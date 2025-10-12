@@ -9,6 +9,7 @@ import { SignupCommand } from 'src/application/command/signup.command';
 import type { UserRepository } from 'src/application/port/out/user.repository';
 import type { KakaoAddressService } from 'src/application/port/out/kakao-address.service';
 import { User } from 'src/domain/model/user/user.entity';
+import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { SignupResponseData } from 'pai-shared-types';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -21,6 +22,10 @@ export class SignupService implements SignupUseCase {
 
     @Inject('KakaoAddressService')
     private readonly kakaoAddressService: KakaoAddressService,
+
+    @Inject('TokenProvider')
+    private readonly tokenProvider: TokenProvider,
+
     private readonly configService: ConfigService,
   ) {}
 
@@ -56,11 +61,16 @@ export class SignupService implements SignupUseCase {
     // 6) 저장 (Prisma)
     const saved = await this.userRepository.save(user);
 
-    // 7) 반환 DTO 구성
+    // 7) 토큰 발급
+    const tokenPair = await this.tokenProvider.generateBasicTokenPair(
+      Number(saved.getId()),
+    );
+
+    // 8) 반환 DTO 구성
     const response: SignupResponseData = {
       userId: Number(saved.getId()),
-      accessToken: '', // 토큰은 나중에 추가 예정
-      refreshToken: '', // 토큰은 나중에 추가 예정
+      accessToken: tokenPair.accessToken,
+      refreshToken: tokenPair.refreshToken,
     };
 
     return response;

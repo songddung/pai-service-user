@@ -12,8 +12,10 @@ import { UserRepositoryPrisma } from './adapter/out/persistence/prisma/user.repo
 // Kakao API Adapter 구현체
 import { KakaoAddressServiceImpl } from './adapter/out/http/kakao/kakao-address.service.impl';
 
+import { AuthModule } from './adapter/out/security/auth.module';
+
 @Module({
-  imports: [],
+  imports: [AuthModule],
   controllers: [SignupController],
   providers: [
     // UseCase 바인딩
