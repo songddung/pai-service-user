@@ -40,6 +40,7 @@ export interface TokenProvider {
  */
 export interface BasicTokenPayload {
   userId: number;
+  sub?: string; // JWT 표준: subject (userId를 문자열로)
   iat?: number;
   exp?: number;
 }

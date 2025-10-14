@@ -4,6 +4,8 @@ export const USER_TOKENS = {
   LoginUseCase: Symbol('LoginUseCase'),
   CheckEmailDuplicateUseCase: Symbol('CheckEmailDuplicateUseCase'),
   CreateProfileUseCase: Symbol('CreateProfileUseCase'),
+  GetParentProfilesUseCase: Symbol('GetParentProfilesUseCase'),
+  GetChildProfilesUseCase: Symbol('GetChildProfilesUseCase'),
 
   // Repository (Output Ports - Write)
   UserRepositoryPort: Symbol('UserRepositoryPort'),

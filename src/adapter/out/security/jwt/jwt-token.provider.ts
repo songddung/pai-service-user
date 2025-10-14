@@ -19,7 +19,10 @@ export class JwtTokenProvider implements TokenProvider {
   ) {}
 
   async generateBasicTokenPair(userId: number): Promise<TokenPair> {
-    const payload: BasicTokenPayload = { userId };
+    const payload: BasicTokenPayload = {
+      userId,
+      sub: String(userId), // JWT 표준: subject claim
+    };
 
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
@@ -43,6 +46,7 @@ export class JwtTokenProvider implements TokenProvider {
   ): Promise<TokenPair> {
     const payload: ProfileTokenPayload = {
       userId,
+      sub: String(userId), // JWT 표준: subject claim
       profileId,
       profileType,
     };

@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import type {
   CreateProfileRequestDto,
   CreateProfileResponseData,
+  ProfileDto,
 } from 'pai-shared-types';
 import { CreateProfileCommand } from '../application/port/in/create-profile.use-case';
+import { Profile } from '../domain/model/profile/profile.entity';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -42,5 +44,28 @@ export class ProfileMapper {
       accessToken,
       refreshToken,
     };
+  }
+
+  /**
+   * Profile 엔티티를 ProfileDto로 변환
+   */
+  toDto(profile: Profile): ProfileDto {
+    return {
+      profileId: profile.getId(),
+      profileType: profile.getProfileType(),
+      name: profile.getName(),
+      birthDate: profile.getBirthDate().toISOString().split('T')[0],
+      gender: profile.getGender() || '',
+      avatarMediaId: profile.getAvatarMediaId(),
+      voiceMediaId: profile.getVoiceMediaId(),
+      createdAt: profile.getCreatedAt()?.toISOString() || '',
+    };
+  }
+
+  /**
+   * Profile 엔티티 배열을 ProfileDto 배열로 변환
+   */
+  toDtoList(profiles: Profile[]): ProfileDto[] {
+    return profiles.map((profile) => this.toDto(profile));
   }
 }
