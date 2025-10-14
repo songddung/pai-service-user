@@ -4,27 +4,29 @@ import type {
   LoginRequestDto,
   LoginResponseData,
 } from 'pai-shared-types';
-import { LoginCommand } from 'src/application/command/login.command';
 import type { LoginUseCase } from 'src/application/port/in/login.use-case';
+import { USER_TOKENS } from '../../../../user.token';
+import { LoginMapper } from '../../../../mapper/login.mapper';
 
 @Controller('api/auth')
 export class LoginController {
   constructor(
-    @Inject('LoginUseCase')
+    @Inject(USER_TOKENS.LoginUseCase)
     private readonly loginUseCase: LoginUseCase,
+    private readonly loginMapper: LoginMapper,
   ) {}
 
   @Post('login')
   async login(
-    @Body() loginDto: LoginRequestDto,
+    @Body() dto: LoginRequestDto,
   ): Promise<BaseResponse<LoginResponseData>> {
-    const command = new LoginCommand(loginDto.email, loginDto.password);
-    const data = await this.loginUseCase.execute(command);
+    const command = this.loginMapper.toCommand(dto);
+    const result = await this.loginUseCase.execute(command);
 
     return {
       success: true,
       message: '로그인 성공',
-      data,
+      data: result,
     };
   }
 }

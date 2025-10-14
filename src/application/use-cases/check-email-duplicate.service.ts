@@ -5,17 +5,18 @@ import {
   CheckEmailDuplicateUseCase,
   CheckEmailDuplicateResult,
 } from 'src/application/port/in/check-email-duplicate.use-case';
-import type { UserRepository } from 'src/application/port/out/user.repository';
+import type { UserQueryPort } from 'src/application/port/out/user.query.port';
+import { USER_TOKENS } from '../../user.token';
 
 @Injectable()
 export class CheckEmailDuplicateService implements CheckEmailDuplicateUseCase {
   constructor(
-    @Inject('UserRepository')
-    private readonly userRepository: UserRepository,
+    @Inject(USER_TOKENS.UserQueryPort)
+    private readonly userQuery: UserQueryPort,
   ) {}
 
   async execute(email: string): Promise<CheckEmailDuplicateResult> {
-    const exists = await this.userRepository.existsByEmail(email);
+    const exists = await this.userQuery.existsByEmail(email);
 
     if (exists) {
       return {

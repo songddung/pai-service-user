@@ -7,17 +7,18 @@ import {
   CreateProfileCommand,
   CreateProfileResponseData,
 } from 'src/application/port/in/create-profile.use-case';
-import type { ProfileRepository } from 'src/application/port/out/profile.repository';
+import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { Profile } from 'src/domain/model/profile/profile.entity';
+import { USER_TOKENS } from '../../user.token';
 
 @Injectable()
 export class CreateProfileService implements CreateProfileUseCase {
   constructor(
-    @Inject('ProfileRepository')
-    private readonly profileRepository: ProfileRepository,
+    @Inject(USER_TOKENS.ProfileRepositoryPort)
+    private readonly profileRepository: ProfileRepositoryPort,
 
-    @Inject('TokenProvider')
+    @Inject(USER_TOKENS.TokenProvider)
     private readonly tokenProvider: TokenProvider,
   ) {}
 

@@ -6,24 +6,29 @@ import {
 } from '@nestjs/common';
 import { SignupUseCase } from 'src/application/port/in/signup.use-case';
 import { SignupCommand } from 'src/application/command/signup.command';
-import type { UserRepository } from 'src/application/port/out/user.repository';
+import type { UserQueryPort } from 'src/application/port/out/user.query.port';
+import type { UserRepositoryPort } from 'src/application/port/out/user.repository.port';
 import type { KakaoAddressService } from 'src/application/port/out/kakao-address.service';
 import { User } from 'src/domain/model/user/user.entity';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { SignupResponseData } from 'pai-shared-types';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { USER_TOKENS } from '../../user.token';
 
 @Injectable()
 export class SignupService implements SignupUseCase {
   constructor(
-    @Inject('UserRepository')
-    private readonly userRepository: UserRepository,
+    @Inject(USER_TOKENS.UserQueryPort)
+    private readonly userQuery: UserQueryPort,
 
-    @Inject('KakaoAddressService')
+    @Inject(USER_TOKENS.UserRepositoryPort)
+    private readonly userRepository: UserRepositoryPort,
+
+    @Inject(USER_TOKENS.KakaoAddressService)
     private readonly kakaoAddressService: KakaoAddressService,
 
-    @Inject('TokenProvider')
+    @Inject(USER_TOKENS.TokenProvider)
     private readonly tokenProvider: TokenProvider,
 
     private readonly configService: ConfigService,
@@ -31,7 +36,7 @@ export class SignupService implements SignupUseCase {
 
   async execute(command: SignupCommand): Promise<SignupResponseData> {
     // 1) 이메일 중복 체크
-    const exists = await this.userRepository.existsByEmail(command.email);
+    const exists = await this.userQuery.existsByEmail(command.email);
     if (exists) {
       throw new ConflictException('이미 가입된 이메일입니다.');
     }
