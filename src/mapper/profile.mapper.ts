@@ -4,8 +4,8 @@ import type {
   CreateProfileResponseData,
   ProfileDto,
 } from 'pai-shared-types';
-import { CreateProfileCommand } from '../application/port/in/create-profile.use-case';
 import { Profile } from '../domain/model/profile/profile.entity';
+import { CreateProfileCommand } from 'src/application/command/create-profile.command';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -67,5 +67,27 @@ export class ProfileMapper {
    */
   toDtoList(profiles: Profile[]): ProfileDto[] {
     return profiles.map((profile) => this.toDto(profile));
+  }
+
+  toSelectCommand(
+    dto: SelectProfileRequestDto,
+    userId: number,
+  ): SelectProfileCommand {
+    return new SelectProfileCommand(userId, Number(dto.profileId));
+  }
+
+  // Prisma 객체 기준으로 수정, SelectProfileResponseData 타입과 정확히 일치
+  toSelectResponse(
+    profile: Profile,
+    accessToken: string,
+    refreshToken: string,
+  ): SelectProfileResponseData {
+    return {
+      profileId: Number(profile.getId()),
+      userId: Number(profile.getUserId()),
+      profileType: profile.getProfileType(),
+      accessToken,
+      refreshToken,
+    };
   }
 }

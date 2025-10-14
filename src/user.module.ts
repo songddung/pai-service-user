@@ -64,21 +64,37 @@ import { AuthModule } from './adapter/out/security/auth.module';
     // UseCase 바인딩
     { provide: USER_TOKENS.SignupUseCase, useClass: SignupService },
     { provide: USER_TOKENS.LoginUseCase, useClass: LoginService },
-    { provide: USER_TOKENS.CreateProfileUseCase, useClass: CreateProfileService },
+    {
+      provide: USER_TOKENS.CreateProfileUseCase,
+      useClass: CreateProfileService,
+    },
+    
     {
       provide: USER_TOKENS.CheckEmailDuplicateUseCase,
       useClass: CheckEmailDuplicateService,
     },
-    { provide: USER_TOKENS.GetParentProfilesUseCase, useClass: GetParentProfilesService },
-    { provide: USER_TOKENS.GetChildProfilesUseCase, useClass: GetChildProfilesService },
+    {
+      provide: USER_TOKENS.GetParentProfilesUseCase,
+      useClass: GetParentProfilesService,
+    },
+    {
+      provide: USER_TOKENS.GetChildProfilesUseCase,
+      useClass: GetChildProfilesService,
+    },
 
     // Query 바인딩 (읽기)
     { provide: USER_TOKENS.UserQueryPort, useClass: UserQueryAdapter },
     { provide: USER_TOKENS.ProfileQueryPort, useClass: ProfileQueryAdapter },
 
     // Repository 바인딩 (쓰기)
-    { provide: USER_TOKENS.UserRepositoryPort, useClass: UserRepositoryAdapter },
-    { provide: USER_TOKENS.ProfileRepositoryPort, useClass: ProfileRepositoryAdapter },
+    {
+      provide: USER_TOKENS.UserRepositoryPort,
+      useClass: UserRepositoryAdapter,
+    },
+    {
+      provide: USER_TOKENS.ProfileRepositoryPort,
+      useClass: ProfileRepositoryAdapter,
+    },
 
     // External API 바인딩 (Kakao)
     { provide: USER_TOKENS.KakaoAddressService, useClass: KakaoAddressAdapter },
