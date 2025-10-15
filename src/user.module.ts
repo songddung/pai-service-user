@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { SignupController } from './adapter/in/http/controllers/signup.controller';
 import { LoginController } from './adapter/in/http/controllers/login.controller';
 import { CreateProfileController } from './adapter/in/http/controllers/create-profile.controller';
+import { SelectProfileController } from './adapter/in/http/controllers/select-profile.controller';
 import { CheckEmailController } from './adapter/in/http/controllers/check-email.controller';
 import { GetParentProfilesController } from './adapter/in/http/controllers/get-parent-profiles.controller';
 import { GetChildProfilesController } from './adapter/in/http/controllers/get-child-profiles.controller';
@@ -16,6 +17,7 @@ import { SignupService } from './application/use-cases/signup.service';
 import { LoginService } from './application/use-cases/login.service';
 import { CheckEmailDuplicateService } from './application/use-cases/check-email-duplicate.service';
 import { CreateProfileService } from './application/use-cases/create-profile.service';
+import { SelectProfileService } from './application/use-cases/select-profile.service';
 import { GetParentProfilesService } from './application/use-cases/get-parent-profiles.service';
 import { GetChildProfilesService } from './application/use-cases/get-child-profiles.service';
 
@@ -48,6 +50,7 @@ import { AuthModule } from './adapter/out/security/auth.module';
     LoginController,
     CheckEmailController,
     CreateProfileController,
+    SelectProfileController,
     GetParentProfilesController,
     GetChildProfilesController,
   ],
@@ -68,7 +71,10 @@ import { AuthModule } from './adapter/out/security/auth.module';
       provide: USER_TOKENS.CreateProfileUseCase,
       useClass: CreateProfileService,
     },
-    
+    {
+      provide: USER_TOKENS.SelectProfileUseCase,
+      useClass: SelectProfileService,
+    },
     {
       provide: USER_TOKENS.CheckEmailDuplicateUseCase,
       useClass: CheckEmailDuplicateService,

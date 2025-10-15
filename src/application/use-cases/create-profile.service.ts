@@ -2,11 +2,9 @@
 
 import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import {
-  CreateProfileUseCase,
-  CreateProfileCommand,
-  CreateProfileResponseData,
-} from 'src/application/port/in/create-profile.use-case';
+import type { CreateProfileResponseData } from 'pai-shared-types';
+import type { CreateProfileUseCase } from 'src/application/port/in/create-profile.use-case';
+import { CreateProfileCommand } from 'src/application/command/create-profile.command';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { Profile } from 'src/domain/model/profile/profile.entity';

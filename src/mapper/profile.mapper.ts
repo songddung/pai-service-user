@@ -3,9 +3,12 @@ import type {
   CreateProfileRequestDto,
   CreateProfileResponseData,
   ProfileDto,
+  SelectProfileRequestDto,
+  SelectProfileResponseData,
 } from 'pai-shared-types';
 import { Profile } from '../domain/model/profile/profile.entity';
 import { CreateProfileCommand } from 'src/application/command/create-profile.command';
+import { SelectProfileCommand } from 'src/application/command/select-profile.command';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
