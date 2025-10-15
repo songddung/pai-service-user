@@ -8,6 +8,7 @@ import { SelectProfileCommand } from 'src/application/command/select-profile.com
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refresh-token.repository.port';
+import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
 import { USER_TOKENS } from '../../user.token';
 
 @Injectable()
@@ -21,6 +22,9 @@ export class SelectProfileService implements SelectProfileUseCase {
 
     @Inject(USER_TOKENS.RefreshTokenRepositoryPort)
     private readonly refreshTokenRepository: RefreshTokenRepositoryPort,
+
+    @Inject(USER_TOKENS.TokenVersionRepositoryPort)
+    private readonly tokenVersionRepository: TokenVersionRepositoryPort,
   ) {}
 
   async execute(
@@ -54,21 +58,27 @@ export class SelectProfileService implements SelectProfileUseCase {
       }
     }
 
-    // 4) 프로필 정보로 새 토큰 발급
+    // 4) 토큰 버전 증가 (이전 토큰 모두 무효화)
+    const tokenVersion = await this.tokenVersionRepository.incrementVersion(
+      command.userId,
+    );
+
+    // 5) 프로필 정보로 새 토큰 발급
     const tokenPair = await this.tokenProvider.generateProfileTokenPair(
       command.userId,
       profile.getId(),
       profile.getProfileType(),
+      tokenVersion,
     );
 
-    // 5) Redis에 RefreshToken 업데이트 (7일 TTL)
+    // 6) Redis에 RefreshToken 업데이트 (7일 TTL)
     await this.refreshTokenRepository.save(
       command.userId,
       tokenPair.refreshToken,
       7 * 24 * 60 * 60, // 7일 (초 단위)
     );
 
-    // 6) 결과 반환
+    // 7) 결과 반환
     return {
       userId: command.userId,
       profileId: profile.getId(),

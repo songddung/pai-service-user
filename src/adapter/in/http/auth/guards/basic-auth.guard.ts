@@ -1,13 +1,21 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, Inject, UnauthorizedException } from '@nestjs/common';
 import { verifyAccessToken } from '../token.verifier';
+import type { TokenVersionQueryPort } from 'src/application/port/out/token-version.query.port';
+import { USER_TOKENS } from 'src/user.token';
 
 /**
  * Basic 토큰 검증 Guard
  * - userId만 포함된 토큰 검증 (회원가입, 프로필 생성 등)
  * - profileId가 없어도 통과
+ * - tokenVersion 검증 (무효화된 토큰 차단)
  */
 @Injectable()
 export class BasicAuthGuard implements CanActivate {
+  constructor(
+    @Inject(USER_TOKENS.TokenVersionQueryPort)
+    private readonly tokenVersionQuery: TokenVersionQueryPort,
+  ) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest() as any;
 
@@ -32,7 +40,20 @@ export class BasicAuthGuard implements CanActivate {
       throw new UnauthorizedException('UNAUTHORIZED: sub(userId) missing');
     }
 
-    // 4) req.auth에 저장
+    // 4) Token Version 검증 (무효화된 토큰 차단)
+    const tokenVersion = claims.tokenVersion;
+    if (tokenVersion !== undefined) {
+      const currentVersion = await this.tokenVersionQuery.getVersion(
+        Number(userId),
+      );
+      if (tokenVersion !== currentVersion) {
+        throw new UnauthorizedException(
+          'UNAUTHORIZED: token has been revoked (version mismatch)',
+        );
+      }
+    }
+
+    // 5) req.auth에 저장
     req.auth = {
       token,
       userId,

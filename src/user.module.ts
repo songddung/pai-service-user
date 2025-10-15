@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { SignupController } from './adapter/in/http/controllers/signup.controller';
 import { LoginController } from './adapter/in/http/controllers/login.controller';
 import { LogoutController } from './adapter/in/http/controllers/logout.controller';
+import { RefreshTokenController } from './adapter/in/http/controllers/refresh-token.controller';
 import { CreateProfileController } from './adapter/in/http/controllers/create-profile.controller';
 import { SelectProfileController } from './adapter/in/http/controllers/select-profile.controller';
 import { UpdateProfileController } from './adapter/in/http/controllers/update-profile.controller';
@@ -19,6 +20,7 @@ import { USER_TOKENS } from './user.token';
 import { SignupService } from './application/use-cases/signup.service';
 import { LoginService } from './application/use-cases/login.service';
 import { LogoutService } from './application/use-cases/logout.service';
+import { RefreshTokenService } from './application/use-cases/refresh-token.service';
 import { CheckEmailDuplicateService } from './application/use-cases/check-email-duplicate.service';
 import { CreateProfileService } from './application/use-cases/create-profile.service';
 import { SelectProfileService } from './application/use-cases/select-profile.service';
@@ -30,11 +32,13 @@ import { GetChildProfilesService } from './application/use-cases/get-child-profi
 // Query Adapter 구현체
 import { UserQueryAdapter } from './adapter/out/persistence/prisma/user.query.adapter';
 import { ProfileQueryAdapter } from './adapter/out/persistence/prisma/profile.query.adapter';
+import { RedisRefreshTokenQueryAdapter } from './adapter/out/cache/redis-refresh-token.query.adapter';
+import { RedisTokenVersionQueryAdapter } from './adapter/out/cache/redis-token-version.query.adapter';
 
 // Repository Adapter 구현체
 import { UserRepositoryAdapter } from './adapter/out/persistence/prisma/user.repository.adapter';
 import { ProfileRepositoryAdapter } from './adapter/out/persistence/prisma/profile.repository.adapter';
-import { RedisRefreshTokenRepository } from './adapter/out/cache/redis-refresh-token.repository';
+import { RedisTokenVersionRepositoryAdapter } from './adapter/out/cache/redis-token-version.repository.adapter';
 
 // Redis Module
 import { RedisModule } from './adapter/out/cache/redis.module';
@@ -52,6 +56,7 @@ import { BasicAuthGuard } from './adapter/in/http/auth/guards/basic-auth.guard';
 import { ParentGuard } from './adapter/in/http/auth/guards/parent.guard';
 
 import { AuthModule } from './adapter/out/security/auth.module';
+import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-refresh-token.repository.adapter';
 
 @Module({
   imports: [AuthModule, RedisModule],
@@ -59,6 +64,7 @@ import { AuthModule } from './adapter/out/security/auth.module';
     SignupController,
     LoginController,
     LogoutController,
+    RefreshTokenController,
     CheckEmailController,
     CreateProfileController,
     SelectProfileController,
@@ -81,6 +87,7 @@ import { AuthModule } from './adapter/out/security/auth.module';
     { provide: USER_TOKENS.SignupUseCase, useClass: SignupService },
     { provide: USER_TOKENS.LoginUseCase, useClass: LoginService },
     { provide: USER_TOKENS.LogoutUseCase, useClass: LogoutService },
+    { provide: USER_TOKENS.RefreshTokenUseCase, useClass: RefreshTokenService },
     {
       provide: USER_TOKENS.CreateProfileUseCase,
       useClass: CreateProfileService,
@@ -113,6 +120,14 @@ import { AuthModule } from './adapter/out/security/auth.module';
     // Query 바인딩 (읽기)
     { provide: USER_TOKENS.UserQueryPort, useClass: UserQueryAdapter },
     { provide: USER_TOKENS.ProfileQueryPort, useClass: ProfileQueryAdapter },
+    {
+      provide: USER_TOKENS.RefreshTokenQueryPort,
+      useClass: RedisRefreshTokenQueryAdapter,
+    },
+    {
+      provide: USER_TOKENS.TokenVersionQueryPort,
+      useClass: RedisTokenVersionQueryAdapter,
+    },
 
     // Repository 바인딩 (쓰기)
     {
@@ -125,7 +140,11 @@ import { AuthModule } from './adapter/out/security/auth.module';
     },
     {
       provide: USER_TOKENS.RefreshTokenRepositoryPort,
-      useClass: RedisRefreshTokenRepository,
+      useClass: RedisRefreshTokenRepositoryAdapter,
+    },
+    {
+      provide: USER_TOKENS.TokenVersionRepositoryPort,
+      useClass: RedisTokenVersionRepositoryAdapter,
     },
 
     // External API 바인딩 (Kakao)

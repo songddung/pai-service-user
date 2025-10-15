@@ -6,6 +6,7 @@ import type { CreateProfileResponseData } from 'pai-shared-types';
 import type { CreateProfileUseCase } from 'src/application/port/in/create-profile.use-case';
 import { CreateProfileCommand } from 'src/application/command/create-profile.command';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
+import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { Profile } from 'src/domain/model/profile/profile.entity';
 import { USER_TOKENS } from '../../user.token';
@@ -15,6 +16,9 @@ export class CreateProfileService implements CreateProfileUseCase {
   constructor(
     @Inject(USER_TOKENS.ProfileRepositoryPort)
     private readonly profileRepository: ProfileRepositoryPort,
+
+    @Inject(USER_TOKENS.TokenVersionRepositoryPort)
+    private readonly tokenVersionRepository: TokenVersionRepositoryPort,
 
     @Inject(USER_TOKENS.TokenProvider)
     private readonly tokenProvider: TokenProvider,
@@ -54,14 +58,20 @@ export class CreateProfileService implements CreateProfileUseCase {
     // 4) 저장
     const saved = await this.profileRepository.save(profile);
 
-    // 5) 프로필 포함된 새 토큰 발급
+    // 5) 토큰 버전 증가 (이전 토큰 모두 무효화)
+    const tokenVersion = await this.tokenVersionRepository.incrementVersion(
+      command.userId,
+    );
+
+    // 6) 프로필 포함된 새 토큰 발급
     const tokenPair = await this.tokenProvider.generateProfileTokenPair(
       command.userId,
       saved.getId(),
       saved.getProfileType(),
+      tokenVersion,
     );
 
-    // 6) 결과 반환
+    // 7) 결과 반환
     return {
       profileId: saved.getId(),
       userId: command.userId,

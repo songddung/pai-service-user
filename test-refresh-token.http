@@ -1,0 +1,28 @@
+### 1. 로그인
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "yourpassword"
+}
+
+### 2. RefreshToken으로 AccessToken 재발급
+# 위에서 받은 accessToken과 refreshToken을 아래에 붙여넣으세요
+POST http://localhost:3000/api/auth/refresh
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+
+### 3. (선택) 만료된 AccessToken으로 테스트
+# AccessToken이 만료되었어도 디코딩만 가능하면 userId 추출 가능
+POST http://localhost:3000/api/auth/refresh
+Content-Type: application/json
+Authorization: Bearer <만료된_accessToken>
+
+{
+  "refreshToken": "<유효한_refreshToken>"
+}

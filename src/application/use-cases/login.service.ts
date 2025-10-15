@@ -3,6 +3,7 @@ import { LoginUseCase } from '../port/in/login.use-case';
 import type { UserQueryPort } from '../port/out/user.query.port';
 import type { TokenProvider } from '../port/out/token.provider';
 import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repository.port';
+import type { TokenVersionRepositoryPort } from '../port/out/token-version.repository.port';
 import { LoginResponseData } from 'pai-shared-types';
 import * as bcrypt from 'bcrypt';
 import { LoginCommand } from '../command/login.command';
@@ -19,6 +20,9 @@ export class LoginService implements LoginUseCase {
 
     @Inject(USER_TOKENS.RefreshTokenRepositoryPort)
     private readonly refreshTokenRepository: RefreshTokenRepositoryPort,
+
+    @Inject(USER_TOKENS.TokenVersionRepositoryPort)
+    private readonly tokenVersionRepository: TokenVersionRepositoryPort,
   ) {}
 
   async execute(command: LoginCommand): Promise<LoginResponseData> {
@@ -41,9 +45,17 @@ export class LoginService implements LoginUseCase {
       );
     }
 
-    // 토큰 발급
+    // 토큰 버전 증가 (이전 토큰 모두 무효화)
     const userId = Number(user.getId());
-    const tokenPair = await this.tokenProvider.generateBasicTokenPair(userId);
+    const tokenVersion = await this.tokenVersionRepository.incrementVersion(
+      userId,
+    );
+
+    // 새로운 버전으로 토큰 발급
+    const tokenPair = await this.tokenProvider.generateBasicTokenPair(
+      userId,
+      tokenVersion,
+    );
 
     // Redis에 RefreshToken 저장 (7일 TTL)
     await this.refreshTokenRepository.save(

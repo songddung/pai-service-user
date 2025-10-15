@@ -3,13 +3,21 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  Inject,
   UnauthorizedException,
   ForbiddenException,
 } from '@nestjs/common';
 import { verifyAccessToken } from '../token.verifier';
+import type { TokenVersionQueryPort } from 'src/application/port/out/token-version.query.port';
+import { USER_TOKENS } from 'src/user.token';
 
 @Injectable()
 export class ParentGuard implements CanActivate {
+  constructor(
+    @Inject(USER_TOKENS.TokenVersionQueryPort)
+    private readonly tokenVersionQuery: TokenVersionQueryPort,
+  ) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // HTTP 요청 객체 가져오기
     const req = context.switchToHttp().getRequest() as any;
@@ -38,10 +46,23 @@ export class ParentGuard implements CanActivate {
       throw new UnauthorizedException('UNAUTHORIZED: sub(userId) missing');
     if (!profileId)
       throw new BadRequestException('VALIDATION_ERROR: profileId missing');
-    if (profileType !== 'parent')
+    if (profileType !== 'PARENT')
       throw new ForbiddenException('FORBIDDEN: parent profile required');
 
-    // 4) 쓰기 쉽게 저장
+    // 4) Token Version 검증 (무효화된 토큰 차단)
+    const tokenVersion = claims.tokenVersion;
+    if (tokenVersion !== undefined) {
+      const currentVersion = await this.tokenVersionQuery.getVersion(
+        Number(userId),
+      );
+      if (tokenVersion !== currentVersion) {
+        throw new UnauthorizedException(
+          'UNAUTHORIZED: token has been revoked (version mismatch)',
+        );
+      }
+    }
+
+    // 5) 쓰기 쉽게 저장
     req.auth = {
       token,
       userId,

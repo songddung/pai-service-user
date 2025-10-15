@@ -1,4 +1,7 @@
-// 쓰기 전용
+/**
+ * RefreshToken Repository Port (쓰기 전용)
+ * - 저장/삭제 작업만 담당
+ */
 export interface RefreshTokenRepositoryPort {
   /**
    * RefreshToken 저장

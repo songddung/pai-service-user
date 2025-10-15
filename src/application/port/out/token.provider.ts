@@ -4,19 +4,25 @@ export interface TokenProvider {
   /**
    * 로그인 시 기본 토큰 생성 (userId만 포함)
    * @param userId 사용자 ID
+   * @param tokenVersion 토큰 버전
    */
-  generateBasicTokenPair(userId: number): Promise<TokenPair>;
+  generateBasicTokenPair(
+    userId: number,
+    tokenVersion: number,
+  ): Promise<TokenPair>;
 
   /**
    * 프로필 선택 후 완전한 토큰 생성 (userId + profileId + profileType)
    * @param userId 사용자 ID
    * @param profileId 프로필 ID
    * @param profileType 프로필 타입 (예: 'parent', 'child')
+   * @param tokenVersion 토큰 버전
    */
   generateProfileTokenPair(
     userId: number,
     profileId: number,
     profileType: string,
+    tokenVersion: number,
   ): Promise<TokenPair>;
 
   /**
@@ -30,9 +36,15 @@ export interface TokenProvider {
   verifyRefreshToken(token: string): Promise<TokenPayload>;
 
   /**
-   * Refresh Token으로 새로운 Access Token 재발급
+   * Refresh Token으로 새로운 토큰 쌍 재발급 (Rotation)
+   * @param refreshToken 기존 RefreshToken
+   * @param newTokenVersion 새로운 토큰 버전
+   * @returns 새로운 AccessToken과 RefreshToken
    */
-  refreshAccessToken(refreshToken: string): Promise<string>;
+  refreshTokenPair(
+    refreshToken: string,
+    newTokenVersion: number,
+  ): Promise<TokenPair>;
 }
 
 /**
@@ -40,6 +52,7 @@ export interface TokenProvider {
  */
 export interface BasicTokenPayload {
   userId: number;
+  tokenVersion: number; // 토큰 버전 (무효화 용)
   sub?: string; // JWT 표준: subject (userId를 문자열로)
   iat?: number;
   exp?: number;

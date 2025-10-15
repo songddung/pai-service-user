@@ -3,6 +3,7 @@ export const USER_TOKENS = {
   SignupUseCase: Symbol('SignupUseCase'),
   LoginUseCase: Symbol('LoginUseCase'),
   LogoutUseCase: Symbol('LogoutUseCase'),
+  RefreshTokenUseCase: Symbol('RefreshTokenUseCase'),
   CheckEmailDuplicateUseCase: Symbol('CheckEmailDuplicateUseCase'),
   CreateProfileUseCase: Symbol('CreateProfileUseCase'),
   SelectProfileUseCase: Symbol('SelectProfileUseCase'),
@@ -15,10 +16,13 @@ export const USER_TOKENS = {
   UserRepositoryPort: Symbol('UserRepositoryPort'),
   ProfileRepositoryPort: Symbol('ProfileRepositoryPort'),
   RefreshTokenRepositoryPort: Symbol('RefreshTokenRepositoryPort'),
+  TokenVersionRepositoryPort: Symbol('TokenVersionRepositoryPort'),
 
   // Query (Output Ports - Read)
   UserQueryPort: Symbol('UserQueryPort'),
   ProfileQueryPort: Symbol('ProfileQueryPort'),
+  RefreshTokenQueryPort: Symbol('RefreshTokenQueryPort'),
+  TokenVersionQueryPort: Symbol('TokenVersionQueryPort'),
 
   // External Services (Output Ports)
   KakaoAddressService: Symbol('KakaoAddressService'),
