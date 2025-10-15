@@ -5,6 +5,8 @@ export const USER_TOKENS = {
   CheckEmailDuplicateUseCase: Symbol('CheckEmailDuplicateUseCase'),
   CreateProfileUseCase: Symbol('CreateProfileUseCase'),
   SelectProfileUseCase: Symbol('SelectProfileUseCase'),
+  UpdateProfileUseCase: Symbol('UpdateProfileUseCase'),
+  DeleteProfileUseCase: Symbol('DeleteProfileUseCase'),
   GetParentProfilesUseCase: Symbol('GetParentProfilesUseCase'),
   GetChildProfilesUseCase: Symbol('GetChildProfilesUseCase'),
 

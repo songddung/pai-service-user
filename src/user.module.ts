@@ -5,6 +5,8 @@ import { SignupController } from './adapter/in/http/controllers/signup.controlle
 import { LoginController } from './adapter/in/http/controllers/login.controller';
 import { CreateProfileController } from './adapter/in/http/controllers/create-profile.controller';
 import { SelectProfileController } from './adapter/in/http/controllers/select-profile.controller';
+import { UpdateProfileController } from './adapter/in/http/controllers/update-profile.controller';
+import { DeleteProfileController } from './adapter/in/http/controllers/delete-profile.controller';
 import { CheckEmailController } from './adapter/in/http/controllers/check-email.controller';
 import { GetParentProfilesController } from './adapter/in/http/controllers/get-parent-profiles.controller';
 import { GetChildProfilesController } from './adapter/in/http/controllers/get-child-profiles.controller';
@@ -18,6 +20,8 @@ import { LoginService } from './application/use-cases/login.service';
 import { CheckEmailDuplicateService } from './application/use-cases/check-email-duplicate.service';
 import { CreateProfileService } from './application/use-cases/create-profile.service';
 import { SelectProfileService } from './application/use-cases/select-profile.service';
+import { UpdateProfileService } from './application/use-cases/update-profile.service';
+import { DeleteProfileService } from './application/use-cases/delete-profile.service';
 import { GetParentProfilesService } from './application/use-cases/get-parent-profiles.service';
 import { GetChildProfilesService } from './application/use-cases/get-child-profiles.service';
 
@@ -51,6 +55,8 @@ import { AuthModule } from './adapter/out/security/auth.module';
     CheckEmailController,
     CreateProfileController,
     SelectProfileController,
+    UpdateProfileController,
+    DeleteProfileController,
     GetParentProfilesController,
     GetChildProfilesController,
   ],
@@ -74,6 +80,14 @@ import { AuthModule } from './adapter/out/security/auth.module';
     {
       provide: USER_TOKENS.SelectProfileUseCase,
       useClass: SelectProfileService,
+    },
+    {
+      provide: USER_TOKENS.UpdateProfileUseCase,
+      useClass: UpdateProfileService,
+    },
+    {
+      provide: USER_TOKENS.DeleteProfileUseCase,
+      useClass: DeleteProfileService,
     },
     {
       provide: USER_TOKENS.CheckEmailDuplicateUseCase,

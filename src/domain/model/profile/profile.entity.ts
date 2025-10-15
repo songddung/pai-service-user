@@ -121,6 +121,13 @@ export class Profile {
     this.avatarMediaId = avatarMediaId;
   }
 
+  updatePin(pinHash: string): void {
+    if (this.profileType !== 'parent') {
+      throw new Error('부모 프로필만 PIN을 설정할 수 있습니다.');
+    }
+    this.pinHash = pinHash;
+  }
+
   isparent(): boolean {
     return this.profileType === 'parent';
   }
