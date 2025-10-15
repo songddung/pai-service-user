@@ -9,6 +9,7 @@ import { SignupCommand } from 'src/application/command/signup.command';
 import type { UserQueryPort } from 'src/application/port/out/user.query.port';
 import type { UserRepositoryPort } from 'src/application/port/out/user.repository.port';
 import type { KakaoAddressService } from 'src/application/port/out/kakao-address.service';
+import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refresh-token.repository.port';
 import { User } from 'src/domain/model/user/user.entity';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { SignupResponseData } from 'pai-shared-types';
@@ -30,6 +31,9 @@ export class SignupService implements SignupUseCase {
 
     @Inject(USER_TOKENS.TokenProvider)
     private readonly tokenProvider: TokenProvider,
+
+    @Inject(USER_TOKENS.RefreshTokenRepositoryPort)
+    private readonly refreshTokenRepository: RefreshTokenRepositoryPort,
 
     private readonly configService: ConfigService,
   ) {}
@@ -67,13 +71,19 @@ export class SignupService implements SignupUseCase {
     const saved = await this.userRepository.save(user);
 
     // 7) 토큰 발급
-    const tokenPair = await this.tokenProvider.generateBasicTokenPair(
-      Number(saved.getId()),
+    const userId = Number(saved.getId());
+    const tokenPair = await this.tokenProvider.generateBasicTokenPair(userId);
+
+    // 8) Redis에 RefreshToken 저장 (7일 TTL)
+    await this.refreshTokenRepository.save(
+      userId,
+      tokenPair.refreshToken,
+      7 * 24 * 60 * 60, // 7일 (초 단위)
     );
 
-    // 8) 반환 DTO 구성
+    // 9) 반환 DTO 구성
     const response: SignupResponseData = {
-      userId: Number(saved.getId()),
+      userId,
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
     };

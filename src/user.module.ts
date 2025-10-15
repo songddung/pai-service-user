@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 // Controllers
 import { SignupController } from './adapter/in/http/controllers/signup.controller';
 import { LoginController } from './adapter/in/http/controllers/login.controller';
+import { LogoutController } from './adapter/in/http/controllers/logout.controller';
 import { CreateProfileController } from './adapter/in/http/controllers/create-profile.controller';
 import { SelectProfileController } from './adapter/in/http/controllers/select-profile.controller';
 import { UpdateProfileController } from './adapter/in/http/controllers/update-profile.controller';
@@ -17,6 +18,7 @@ import { USER_TOKENS } from './user.token';
 // UseCase 구현체
 import { SignupService } from './application/use-cases/signup.service';
 import { LoginService } from './application/use-cases/login.service';
+import { LogoutService } from './application/use-cases/logout.service';
 import { CheckEmailDuplicateService } from './application/use-cases/check-email-duplicate.service';
 import { CreateProfileService } from './application/use-cases/create-profile.service';
 import { SelectProfileService } from './application/use-cases/select-profile.service';
@@ -32,6 +34,10 @@ import { ProfileQueryAdapter } from './adapter/out/persistence/prisma/profile.qu
 // Repository Adapter 구현체
 import { UserRepositoryAdapter } from './adapter/out/persistence/prisma/user.repository.adapter';
 import { ProfileRepositoryAdapter } from './adapter/out/persistence/prisma/profile.repository.adapter';
+import { RedisRefreshTokenRepository } from './adapter/out/cache/redis-refresh-token.repository';
+
+// Redis Module
+import { RedisModule } from './adapter/out/cache/redis.module';
 
 // Kakao API Adapter 구현체
 import { KakaoAddressAdapter } from './adapter/out/http/kakao/kakao-address.adapter';
@@ -48,10 +54,11 @@ import { ParentGuard } from './adapter/in/http/auth/guards/parent.guard';
 import { AuthModule } from './adapter/out/security/auth.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, RedisModule],
   controllers: [
     SignupController,
     LoginController,
+    LogoutController,
     CheckEmailController,
     CreateProfileController,
     SelectProfileController,
@@ -73,6 +80,7 @@ import { AuthModule } from './adapter/out/security/auth.module';
     // UseCase 바인딩
     { provide: USER_TOKENS.SignupUseCase, useClass: SignupService },
     { provide: USER_TOKENS.LoginUseCase, useClass: LoginService },
+    { provide: USER_TOKENS.LogoutUseCase, useClass: LogoutService },
     {
       provide: USER_TOKENS.CreateProfileUseCase,
       useClass: CreateProfileService,
@@ -114,6 +122,10 @@ import { AuthModule } from './adapter/out/security/auth.module';
     {
       provide: USER_TOKENS.ProfileRepositoryPort,
       useClass: ProfileRepositoryAdapter,
+    },
+    {
+      provide: USER_TOKENS.RefreshTokenRepositoryPort,
+      useClass: RedisRefreshTokenRepository,
     },
 
     // External API 바인딩 (Kakao)

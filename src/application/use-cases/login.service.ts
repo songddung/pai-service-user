@@ -2,6 +2,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginUseCase } from '../port/in/login.use-case';
 import type { UserQueryPort } from '../port/out/user.query.port';
 import type { TokenProvider } from '../port/out/token.provider';
+import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repository.port';
 import { LoginResponseData } from 'pai-shared-types';
 import * as bcrypt from 'bcrypt';
 import { LoginCommand } from '../command/login.command';
@@ -15,6 +16,9 @@ export class LoginService implements LoginUseCase {
 
     @Inject(USER_TOKENS.TokenProvider)
     private readonly tokenProvider: TokenProvider,
+
+    @Inject(USER_TOKENS.RefreshTokenRepositoryPort)
+    private readonly refreshTokenRepository: RefreshTokenRepositoryPort,
   ) {}
 
   async execute(command: LoginCommand): Promise<LoginResponseData> {
@@ -38,12 +42,18 @@ export class LoginService implements LoginUseCase {
     }
 
     // 토큰 발급
-    const tokenPair = await this.tokenProvider.generateBasicTokenPair(
-      Number(user.getId()),
+    const userId = Number(user.getId());
+    const tokenPair = await this.tokenProvider.generateBasicTokenPair(userId);
+
+    // Redis에 RefreshToken 저장 (7일 TTL)
+    await this.refreshTokenRepository.save(
+      userId,
+      tokenPair.refreshToken,
+      7 * 24 * 60 * 60, // 7일 (초 단위)
     );
 
     return {
-      userId: Number(user.getId()),
+      userId,
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
     };
