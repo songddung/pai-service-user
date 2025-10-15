@@ -22,10 +22,10 @@ model User {
 model Profile {
   profile_id      BigInt   @id @default(autoincrement())
   user_id         BigInt
-  profile_type    String   // PARENT | CHILD
+  profile_type    String   // parent | child
   name            String
-  birth_date      DateTime?
-  gender          String?
+  birth_date      DateTime
+  gender          String
   avatar_media_id BigInt?
   voice_media_id  BigInt?
   pin_hash        String?

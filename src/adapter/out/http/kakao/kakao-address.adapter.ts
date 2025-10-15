@@ -4,7 +4,7 @@ import { KakaoAddressService } from 'src/application/port/out/kakao-address.serv
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class KakaoAddressServiceImpl implements KakaoAddressService {
+export class KakaoAddressAdapter implements KakaoAddressService {
   constructor(private readonly configService: ConfigService) {}
 
   async getLatLng(
