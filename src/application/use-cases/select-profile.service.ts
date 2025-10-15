@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, UnauthorizedException, Inject } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import type { SelectProfileResponseData } from 'pai-shared-types';
 import {
   SelectProfileUseCase,
@@ -32,14 +33,31 @@ export class SelectProfileService implements SelectProfileUseCase {
       throw new NotFoundException('접근 권한이 없는 프로필입니다.');
     }
 
-    // 3) 프로필 정보로 새 토큰 발급
+    // 3) 부모 프로필인 경우 PIN 검증
+    if (profile.getProfileType() === 'parent') {
+      if (!command.pin) {
+        throw new BadRequestException('부모 프로필 선택 시 PIN이 필요합니다.');
+      }
+
+      const pinHash = profile.getPinHash();
+      if (!pinHash) {
+        throw new BadRequestException('프로필에 PIN이 설정되지 않았습니다.');
+      }
+
+      const isPinValid = await bcrypt.compare(command.pin, pinHash);
+      if (!isPinValid) {
+        throw new UnauthorizedException('PIN이 일치하지 않습니다.');
+      }
+    }
+
+    // 4) 프로필 정보로 새 토큰 발급
     const tokenPair = await this.tokenProvider.generateProfileTokenPair(
       command.userId,
       profile.getId(),
       profile.getProfileType(),
     );
 
-    // 4) 결과 반환
+    // 5) 결과 반환
     return {
       userId: command.userId,
       profileId: profile.getId(),

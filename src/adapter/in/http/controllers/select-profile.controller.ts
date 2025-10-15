@@ -23,7 +23,11 @@ export class SelectProfileController {
     @Body() dto: SelectProfileRequestDto,
     @Auth('userId') userId: string,
   ): Promise<BaseResponse<SelectProfileResponseData>> {
-    const command = new SelectProfileCommand(Number(userId), dto.profileId);
+    const command = new SelectProfileCommand(
+      Number(userId),
+      dto.profileId,
+      dto.pin,
+    );
     const result = await this.selectProfileUseCase.execute(command);
 
     return {
