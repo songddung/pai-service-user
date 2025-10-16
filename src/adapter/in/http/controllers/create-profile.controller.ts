@@ -22,9 +22,9 @@ export class CreateProfileController {
   @Post()
   async createProfile(
     @Body() dto: CreateProfileRequestDto,
-    @Auth('userId') userId: string,
+    @Auth('userId') userId: number,
   ): Promise<BaseResponse<CreateProfileResponseData>> {
-    const command = this.profileMapper.toCreateCommand(dto, Number(userId));
+    const command = this.profileMapper.toCreateCommand(dto, userId);
     const result = await this.createProfileUseCase.execute(command);
 
     return {

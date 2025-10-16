@@ -5,10 +5,10 @@ import type {
   SelectProfileResponseData,
 } from 'pai-shared-types';
 import type { SelectProfileUseCase } from 'src/application/port/in/select-profile.use-case';
-import { SelectProfileCommand } from 'src/application/command/select-profile.command';
 import { USER_TOKENS } from '../../../../user.token';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
+import { ProfileMapper } from '../../../../mapper/profile.mapper';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -16,18 +16,15 @@ export class SelectProfileController {
   constructor(
     @Inject(USER_TOKENS.SelectProfileUseCase)
     private readonly selectProfileUseCase: SelectProfileUseCase,
+    private readonly profileMapper: ProfileMapper,
   ) {}
 
   @Post('select')
   async selectProfile(
     @Body() dto: SelectProfileRequestDto,
-    @Auth('userId') userId: string,
+    @Auth('userId') userId: number,
   ): Promise<BaseResponse<SelectProfileResponseData>> {
-    const command = new SelectProfileCommand(
-      Number(userId),
-      dto.profileId,
-      dto.pin,
-    );
+    const command = this.profileMapper.toSelectCommand(dto, userId);
     const result = await this.selectProfileUseCase.execute(command);
 
     return {

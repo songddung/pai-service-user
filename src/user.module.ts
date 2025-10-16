@@ -50,6 +50,9 @@ import { KakaoAddressAdapter } from './adapter/out/http/kakao/kakao-address.adap
 import { SignupMapper } from './mapper/signup.mapper';
 import { LoginMapper } from './mapper/login.mapper';
 import { ProfileMapper } from './mapper/profile.mapper';
+import { RefreshTokenMapper } from './mapper/refresh-token.mapper';
+import { LogoutMapper } from './mapper/logout.mapper';
+import { GetProfilesMapper } from './mapper/get-profiles.mapper';
 
 // Guard
 import { BasicAuthGuard } from './adapter/in/http/auth/guards/basic-auth.guard';
@@ -82,6 +85,9 @@ import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-re
     SignupMapper,
     LoginMapper,
     ProfileMapper,
+    RefreshTokenMapper,
+    LogoutMapper,
+    GetProfilesMapper,
 
     // UseCase 바인딩
     { provide: USER_TOKENS.SignupUseCase, useClass: SignupService },

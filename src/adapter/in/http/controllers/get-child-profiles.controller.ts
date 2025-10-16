@@ -7,6 +7,7 @@ import type { GetChildProfilesUseCase } from 'src/application/port/in/get-child-
 import { USER_TOKENS } from '../../../../user.token';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
+import { GetProfilesMapper } from '../../../../mapper/get-profiles.mapper';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -14,15 +15,15 @@ export class GetChildProfilesController {
   constructor(
     @Inject(USER_TOKENS.GetChildProfilesUseCase)
     private readonly getChildProfilesUseCase: GetChildProfilesUseCase,
+    private readonly getProfilesMapper: GetProfilesMapper,
   ) {}
 
   @Get('child')
   async getChildProfiles(
-    @Auth('userId') userId: string,
+    @Auth('userId') userId: number,
   ): Promise<BaseResponse<GetChildProfilesResponseData>> {
-    const result = await this.getChildProfilesUseCase.execute({
-      userId: Number(userId),
-    });
+    const query = this.getProfilesMapper.toQuery(userId);
+    const result = await this.getChildProfilesUseCase.execute(query);
 
     return {
       success: true,

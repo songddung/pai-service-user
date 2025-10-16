@@ -1,11 +1,12 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { RefreshTokenUseCase, RefreshTokenResult } from '../port/in/refresh-token.use-case';
+import { RefreshTokenUseCase } from '../port/in/refresh-token.use-case';
 import { RefreshTokenCommand } from '../command/refresh-token.command';
 import type { RefreshTokenQueryPort } from '../port/out/refresh-token.query.port';
 import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repository.port';
 import type { TokenVersionRepositoryPort } from '../port/out/token-version.repository.port';
 import type { TokenProvider } from '../port/out/token.provider';
 import { USER_TOKENS } from '../../user.token';
+import { RefreshTokenResult } from 'pai-shared-types';
 
 @Injectable()
 export class RefreshTokenService implements RefreshTokenUseCase {
