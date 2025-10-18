@@ -1,17 +1,8 @@
 import { Module } from '@nestjs/common';
 
 // Controllers
-import { SignupController } from './adapter/in/http/controllers/signup.controller';
-import { LoginController } from './adapter/in/http/controllers/login.controller';
-import { LogoutController } from './adapter/in/http/controllers/logout.controller';
-import { RefreshTokenController } from './adapter/in/http/controllers/refresh-token.controller';
-import { CreateProfileController } from './adapter/in/http/controllers/create-profile.controller';
-import { SelectProfileController } from './adapter/in/http/controllers/select-profile.controller';
-import { UpdateProfileController } from './adapter/in/http/controllers/update-profile.controller';
-import { DeleteProfileController } from './adapter/in/http/controllers/delete-profile.controller';
-import { CheckEmailController } from './adapter/in/http/controllers/check-email.controller';
-import { GetParentProfilesController } from './adapter/in/http/controllers/get-parent-profiles.controller';
-import { GetChildProfilesController } from './adapter/in/http/controllers/get-child-profiles.controller';
+import { AuthController } from './adapter/in/http/controllers/auth.controller';
+import { ProfileController } from './adapter/in/http/controllers/profile.controller';
 
 // Tokens
 import { USER_TOKENS } from './user.token';
@@ -64,17 +55,8 @@ import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-re
 @Module({
   imports: [AuthModule, RedisModule],
   controllers: [
-    SignupController,
-    LoginController,
-    LogoutController,
-    RefreshTokenController,
-    CheckEmailController,
-    CreateProfileController,
-    SelectProfileController,
-    UpdateProfileController,
-    DeleteProfileController,
-    GetParentProfilesController,
-    GetChildProfilesController,
+    AuthController,
+    ProfileController,
   ],
   providers: [
     // Guard
