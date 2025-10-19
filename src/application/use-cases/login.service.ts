@@ -65,7 +65,7 @@ export class LoginService implements LoginUseCase {
     );
 
     return {
-      userId,
+      userId: String(userId),
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
     };

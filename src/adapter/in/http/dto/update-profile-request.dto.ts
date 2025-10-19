@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsInt, IsDateString, MinLength, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsDateString, MinLength, MaxLength } from 'class-validator';
 
 export class UpdateProfileRequestDto {
   @IsOptional()
@@ -16,12 +16,12 @@ export class UpdateProfileRequestDto {
   gender?: string;
 
   @IsOptional()
-  @IsInt()
-  avatarMediaId?: number;
+  @IsString()
+  avatarMediaId?: string;
 
   @IsOptional()
-  @IsInt()
-  voiceMediaId?: number;
+  @IsString()
+  voiceMediaId?: string;
 
   @IsOptional()
   @IsString()

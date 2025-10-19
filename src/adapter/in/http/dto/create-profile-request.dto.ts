@@ -2,7 +2,6 @@ import {
   IsEnum,
   IsString,
   IsOptional,
-  IsInt,
   IsDateString,
   MinLength,
   MaxLength,
@@ -30,8 +29,8 @@ export class CreateProfileRequestDto {
   gender: string;
 
   @IsOptional()
-  @IsInt()
-  avatarMediaId?: number;
+  @IsString()
+  avatarMediaId?: string;
 
   @IsOptional()
   @IsString()
@@ -40,6 +39,6 @@ export class CreateProfileRequestDto {
   pin?: string;
 
   @IsOptional()
-  @IsInt()
-  voiceMediaId?: number;
+  @IsString()
+  voiceMediaId?: string;
 }

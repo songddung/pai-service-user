@@ -1,8 +1,8 @@
-import { IsInt, IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
 
 export class SelectProfileRequestDto {
-  @IsInt()
-  profileId: number;
+  @IsString()
+  profileId: string;
 
   @IsOptional()
   @IsString()

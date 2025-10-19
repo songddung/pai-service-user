@@ -73,8 +73,8 @@ export class CreateProfileService implements CreateProfileUseCase {
 
     // 7) 결과 반환
     return {
-      profileId: saved.getId(),
-      userId: command.userId,
+      profileId: String(saved.getId()),
+      userId: String(command.userId),
       profileType: saved.getProfileType(),
       name: saved.getName(),
       accessToken: tokenPair.accessToken,

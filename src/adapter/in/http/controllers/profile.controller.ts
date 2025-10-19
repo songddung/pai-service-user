@@ -10,15 +10,7 @@ import {
   UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
-import type {
-  BaseResponse,
-  CreateProfileResponseData,
-  UpdateProfileResponseData,
-  DeleteProfileResponseData,
-  SelectProfileResponseData,
-  GetParentProfilesResponseData,
-  GetChildProfilesResponseData,
-} from 'pai-shared-types';
+import type { BaseResponse } from 'pai-shared-types';
 import { CreateProfileRequestDto } from '../dto/create-profile-request.dto';
 import { UpdateProfileRequestDto } from '../dto/update-profile-request.dto';
 import { SelectProfileRequestDto } from '../dto/select-profile-request.dto';
@@ -33,6 +25,11 @@ import { ProfileMapper } from '../../../../mapper/profile.mapper';
 import { GetProfilesMapper } from '../../../../mapper/get-profiles.mapper';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
+import { CreateProfileResponseDto } from '../dto/create-profile-response.dto';
+import { UpdateProfileResponseDto } from '../dto/update-profile-response.dto';
+import { DeleteProfileResponseDto } from '../dto/delete-profile-response.dto';
+import { SelectProfileResponseDto } from '../dto/select-profile-response.dto';
+import { GetChildProfilesResponseDto, GetParentProfilesResponseDto } from '../dto/get-profiles-response.dto';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -63,7 +60,7 @@ export class ProfileController {
   async createProfile(
     @Body() dto: CreateProfileRequestDto,
     @Auth('userId') userId: number,
-  ): Promise<BaseResponse<CreateProfileResponseData>> {
+  ): Promise<BaseResponse<CreateProfileResponseDto>> {
     const command = this.profileMapper.toCreateCommand(dto, userId);
     const result = await this.createProfileUseCase.execute(command);
 
@@ -79,7 +76,7 @@ export class ProfileController {
     @Param('profileId', ParseIntPipe) profileId: number,
     @Body() dto: UpdateProfileRequestDto,
     @Auth('userId') userId: number,
-  ): Promise<BaseResponse<UpdateProfileResponseData>> {
+  ): Promise<BaseResponse<UpdateProfileResponseDto>> {
     const command = this.profileMapper.toUpdateCommand(profileId, userId, dto);
     const result = await this.updateProfileUseCase.execute(command);
 
@@ -94,7 +91,7 @@ export class ProfileController {
   async deleteProfile(
     @Param('profileId', ParseIntPipe) profileId: number,
     @Auth('userId') userId: number,
-  ): Promise<BaseResponse<DeleteProfileResponseData>> {
+  ): Promise<BaseResponse<DeleteProfileResponseDto>> {
     const command = this.profileMapper.toDeleteCommand(userId, profileId);
     const result = await this.deleteProfileUseCase.execute(command);
 
@@ -109,7 +106,7 @@ export class ProfileController {
   async selectProfile(
     @Body() dto: SelectProfileRequestDto,
     @Auth('userId') userId: number,
-  ): Promise<BaseResponse<SelectProfileResponseData>> {
+  ): Promise<BaseResponse<SelectProfileResponseDto>> {
     const command = this.profileMapper.toSelectCommand(dto, userId);
     const result = await this.selectProfileUseCase.execute(command);
 
@@ -123,7 +120,7 @@ export class ProfileController {
   @Get('parent')
   async getParentProfiles(
     @Auth('userId') userId: number,
-  ): Promise<BaseResponse<GetParentProfilesResponseData>> {
+  ): Promise<BaseResponse<GetParentProfilesResponseDto>> {
     const query = this.getProfilesMapper.toQuery(userId);
     const result = await this.getParentProfilesUseCase.execute(query);
 
@@ -137,7 +134,7 @@ export class ProfileController {
   @Get('child')
   async getChildProfiles(
     @Auth('userId') userId: number,
-  ): Promise<BaseResponse<GetChildProfilesResponseData>> {
+  ): Promise<BaseResponse<GetChildProfilesResponseDto>> {
     const query = this.getProfilesMapper.toQuery(userId);
     const result = await this.getChildProfilesUseCase.execute(query);
 

@@ -28,9 +28,9 @@ export class ProfileMapper {
       String(dto.name ?? '').trim(),
       String(dto.birthDate ?? '').trim(),
       dto.gender,
-      dto.avatarMediaId,
+      dto.avatarMediaId ? Number(dto.avatarMediaId) : undefined,
       dto.pin ? String(dto.pin).trim() : undefined,
-      dto.voiceMediaId,
+      dto.voiceMediaId ? Number(dto.voiceMediaId) : undefined,
     );
   }
 
@@ -43,8 +43,8 @@ export class ProfileMapper {
     refreshToken: string,
   ): CreateProfileResponseData {
     return {
-      profileId,
-      userId,
+      profileId: String(profileId),
+      userId: String(userId),
       profileType,
       name,
       accessToken,
@@ -57,13 +57,13 @@ export class ProfileMapper {
    */
   toDto(profile: Profile): ProfileDto {
     return {
-      profileId: profile.getId(),
+      profileId: String(profile.getId()),
       profileType: profile.getProfileType(),
       name: profile.getName(),
       birthDate: profile.getBirthDate().toISOString().split('T')[0],
       gender: profile.getGender() || '',
-      avatarMediaId: profile.getAvatarMediaId(),
-      voiceMediaId: profile.getVoiceMediaId(),
+      avatarMediaId: profile.getAvatarMediaId() ? String(profile.getAvatarMediaId()) : undefined,
+      voiceMediaId: profile.getVoiceMediaId() ? String(profile.getVoiceMediaId()) : undefined,
       createdAt: profile.getCreatedAt()?.toISOString() || '',
     };
   }
@@ -93,8 +93,8 @@ export class ProfileMapper {
     refreshToken: string,
   ): SelectProfileResponseData {
     return {
-      profileId: Number(profile.getId()),
-      userId: Number(profile.getUserId()),
+      profileId: String(profile.getId()),
+      userId: String(profile.getUserId()),
       profileType: profile.getProfileType(),
       accessToken,
       refreshToken,
@@ -112,8 +112,8 @@ export class ProfileMapper {
       dto.name ? String(dto.name).trim() : undefined,
       dto.birthDate ? String(dto.birthDate).trim() : undefined,
       dto.gender,
-      dto.avatarMediaId,
-      dto.voiceMediaId,
+      dto.avatarMediaId ? Number(dto.avatarMediaId) : undefined,
+      dto.voiceMediaId ? Number(dto.voiceMediaId) : undefined,
       dto.pin ? String(dto.pin).trim() : undefined,
     );
   }

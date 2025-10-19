@@ -35,7 +35,7 @@ export class DeleteProfileService implements DeleteProfileUseCase {
 
     // 4) 결과 반환
     return {
-      profileId: command.profileId,
+      profileId: String(command.profileId),
       deletedAt: new Date().toISOString(),
     };
   }

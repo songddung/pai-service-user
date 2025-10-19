@@ -20,7 +20,7 @@ export class LoginMapper {
     refreshToken: string,
   ): LoginResponseData {
     return {
-      userId,
+      userId: String(userId),
       accessToken,
       refreshToken,
     };

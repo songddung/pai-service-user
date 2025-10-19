@@ -95,7 +95,7 @@ export class SignupService implements SignupUseCase {
 
     // 10) 반환 DTO 구성
     const response: SignupResponseData = {
-      userId,
+      userId: String(userId),
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
     };

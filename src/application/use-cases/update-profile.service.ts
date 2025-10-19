@@ -67,14 +67,14 @@ export class UpdateProfileService implements UpdateProfileUseCase {
 
     // 6) 결과 반환
     return {
-      profileId: updated.getId(),
-      userId: updated.getUserId(),
+      profileId: String(updated.getId()),
+      userId: String(updated.getUserId()),
       profileType: updated.getProfileType(),
       name: updated.getName(),
       birthDate: updated.getBirthDate().toISOString().split('T')[0],
       gender: updated.getGender() || '',
-      avatarMediaId: updated.getAvatarMediaId(),
-      voiceMediaId: updated.getVoiceMediaId(),
+      avatarMediaId: updated.getAvatarMediaId() ? String(updated.getAvatarMediaId()) : undefined,
+      voiceMediaId: updated.getVoiceMediaId() ? String(updated.getVoiceMediaId()) : undefined,
     };
   }
 }

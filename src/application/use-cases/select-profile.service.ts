@@ -80,8 +80,8 @@ export class SelectProfileService implements SelectProfileUseCase {
 
     // 7) 결과 반환
     return {
-      userId: command.userId,
-      profileId: profile.getId(),
+      userId: String(command.userId),
+      profileId: String(profile.getId()),
       profileType: profile.getProfileType(),
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,

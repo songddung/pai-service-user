@@ -23,7 +23,7 @@ export class SignupMapper {
     refreshToken: string,
   ): SignupResponseData {
     return {
-      userId,
+      userId: String(userId),
       accessToken,
       refreshToken,
     };
