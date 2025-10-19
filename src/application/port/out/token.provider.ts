@@ -1,5 +1,3 @@
-// src/application/port/out/token.provider.ts
-
 export interface TokenProvider {
   /**
    * 로그인 시 기본 토큰 생성 (userId만 포함)
