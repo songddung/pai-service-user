@@ -1,5 +1,3 @@
-// src/adapter/in/http/dto/check-email.dto.ts
-
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class CheckEmailDto {

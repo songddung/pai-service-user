@@ -1,12 +1,12 @@
 import { Controller, Post, Body, Inject, UseGuards } from '@nestjs/common';
 import type {
   BaseResponse,
-  SignupRequestDto,
   SignupResponseData,
-  LoginRequestDto,
   LoginResponseData,
   RefreshTokenResult,
 } from 'pai-shared-types';
+import { SignupRequestDto } from '../dto/signup-request.dto';
+import { LoginRequestDto } from '../dto/login-request.dto';
 import type { SignupUseCase } from 'src/application/port/in/signup.use-case';
 import type { LoginUseCase } from 'src/application/port/in/login.use-case';
 import type { LogoutUseCase } from 'src/application/port/in/logout.use-case';

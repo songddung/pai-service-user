@@ -12,16 +12,16 @@ import {
 } from '@nestjs/common';
 import type {
   BaseResponse,
-  CreateProfileRequestDto,
   CreateProfileResponseData,
-  UpdateProfileRequestDto,
   UpdateProfileResponseData,
   DeleteProfileResponseData,
-  SelectProfileRequestDto,
   SelectProfileResponseData,
   GetParentProfilesResponseData,
   GetChildProfilesResponseData,
 } from 'pai-shared-types';
+import { CreateProfileRequestDto } from '../dto/create-profile-request.dto';
+import { UpdateProfileRequestDto } from '../dto/update-profile-request.dto';
+import { SelectProfileRequestDto } from '../dto/select-profile-request.dto';
 import type { CreateProfileUseCase } from 'src/application/port/in/create-profile.use-case';
 import type { UpdateProfileUseCase } from 'src/application/port/in/update-profile.use-case';
 import type { DeleteProfileUseCase } from 'src/application/port/in/delete-profile.use-case';
