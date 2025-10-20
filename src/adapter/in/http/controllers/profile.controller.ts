@@ -11,9 +11,9 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import type { BaseResponse } from 'pai-shared-types';
-import { CreateProfileRequestDto } from '../dto/create-profile-request.dto';
-import { UpdateProfileRequestDto } from '../dto/update-profile-request.dto';
-import { SelectProfileRequestDto } from '../dto/select-profile-request.dto';
+import { CreateProfileRequestDto } from '../dto/request/create-profile-request.dto';
+import { UpdateProfileRequestDto } from '../dto/request/update-profile-request.dto';
+import { SelectProfileRequestDto } from '../dto/request/select-profile-request.dto';
 import type { CreateProfileUseCase } from 'src/application/port/in/create-profile.use-case';
 import type { UpdateProfileUseCase } from 'src/application/port/in/update-profile.use-case';
 import type { DeleteProfileUseCase } from 'src/application/port/in/delete-profile.use-case';
@@ -25,11 +25,14 @@ import { ProfileMapper } from '../../../../mapper/profile.mapper';
 import { GetProfilesMapper } from '../../../../mapper/get-profiles.mapper';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
-import { CreateProfileResponseDto } from '../dto/create-profile-response.dto';
-import { UpdateProfileResponseDto } from '../dto/update-profile-response.dto';
-import { DeleteProfileResponseDto } from '../dto/delete-profile-response.dto';
-import { SelectProfileResponseDto } from '../dto/select-profile-response.dto';
-import { GetChildProfilesResponseDto, GetParentProfilesResponseDto } from '../dto/get-profiles-response.dto';
+import { CreateProfileResponseDto } from '../dto/reponse/create-profile-response.dto';
+import { UpdateProfileResponseDto } from '../dto/reponse/update-profile-response.dto';
+import { DeleteProfileResponseDto } from '../dto/reponse/delete-profile-response.dto';
+import { SelectProfileResponseDto } from '../dto/reponse/select-profile-response.dto';
+import {
+  GetChildProfilesResponseDto,
+  GetParentProfilesResponseDto,
+} from '../dto/reponse/get-profiles-response.dto';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')

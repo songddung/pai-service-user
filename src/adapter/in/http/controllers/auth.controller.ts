@@ -5,8 +5,8 @@ import type {
   LoginResponseData,
   RefreshTokenResult,
 } from 'pai-shared-types';
-import { SignupRequestDto } from '../dto/signup-request.dto';
-import { LoginRequestDto } from '../dto/login-request.dto';
+import { SignupRequestDto } from '../dto/request/signup-request.dto';
+import { LoginRequestDto } from '../dto/request/login-request.dto';
 import type { SignupUseCase } from 'src/application/port/in/signup.use-case';
 import type { LoginUseCase } from 'src/application/port/in/login.use-case';
 import type { LogoutUseCase } from 'src/application/port/in/logout.use-case';
@@ -85,9 +85,7 @@ export class AuthController {
 
   @UseGuards(BasicAuthGuard)
   @Post('logout')
-  async logout(
-    @Auth('userId') userId: number,
-  ): Promise<BaseResponse<null>> {
+  async logout(@Auth('userId') userId: number): Promise<BaseResponse<null>> {
     const command = this.logoutMapper.toCommand(userId);
     await this.logoutUseCase.execute(command);
 
