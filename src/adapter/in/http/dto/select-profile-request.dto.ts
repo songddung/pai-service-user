@@ -1,6 +1,7 @@
 import { IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
+import { SelectProfileRequestDto as ISelectProfileRequestDto } from 'pai-shared-types';
 
-export class SelectProfileRequestDto {
+export class SelectProfileRequestDto implements ISelectProfileRequestDto {
   @IsString()
   profileId: string;
 

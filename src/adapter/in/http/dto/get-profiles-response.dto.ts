@@ -1,6 +1,11 @@
-import type { ProfileType } from 'pai-shared-types';
+import type {
+  ProfileType,
+  ProfileDto as IProfileDto,
+  GetParentProfilesResponseData,
+  GetChildProfilesResponseData,
+} from 'pai-shared-types';
 
-export class ProfileDto {
+export class ProfileDto implements IProfileDto {
   profileId: string;
   profileType: ProfileType;
   name: string;
@@ -11,10 +16,14 @@ export class ProfileDto {
   createdAt: string;
 }
 
-export class GetParentProfilesResponseDto {
+export class GetParentProfilesResponseDto
+  implements GetChildProfilesResponseData
+{
   profiles: ProfileDto[];
 }
 
-export class GetChildProfilesResponseDto {
+export class GetChildProfilesResponseDto
+  implements GetChildProfilesResponseData
+{
   profiles: ProfileDto[];
 }

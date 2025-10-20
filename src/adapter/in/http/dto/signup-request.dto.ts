@@ -1,6 +1,7 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
+import { SignupRequestDto as ISignupRequestDto } from 'pai-shared-types';
 
-export class SignupRequestDto {
+export class SignupRequestDto implements ISignupRequestDto {
   @IsEmail({}, { message: 'Invalid email format' })
   email: string;
 

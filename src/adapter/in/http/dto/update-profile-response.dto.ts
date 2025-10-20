@@ -1,6 +1,6 @@
-import type { ProfileType } from 'pai-shared-types';
+import type { ProfileType, UpdateProfileResponseData } from 'pai-shared-types';
 
-export class UpdateProfileResponseDto {
+export class UpdateProfileResponseDto implements UpdateProfileResponseData {
   profileId: string;
   userId: string;
   profileType: ProfileType;

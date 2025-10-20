@@ -1,6 +1,6 @@
-import type { ProfileType } from 'pai-shared-types';
+import type { ProfileType, SelectProfileResponseData } from 'pai-shared-types';
 
-export class SelectProfileResponseDto {
+export class SelectProfileResponseDto implements SelectProfileResponseData {
   userId: string;
   profileId: string;
   profileType: ProfileType;

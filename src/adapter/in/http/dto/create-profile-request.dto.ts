@@ -6,9 +6,12 @@ import {
   MinLength,
   MaxLength,
 } from 'class-validator';
-import type { ProfileType } from 'pai-shared-types';
+import type {
+  ProfileType,
+  CreateProfileRequestDto as ICreateProfileRequestDto,
+} from 'pai-shared-types';
 
-export class CreateProfileRequestDto {
+export class CreateProfileRequestDto implements ICreateProfileRequestDto {
   @IsEnum(['parent', 'child'], {
     message: 'profileType must be either "parent" or "child"',
   })

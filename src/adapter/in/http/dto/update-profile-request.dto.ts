@@ -1,6 +1,13 @@
-import { IsString, IsOptional, IsDateString, MinLength, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsDateString,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
+import { UpdateProfileRequestDto as IUpdateProfileRequestDto } from 'pai-shared-types';
 
-export class UpdateProfileRequestDto {
+export class UpdateProfileRequestDto implements IUpdateProfileRequestDto {
   @IsOptional()
   @IsString()
   @MinLength(1)
@@ -8,7 +15,10 @@ export class UpdateProfileRequestDto {
   name?: string;
 
   @IsOptional()
-  @IsDateString({}, { message: 'birthDate must be a valid date string (YYYY-MM-DD)' })
+  @IsDateString(
+    {},
+    { message: 'birthDate must be a valid date string (YYYY-MM-DD)' },
+  )
   birthDate?: string;
 
   @IsOptional()
