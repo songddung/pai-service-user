@@ -21,14 +21,14 @@ import { GetParentProfilesService } from './application/use-cases/get-parent-pro
 import { GetChildProfilesService } from './application/use-cases/get-child-profiles.service';
 
 // Query Adapter 구현체
-import { UserQueryAdapter } from './adapter/out/persistence/prisma/user.query.adapter';
-import { ProfileQueryAdapter } from './adapter/out/persistence/prisma/profile.query.adapter';
+import { UserQueryAdapter } from './adapter/out/persistence/user.query.adapter';
+import { ProfileQueryAdapter } from './adapter/out/persistence/profile.query.adapter';
 import { RedisRefreshTokenQueryAdapter } from './adapter/out/cache/redis-refresh-token.query.adapter';
 import { RedisTokenVersionQueryAdapter } from './adapter/out/cache/redis-token-version.query.adapter';
 
 // Repository Adapter 구현체
-import { UserRepositoryAdapter } from './adapter/out/persistence/prisma/user.repository.adapter';
-import { ProfileRepositoryAdapter } from './adapter/out/persistence/prisma/profile.repository.adapter';
+import { UserRepositoryAdapter } from './adapter/out/persistence/user.repository.adapter';
+import { ProfileRepositoryAdapter } from './adapter/out/persistence/profile.repository.adapter';
 import { RedisTokenVersionRepositoryAdapter } from './adapter/out/cache/redis-token-version.repository.adapter';
 
 // Redis Module
@@ -54,10 +54,7 @@ import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-re
 
 @Module({
   imports: [AuthModule, RedisModule],
-  controllers: [
-    AuthController,
-    ProfileController,
-  ],
+  controllers: [AuthController, ProfileController],
   providers: [
     // Guard
     BasicAuthGuard,

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from './prisma/prisma.service';
 import { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import { Profile } from 'src/domain/model/profile/profile.entity';
 import type { ProfileType } from 'pai-shared-types';
