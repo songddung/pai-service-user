@@ -2,22 +2,29 @@ import { Injectable } from '@nestjs/common';
 import type {
   CreateProfileRequestDto,
   CreateProfileResponseData,
+  DeleteProfileResponseData,
   ProfileDto,
   SelectProfileRequestDto,
   SelectProfileResponseData,
   UpdateProfileRequestDto,
+  UpdateProfileResponseData,
 } from 'pai-shared-types';
 import { Profile } from '../domain/model/profile/profile.entity';
 import { CreateProfileCommand } from 'src/application/command/create-profile.command';
 import { SelectProfileCommand } from 'src/application/command/select-profile.command';
 import { UpdateProfileCommand } from 'src/application/command/update-profile.command';
 import { DeleteProfileCommand } from 'src/application/command/delete-profile.command';
+import { SelectProfileResult } from 'src/adapter/in/http/dto/result/select-profile.result';
+import { CreateProfileResult } from 'src/adapter/in/http/dto/result/create-profile.result';
+import { UpdateProfileResult } from 'src/adapter/in/http/dto/result/update-profile.result';
+import { DeleteProfileResult } from 'src/adapter/in/http/dto/result/delete-profile.result';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
  */
 @Injectable()
 export class ProfileMapper {
+  // 프로필 생성
   toCreateCommand(
     dto: CreateProfileRequestDto,
     userId: number,
@@ -34,21 +41,14 @@ export class ProfileMapper {
     );
   }
 
-  toCreateResponse(
-    profileId: number,
-    userId: number,
-    profileType: string,
-    name: string,
-    accessToken: string,
-    refreshToken: string,
-  ): CreateProfileResponseData {
+  toCreateResponse(result: CreateProfileResult): CreateProfileResponseData {
     return {
-      profileId: String(profileId),
-      userId: String(userId),
-      profileType,
-      name,
-      accessToken,
-      refreshToken,
+      profileId: result.profileId,
+      userId: result.userId,
+      profileType: result.profileType,
+      name: result.name,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
     };
   }
 
@@ -57,13 +57,17 @@ export class ProfileMapper {
    */
   toDto(profile: Profile): ProfileDto {
     return {
-      profileId: String(profile.getId()),
+      profileId: profile.getId(),
       profileType: profile.getProfileType(),
       name: profile.getName(),
       birthDate: profile.getBirthDate().toISOString().split('T')[0],
       gender: profile.getGender() || '',
-      avatarMediaId: profile.getAvatarMediaId() ? String(profile.getAvatarMediaId()) : undefined,
-      voiceMediaId: profile.getVoiceMediaId() ? String(profile.getVoiceMediaId()) : undefined,
+      avatarMediaId: profile.getAvatarMediaId()
+        ? profile.getAvatarMediaId()
+        : undefined,
+      voiceMediaId: profile.getVoiceMediaId()
+        ? profile.getVoiceMediaId()
+        : undefined,
       createdAt: profile.getCreatedAt()?.toISOString() || '',
     };
   }
@@ -75,6 +79,7 @@ export class ProfileMapper {
     return profiles.map((profile) => this.toDto(profile));
   }
 
+  // 프로필 선택
   toSelectCommand(
     dto: SelectProfileRequestDto,
     userId: number,
@@ -86,21 +91,17 @@ export class ProfileMapper {
     );
   }
 
-  // Prisma 객체 기준으로 수정, SelectProfileResponseData 타입과 정확히 일치
-  toSelectResponse(
-    profile: Profile,
-    accessToken: string,
-    refreshToken: string,
-  ): SelectProfileResponseData {
+  toSelectResponse(result: SelectProfileResult): SelectProfileResponseData {
     return {
-      profileId: String(profile.getId()),
-      userId: String(profile.getUserId()),
-      profileType: profile.getProfileType(),
-      accessToken,
-      refreshToken,
+      profileId: result.profileId,
+      userId: result.userId,
+      profileType: result.profileType,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
     };
   }
 
+  // 프로필 수정
   toUpdateCommand(
     profileId: number,
     userId: number,
@@ -118,7 +119,28 @@ export class ProfileMapper {
     );
   }
 
+  toUpdateResponse(result: UpdateProfileResult): UpdateProfileResponseData {
+    return {
+      profileId: result.profileId,
+      userId: result.userId,
+      profileType: result.profileType,
+      name: result.name,
+      birthDate: result.birthDate,
+      gender: result.gender,
+      avatarMediaId: result.avatarMediaId,
+      voiceMediaId: result.voiceMediaId,
+    };
+  }
+
+  // 프로필 삭제
   toDeleteCommand(userId: number, profileId: number): DeleteProfileCommand {
     return new DeleteProfileCommand(userId, profileId);
+  }
+
+  toDeleteResponse(result: DeleteProfileResult): DeleteProfileResponseData {
+    return {
+      profileId: result.profileId,
+      deletedAt: result.deletedAt,
+    };
   }
 }

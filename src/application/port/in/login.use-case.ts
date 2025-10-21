@@ -1,6 +1,6 @@
+import { LoginResult } from 'src/adapter/in/http/dto/result/login.result';
 import { LoginCommand } from 'src/application/command/login.command';
-import type { LoginResponseData } from 'pai-shared-types';
 
 export interface LoginUseCase {
-  execute(command: LoginCommand): Promise<LoginResponseData>;
+  execute(command: LoginCommand): Promise<LoginResult>;
 }

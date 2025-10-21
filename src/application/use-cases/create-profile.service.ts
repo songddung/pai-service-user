@@ -2,7 +2,6 @@
 
 import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import type { CreateProfileResponseData } from 'pai-shared-types';
 import type { CreateProfileUseCase } from 'src/application/port/in/create-profile.use-case';
 import { CreateProfileCommand } from 'src/application/command/create-profile.command';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
@@ -10,6 +9,7 @@ import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { Profile } from 'src/domain/model/profile/profile.entity';
 import { USER_TOKENS } from '../../user.token';
+import { CreateProfileResult } from 'src/adapter/in/http/dto/result/create-profile.result';
 
 @Injectable()
 export class CreateProfileService implements CreateProfileUseCase {
@@ -24,9 +24,7 @@ export class CreateProfileService implements CreateProfileUseCase {
     private readonly tokenProvider: TokenProvider,
   ) {}
 
-  async execute(
-    command: CreateProfileCommand,
-  ): Promise<CreateProfileResponseData> {
+  async execute(command: CreateProfileCommand): Promise<CreateProfileResult> {
     // 1) 생년월일 형식 검증 및 변환
     const birthDate = this.parseBirthDate(command.birthDate);
 
@@ -73,8 +71,8 @@ export class CreateProfileService implements CreateProfileUseCase {
 
     // 7) 결과 반환
     return {
-      profileId: String(saved.getId()),
-      userId: String(command.userId),
+      profileId: saved.getId(),
+      userId: command.userId,
       profileType: saved.getProfileType(),
       name: saved.getName(),
       accessToken: tokenPair.accessToken,

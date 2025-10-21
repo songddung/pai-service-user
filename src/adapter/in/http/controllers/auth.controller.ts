@@ -17,9 +17,9 @@ import { SignupMapper } from '../../../../mapper/signup.mapper';
 import { LoginMapper } from '../../../../mapper/login.mapper';
 import { LogoutMapper } from '../../../../mapper/logout.mapper';
 import { RefreshTokenMapper } from '../../../../mapper/refresh-token.mapper';
-import { CheckEmailDto } from '../dto/request/check-email.dto';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
+import { CheckEmailDto } from '../dto/request/check-email.dto';
 
 @Controller('api/auth')
 export class AuthController {

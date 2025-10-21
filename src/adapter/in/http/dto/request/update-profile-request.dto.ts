@@ -4,6 +4,7 @@ import {
   IsDateString,
   MinLength,
   MaxLength,
+  IsNumber,
 } from 'class-validator';
 import { UpdateProfileRequestDto as IUpdateProfileRequestDto } from 'pai-shared-types';
 
@@ -26,12 +27,12 @@ export class UpdateProfileRequestDto implements IUpdateProfileRequestDto {
   gender?: string;
 
   @IsOptional()
-  @IsString()
-  avatarMediaId?: string;
+  @IsNumber()
+  avatarMediaId?: number;
 
   @IsOptional()
-  @IsString()
-  voiceMediaId?: string;
+  @IsNumber()
+  voiceMediaId?: number;
 
   @IsOptional()
   @IsString()

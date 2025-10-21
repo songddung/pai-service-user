@@ -1,15 +1,19 @@
-import { Injectable, NotFoundException, BadRequestException, UnauthorizedException, Inject } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import type { SelectProfileResponseData } from 'pai-shared-types';
 import {
-  SelectProfileUseCase,
-} from 'src/application/port/in/select-profile.use-case';
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  UnauthorizedException,
+  Inject,
+} from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { SelectProfileUseCase } from 'src/application/port/in/select-profile.use-case';
 import { SelectProfileCommand } from 'src/application/command/select-profile.command';
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refresh-token.repository.port';
 import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
 import { USER_TOKENS } from '../../user.token';
+import { SelectProfileResult } from 'src/adapter/in/http/dto/result/select-profile.result';
 
 @Injectable()
 export class SelectProfileService implements SelectProfileUseCase {
@@ -27,9 +31,7 @@ export class SelectProfileService implements SelectProfileUseCase {
     private readonly tokenVersionRepository: TokenVersionRepositoryPort,
   ) {}
 
-  async execute(
-    command: SelectProfileCommand,
-  ): Promise<SelectProfileResponseData> {
+  async execute(command: SelectProfileCommand): Promise<SelectProfileResult> {
     // 1) 프로필 존재 여부 확인
     const profile = await this.profileQuery.findById(command.profileId);
     if (!profile) {
@@ -80,8 +82,8 @@ export class SelectProfileService implements SelectProfileUseCase {
 
     // 7) 결과 반환
     return {
-      userId: String(command.userId),
-      profileId: String(profile.getId()),
+      userId: command.userId,
+      profileId: profile.getId(),
       profileType: profile.getProfileType(),
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,

@@ -4,10 +4,10 @@ import type { UserQueryPort } from '../port/out/user.query.port';
 import type { TokenProvider } from '../port/out/token.provider';
 import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repository.port';
 import type { TokenVersionRepositoryPort } from '../port/out/token-version.repository.port';
-import { LoginResponseData } from 'pai-shared-types';
 import * as bcrypt from 'bcrypt';
 import { LoginCommand } from '../command/login.command';
 import { USER_TOKENS } from '../../user.token';
+import { LoginResult } from 'src/adapter/in/http/dto/result/login.result';
 
 @Injectable()
 export class LoginService implements LoginUseCase {
@@ -25,7 +25,7 @@ export class LoginService implements LoginUseCase {
     private readonly tokenVersionRepository: TokenVersionRepositoryPort,
   ) {}
 
-  async execute(command: LoginCommand): Promise<LoginResponseData> {
+  async execute(command: LoginCommand): Promise<LoginResult> {
     // 사용자 조회
     const user = await this.userQuery.findByEmail(command.email);
 
@@ -47,9 +47,8 @@ export class LoginService implements LoginUseCase {
 
     // 토큰 버전 증가 (이전 토큰 모두 무효화)
     const userId = Number(user.getId());
-    const tokenVersion = await this.tokenVersionRepository.incrementVersion(
-      userId,
-    );
+    const tokenVersion =
+      await this.tokenVersionRepository.incrementVersion(userId);
 
     // 새로운 버전으로 토큰 발급
     const tokenPair = await this.tokenProvider.generateBasicTokenPair(
@@ -65,7 +64,7 @@ export class LoginService implements LoginUseCase {
     );
 
     return {
-      userId: String(userId),
+      userId: userId,
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
     };

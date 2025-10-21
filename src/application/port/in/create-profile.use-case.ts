@@ -1,6 +1,6 @@
-import type { CreateProfileResponseData, ProfileType } from 'pai-shared-types';
+import { CreateProfileResult } from 'src/adapter/in/http/dto/result/create-profile.result';
 import { CreateProfileCommand } from 'src/application/command/create-profile.command';
 
 export interface CreateProfileUseCase {
-  execute(command: CreateProfileCommand): Promise<CreateProfileResponseData>;
+  execute(command: CreateProfileCommand): Promise<CreateProfileResult>;
 }

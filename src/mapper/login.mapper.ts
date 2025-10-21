@@ -9,7 +9,9 @@ import { LoginCommand } from '../application/command/login.command';
 export class LoginMapper {
   toCommand(dto: LoginRequestDto): LoginCommand {
     return new LoginCommand(
-      String(dto.email ?? '').trim().toLowerCase(),
+      String(dto.email ?? '')
+        .trim()
+        .toLowerCase(),
       String(dto.password ?? ''),
     );
   }
@@ -20,7 +22,7 @@ export class LoginMapper {
     refreshToken: string,
   ): LoginResponseData {
     return {
-      userId: String(userId),
+      userId: userId,
       accessToken,
       refreshToken,
     };

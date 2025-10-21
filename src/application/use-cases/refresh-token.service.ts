@@ -6,7 +6,7 @@ import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repos
 import type { TokenVersionRepositoryPort } from '../port/out/token-version.repository.port';
 import type { TokenProvider } from '../port/out/token.provider';
 import { USER_TOKENS } from '../../user.token';
-import { RefreshTokenResult } from 'pai-shared-types';
+import { RefreshTokenResult } from 'src/adapter/in/http/dto/result/refresh-token.result';
 
 @Injectable()
 export class RefreshTokenService implements RefreshTokenUseCase {

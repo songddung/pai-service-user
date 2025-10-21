@@ -6,12 +6,12 @@ import {
   Inject,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import type { UpdateProfileResponseData } from 'pai-shared-types';
 import type { UpdateProfileUseCase } from 'src/application/port/in/update-profile.use-case';
 import { UpdateProfileCommand } from 'src/application/command/update-profile.command';
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import { USER_TOKENS } from '../../user.token';
+import { UpdateProfileResult } from 'src/adapter/in/http/dto/result/update-profile.result';
 
 @Injectable()
 export class UpdateProfileService implements UpdateProfileUseCase {
@@ -23,9 +23,7 @@ export class UpdateProfileService implements UpdateProfileUseCase {
     private readonly profileRepository: ProfileRepositoryPort,
   ) {}
 
-  async execute(
-    command: UpdateProfileCommand,
-  ): Promise<UpdateProfileResponseData> {
+  async execute(command: UpdateProfileCommand): Promise<UpdateProfileResult> {
     // 1) 프로필 존재 여부 확인
     const profile = await this.profileQuery.findById(command.profileId);
     if (!profile) {
@@ -67,14 +65,18 @@ export class UpdateProfileService implements UpdateProfileUseCase {
 
     // 6) 결과 반환
     return {
-      profileId: String(updated.getId()),
-      userId: String(updated.getUserId()),
+      profileId: updated.getId(),
+      userId: updated.getUserId(),
       profileType: updated.getProfileType(),
       name: updated.getName(),
       birthDate: updated.getBirthDate().toISOString().split('T')[0],
       gender: updated.getGender() || '',
-      avatarMediaId: updated.getAvatarMediaId() ? String(updated.getAvatarMediaId()) : undefined,
-      voiceMediaId: updated.getVoiceMediaId() ? String(updated.getVoiceMediaId()) : undefined,
+      avatarMediaId: updated.getAvatarMediaId()
+        ? updated.getAvatarMediaId()
+        : undefined,
+      voiceMediaId: updated.getVoiceMediaId()
+        ? updated.getVoiceMediaId()
+        : undefined,
     };
   }
 }

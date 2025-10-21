@@ -13,10 +13,10 @@ import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refres
 import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
 import { User } from 'src/domain/model/user/user.entity';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
-import { SignupResponseData } from 'pai-shared-types';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { USER_TOKENS } from '../../user.token';
+import { SignupResult } from 'src/adapter/in/http/dto/result/signup.result';
 
 @Injectable()
 export class SignupService implements SignupUseCase {
@@ -42,7 +42,7 @@ export class SignupService implements SignupUseCase {
     private readonly configService: ConfigService,
   ) {}
 
-  async execute(command: SignupCommand): Promise<SignupResponseData> {
+  async execute(command: SignupCommand): Promise<SignupResult> {
     // 1) 이메일 중복 체크
     const exists = await this.userQuery.existsByEmail(command.email);
     if (exists) {
@@ -76,9 +76,8 @@ export class SignupService implements SignupUseCase {
 
     // 7) 토큰 버전 증가 (최초 가입이므로 1부터 시작)
     const userId = Number(saved.getId());
-    const tokenVersion = await this.tokenVersionRepository.incrementVersion(
-      userId,
-    );
+    const tokenVersion =
+      await this.tokenVersionRepository.incrementVersion(userId);
 
     // 8) 토큰 발급
     const tokenPair = await this.tokenProvider.generateBasicTokenPair(
@@ -93,13 +92,10 @@ export class SignupService implements SignupUseCase {
       7 * 24 * 60 * 60, // 7일 (초 단위)
     );
 
-    // 10) 반환 DTO 구성
-    const response: SignupResponseData = {
-      userId: String(userId),
+    return {
+      userId: userId,
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
     };
-
-    return response;
   }
 }
