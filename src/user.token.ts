@@ -11,6 +11,7 @@ export const USER_TOKENS = {
   DeleteProfileUseCase: Symbol('DeleteProfileUseCase'),
   GetParentProfilesUseCase: Symbol('GetParentProfilesUseCase'),
   GetChildProfilesUseCase: Symbol('GetChildProfilesUseCase'),
+  GetAllProfilesUseCase: Symbol('GetAllProfilesUseCase'),
 
   // Repository (Output Ports - Write)
   UserRepositoryPort: Symbol('UserRepositoryPort'),

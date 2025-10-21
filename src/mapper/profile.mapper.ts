@@ -3,13 +3,13 @@ import type {
   CreateProfileRequestDto,
   CreateProfileResponseData,
   DeleteProfileResponseData,
-  ProfileDto,
+  GetProfileRequestDto,
+  GetProfilesResponseData,
   SelectProfileRequestDto,
   SelectProfileResponseData,
   UpdateProfileRequestDto,
   UpdateProfileResponseData,
 } from 'pai-shared-types';
-import { Profile } from '../domain/model/profile/profile.entity';
 import { CreateProfileCommand } from 'src/application/command/create-profile.command';
 import { SelectProfileCommand } from 'src/application/command/select-profile.command';
 import { UpdateProfileCommand } from 'src/application/command/update-profile.command';
@@ -18,6 +18,8 @@ import { SelectProfileResult } from 'src/adapter/in/http/dto/result/select-profi
 import { CreateProfileResult } from 'src/adapter/in/http/dto/result/create-profile.result';
 import { UpdateProfileResult } from 'src/adapter/in/http/dto/result/update-profile.result';
 import { DeleteProfileResult } from 'src/adapter/in/http/dto/result/delete-profile.result';
+import { GetProfilesResult } from 'src/adapter/in/http/dto/result/get-profiles.result';
+import { GetProfileCommand } from 'src/application/command/get-profile.command';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -52,31 +54,27 @@ export class ProfileMapper {
     };
   }
 
-  /**
-   * Profile 엔티티를 ProfileDto로 변환
-   */
-  toDto(profile: Profile): ProfileDto {
-    return {
-      profileId: profile.getId(),
-      profileType: profile.getProfileType(),
-      name: profile.getName(),
-      birthDate: profile.getBirthDate().toISOString().split('T')[0],
-      gender: profile.getGender() || '',
-      avatarMediaId: profile.getAvatarMediaId()
-        ? profile.getAvatarMediaId()
-        : undefined,
-      voiceMediaId: profile.getVoiceMediaId()
-        ? profile.getVoiceMediaId()
-        : undefined,
-      createdAt: profile.getCreatedAt()?.toISOString() || '',
-    };
+  // 전체 프로필 조회
+  toGetProfileCommand(
+    dto: GetProfileRequestDto,
+    userId: number,
+  ): GetProfileCommand {
+    return new GetProfileCommand(userId, dto.profileType);
   }
 
-  /**
-   * Profile 엔티티 배열을 ProfileDto 배열로 변환
-   */
-  toDtoList(profiles: Profile[]): ProfileDto[] {
-    return profiles.map((profile) => this.toDto(profile));
+  toGetProfileResponse(result: GetProfilesResult): GetProfilesResponseData {
+    return {
+      profiles: result.profiles.map((profile) => ({
+        profileId: profile.getId(),
+        profileType: profile.getProfileType(),
+        name: profile.getName(),
+        birthDate: profile.getBirthDate().toISOString().split('T')[0],
+        gender: profile.getGender() ?? '',
+        avatarMediaId: profile.getAvatarMediaId()?.toString(),
+        voiceMediaId: profile.getVoiceMediaId(),
+        createdAt: profile.getCreatedAt()?.toISOString() ?? '',
+      })),
+    };
   }
 
   // 프로필 선택

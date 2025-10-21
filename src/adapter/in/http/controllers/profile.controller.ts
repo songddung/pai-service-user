@@ -14,8 +14,8 @@ import type {
   BaseResponse,
   CreateProfileResponseData,
   DeleteProfileResponseData,
-  GetChildProfilesResponseData,
-  GetParentProfilesResponseData,
+  GetProfileRequestDto,
+  GetProfilesResponseData,
   SelectProfileResponseData,
   UpdateProfileResponseData,
 } from 'pai-shared-types';
@@ -30,9 +30,9 @@ import type { GetParentProfilesUseCase } from 'src/application/port/in/get-paren
 import type { GetChildProfilesUseCase } from 'src/application/port/in/get-child-profiles.use-case';
 import { USER_TOKENS } from '../../../../user.token';
 import { ProfileMapper } from '../../../../mapper/profile.mapper';
-import { GetProfilesMapper } from '../../../../mapper/get-profiles.mapper';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
+import type { GetProfilesUseCase } from 'src/application/port/in/get-all-profiles.use-case';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -53,10 +53,12 @@ export class ProfileController {
 
     @Inject(USER_TOKENS.GetParentProfilesUseCase)
     private readonly getParentProfilesUseCase: GetParentProfilesUseCase,
-    private readonly getProfilesMapper: GetProfilesMapper,
 
     @Inject(USER_TOKENS.GetChildProfilesUseCase)
     private readonly getChildProfilesUseCase: GetChildProfilesUseCase,
+
+    @Inject(USER_TOKENS.GetAllProfilesUseCase)
+    private readonly getAllProfilesUseCase: GetProfilesUseCase,
   ) {}
 
   @Post()
@@ -124,32 +126,51 @@ export class ProfileController {
     };
   }
 
+  @Get()
+  async getProfiles(
+    @Body() dto: GetProfileRequestDto,
+    @Auth('userId') userId: number,
+  ): Promise<BaseResponse<GetProfilesResponseData>> {
+    const command = this.profileMapper.toGetProfileCommand(dto, userId);
+    const result = await this.getAllProfilesUseCase.execute(command);
+    const response = this.profileMapper.toGetProfileResponse(result);
+
+    return {
+      success: true,
+      message: '프로필 조회 성공',
+      data: response,
+    };
+  }
+
   @Get('parent')
   async getParentProfiles(
+    @Body() dto: GetProfileRequestDto,
     @Auth('userId') userId: number,
-  ): Promise<BaseResponse<GetParentProfilesResponseData>> {
-    const command = this.profileMapper.toQuery(userId);
-    const result = await this.getParentProfilesUseCase.execute(query);
-    const response = this.profileMapper.toResponse(result);
+  ): Promise<BaseResponse<GetProfilesResponseData>> {
+    const command = this.profileMapper.toGetProfileCommand(dto, userId);
+    const result = await this.getParentProfilesUseCase.execute(command);
+    const response = this.profileMapper.toGetProfileResponse(result);
 
     return {
       success: true,
       message: '부모 프로필 조회 성공',
-      data: result,
+      data: response,
     };
   }
 
   @Get('child')
   async getChildProfiles(
+    @Body() dto: GetProfileRequestDto,
     @Auth('userId') userId: number,
-  ): Promise<BaseResponse<GetChildProfilesResponseData>> {
-    const query = this.profileMapper.toQuery(userId);
-    const result = await this.getChildProfilesUseCase.execute(query);
+  ): Promise<BaseResponse<GetProfilesResponseData>> {
+    const command = this.profileMapper.toGetProfileCommand(dto, userId);
+    const result = await this.getChildProfilesUseCase.execute(command);
+    const response = this.profileMapper.toGetProfileResponse(result);
 
     return {
       success: true,
       message: '아이 프로필 조회 성공',
-      data: result,
+      data: response,
     };
   }
 }

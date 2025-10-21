@@ -1,9 +1,5 @@
 import { Profile } from 'src/domain/model/profile/profile.entity';
 
-export interface GetParentProfilesResult {
-  profiles: Profile[];
-}
-
-export interface GetChildProfilesResult {
+export interface GetProfilesResult {
   profiles: Profile[];
 }

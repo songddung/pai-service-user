@@ -43,7 +43,6 @@ import { LoginMapper } from './mapper/login.mapper';
 import { ProfileMapper } from './mapper/profile.mapper';
 import { RefreshTokenMapper } from './mapper/refresh-token.mapper';
 import { LogoutMapper } from './mapper/logout.mapper';
-import { GetProfilesMapper } from './mapper/get-profiles.mapper';
 
 // Guard
 import { BasicAuthGuard } from './adapter/in/http/auth/guards/basic-auth.guard';
@@ -51,6 +50,7 @@ import { ParentGuard } from './adapter/in/http/auth/guards/parent.guard';
 
 import { AuthModule } from './adapter/out/security/auth.module';
 import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-refresh-token.repository.adapter';
+import { GetAllProfilesService } from './application/use-cases/get-all-profiles.service';
 
 @Module({
   imports: [AuthModule, RedisModule],
@@ -66,7 +66,6 @@ import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-re
     ProfileMapper,
     RefreshTokenMapper,
     LogoutMapper,
-    GetProfilesMapper,
 
     // UseCase 바인딩
     { provide: USER_TOKENS.SignupUseCase, useClass: SignupService },
@@ -100,6 +99,10 @@ import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-re
     {
       provide: USER_TOKENS.GetChildProfilesUseCase,
       useClass: GetChildProfilesService,
+    },
+    {
+      provide: USER_TOKENS.GetAllProfilesUseCase,
+      useClass: GetAllProfilesService,
     },
 
     // Query 바인딩 (읽기)

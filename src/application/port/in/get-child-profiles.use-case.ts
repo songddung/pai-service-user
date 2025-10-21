@@ -1,9 +1,6 @@
-import { GetChildProfilesResult } from 'src/adapter/in/http/dto/result/get-profiles.result';
-
-export interface GetChildProfilesQuery {
-  userId: number;
-}
+import { GetProfilesResult } from 'src/adapter/in/http/dto/result/get-profiles.result';
+import { GetProfileCommand } from 'src/application/command/get-profile.command';
 
 export interface GetChildProfilesUseCase {
-  execute(query: GetChildProfilesQuery): Promise<GetChildProfilesResult>;
+  execute(command: GetProfileCommand): Promise<GetProfilesResult>;
 }
