@@ -16,7 +16,7 @@ import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { USER_TOKENS } from '../../user.token';
-import { SignupResult } from 'src/adapter/in/http/dto/result/signup.result';
+import { SignupResult } from '../port/in/result/signup.result';
 
 @Injectable()
 export class SignupService implements SignupUseCase {

@@ -9,7 +9,7 @@ import { DeleteProfileCommand } from 'src/application/command/delete-profile.com
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import { USER_TOKENS } from '../../user.token';
-import { DeleteProfileResult } from 'src/adapter/in/http/dto/result/delete-profile.result';
+import { DeleteProfileResult } from '../port/in/result/delete-profile.result';
 
 @Injectable()
 export class DeleteProfileService implements DeleteProfileUseCase {

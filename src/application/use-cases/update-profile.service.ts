@@ -11,7 +11,7 @@ import { UpdateProfileCommand } from 'src/application/command/update-profile.com
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import { USER_TOKENS } from '../../user.token';
-import { UpdateProfileResult } from 'src/adapter/in/http/dto/result/update-profile.result';
+import { UpdateProfileResult } from '../port/in/result/update-profile.result';
 
 @Injectable()
 export class UpdateProfileService implements UpdateProfileUseCase {

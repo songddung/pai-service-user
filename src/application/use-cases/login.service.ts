@@ -7,7 +7,7 @@ import type { TokenVersionRepositoryPort } from '../port/out/token-version.repos
 import * as bcrypt from 'bcrypt';
 import { LoginCommand } from '../command/login.command';
 import { USER_TOKENS } from '../../user.token';
-import { LoginResult } from 'src/adapter/in/http/dto/result/login.result';
+import { LoginResult } from '../port/in/result/login.result';
 
 @Injectable()
 export class LoginService implements LoginUseCase {

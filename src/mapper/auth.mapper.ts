@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { SignupCommand } from '../application/command/signup.command';
-import { SignupResult } from 'src/adapter/in/http/dto/result/signup.result';
 import { SignupRequestDto } from 'src/adapter/in/http/dto/request/signup-request.dto';
 import {
   LoginResponseData,
@@ -9,10 +8,11 @@ import {
 } from 'pai-shared-types';
 import { LoginRequestDto } from 'src/adapter/in/http/dto/request/login-request.dto';
 import { LoginCommand } from 'src/application/command/login.command';
-import { LoginResult } from 'src/adapter/in/http/dto/result/login.result';
 import { LogoutCommand } from 'src/application/command/logout.command';
 import { RefreshTokenCommand } from 'src/application/command/refresh-token.command';
-import { RefreshTokenResult } from 'src/adapter/in/http/dto/result/refresh-token.result';
+import { SignupResult } from 'src/application/port/in/result/signup.result';
+import { LoginResult } from 'src/application/port/in/result/login.result';
+import { RefreshTokenResult } from 'src/application/port/in/result/refresh-token.result';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당

@@ -9,7 +9,7 @@ import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { Profile } from 'src/domain/model/profile/profile.entity';
 import { USER_TOKENS } from '../../user.token';
-import { CreateProfileResult } from 'src/adapter/in/http/dto/result/create-profile.result';
+import { CreateProfileResult } from '../port/in/result/create-profile.result';
 
 @Injectable()
 export class CreateProfileService implements CreateProfileUseCase {

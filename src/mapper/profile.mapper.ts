@@ -14,12 +14,12 @@ import { CreateProfileCommand } from 'src/application/command/create-profile.com
 import { SelectProfileCommand } from 'src/application/command/select-profile.command';
 import { UpdateProfileCommand } from 'src/application/command/update-profile.command';
 import { DeleteProfileCommand } from 'src/application/command/delete-profile.command';
-import { SelectProfileResult } from 'src/adapter/in/http/dto/result/select-profile.result';
-import { CreateProfileResult } from 'src/adapter/in/http/dto/result/create-profile.result';
-import { UpdateProfileResult } from 'src/adapter/in/http/dto/result/update-profile.result';
-import { DeleteProfileResult } from 'src/adapter/in/http/dto/result/delete-profile.result';
-import { GetProfilesResult } from 'src/adapter/in/http/dto/result/get-profiles.result';
 import { GetProfileCommand } from 'src/application/command/get-profile.command';
+import { CreateProfileResult } from 'src/application/port/in/result/create-profile.result';
+import { GetProfilesResult } from 'src/application/port/in/result/get-profiles.result';
+import { SelectProfileResult } from 'src/application/port/in/result/select-profile.result';
+import { UpdateProfileResult } from 'src/application/port/in/result/update-profile.result';
+import { DeleteProfileResult } from 'src/application/port/in/result/delete-profile.result';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당

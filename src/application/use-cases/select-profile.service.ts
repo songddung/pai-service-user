@@ -13,7 +13,7 @@ import type { TokenProvider } from 'src/application/port/out/token.provider';
 import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refresh-token.repository.port';
 import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
 import { USER_TOKENS } from '../../user.token';
-import { SelectProfileResult } from 'src/adapter/in/http/dto/result/select-profile.result';
+import { SelectProfileResult } from '../port/in/result/select-profile.result';
 
 @Injectable()
 export class SelectProfileService implements SelectProfileUseCase {
