@@ -3,7 +3,7 @@ import type {
   BaseResponse,
   SignupResponseData,
   LoginResponseData,
-  RefreshTokenResult,
+  RefreshTokenResponseData,
 } from 'pai-shared-types';
 import { SignupRequestDto } from '../dto/request/signup-request.dto';
 import { LoginRequestDto } from '../dto/request/login-request.dto';
@@ -13,32 +13,26 @@ import type { LogoutUseCase } from 'src/application/port/in/logout.use-case';
 import type { RefreshTokenUseCase } from 'src/application/port/in/refresh-token.use-case';
 import type { CheckEmailDuplicateUseCase } from 'src/application/port/in/check-email-duplicate.use-case';
 import { USER_TOKENS } from '../../../../user.token';
-import { SignupMapper } from '../../../../mapper/signup.mapper';
-import { LoginMapper } from '../../../../mapper/login.mapper';
-import { LogoutMapper } from '../../../../mapper/logout.mapper';
-import { RefreshTokenMapper } from '../../../../mapper/refresh-token.mapper';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
 import { CheckEmailDto } from '../dto/request/check-email.dto';
+import { AuthMapper } from 'src/mapper/auth.mapper';
 
 @Controller('api/auth')
 export class AuthController {
   constructor(
     @Inject(USER_TOKENS.SignupUseCase)
     private readonly signupUseCase: SignupUseCase,
-    private readonly signupMapper: SignupMapper,
+    private readonly authMapper: AuthMapper,
 
     @Inject(USER_TOKENS.LoginUseCase)
     private readonly loginUseCase: LoginUseCase,
-    private readonly loginMapper: LoginMapper,
 
     @Inject(USER_TOKENS.LogoutUseCase)
     private readonly logoutUseCase: LogoutUseCase,
-    private readonly logoutMapper: LogoutMapper,
 
     @Inject(USER_TOKENS.RefreshTokenUseCase)
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
-    private readonly refreshTokenMapper: RefreshTokenMapper,
 
     @Inject(USER_TOKENS.CheckEmailDuplicateUseCase)
     private readonly checkEmailDuplicateUseCase: CheckEmailDuplicateUseCase,
@@ -59,13 +53,14 @@ export class AuthController {
   async signup(
     @Body() dto: SignupRequestDto,
   ): Promise<BaseResponse<SignupResponseData>> {
-    const command = this.signupMapper.toCommand(dto);
+    const command = this.authMapper.toSignupCommand(dto);
     const result = await this.signupUseCase.execute(command);
+    const response = this.authMapper.toSignupResponse(result);
 
     return {
       success: true,
       message: '회원가입 성공',
-      data: result,
+      data: response,
     };
   }
 
@@ -73,20 +68,21 @@ export class AuthController {
   async login(
     @Body() dto: LoginRequestDto,
   ): Promise<BaseResponse<LoginResponseData>> {
-    const command = this.loginMapper.toCommand(dto);
+    const command = this.authMapper.toLoginCommand(dto);
     const result = await this.loginUseCase.execute(command);
+    const response = this.authMapper.toLoginResponse(result);
 
     return {
       success: true,
       message: '로그인 성공',
-      data: result,
+      data: response,
     };
   }
 
   @UseGuards(BasicAuthGuard)
   @Post('logout')
   async logout(@Auth('userId') userId: number): Promise<BaseResponse<null>> {
-    const command = this.logoutMapper.toCommand(userId);
+    const command = this.authMapper.toLogoutCommand(userId);
     await this.logoutUseCase.execute(command);
 
     return {
@@ -101,14 +97,15 @@ export class AuthController {
   async refresh(
     @Auth('userId') userId: number,
     @Body('refreshToken') refreshToken: string,
-  ): Promise<BaseResponse<RefreshTokenResult>> {
-    const command = this.refreshTokenMapper.toCommand(userId, refreshToken);
+  ): Promise<BaseResponse<RefreshTokenResponseData>> {
+    const command = this.authMapper.toTokenCommand(userId, refreshToken);
     const result = await this.refreshTokenUseCase.execute(command);
+    const response = this.authMapper.toTokenResponse(result);
 
     return {
       success: true,
       message: '토큰 재발급 성공',
-      data: result,
+      data: response,
     };
   }
 }

@@ -17,8 +17,6 @@ import { CreateProfileService } from './application/use-cases/create-profile.ser
 import { SelectProfileService } from './application/use-cases/select-profile.service';
 import { UpdateProfileService } from './application/use-cases/update-profile.service';
 import { DeleteProfileService } from './application/use-cases/delete-profile.service';
-import { GetParentProfilesService } from './application/use-cases/get-parent-profiles.service';
-import { GetChildProfilesService } from './application/use-cases/get-child-profiles.service';
 
 // Query Adapter 구현체
 import { UserQueryAdapter } from './adapter/out/persistence/user.query.adapter';
@@ -38,11 +36,8 @@ import { RedisModule } from './adapter/out/cache/redis.module';
 import { KakaoAddressAdapter } from './adapter/out/http/kakao/kakao-address.adapter';
 
 // Mapper
-import { SignupMapper } from './mapper/signup.mapper';
-import { LoginMapper } from './mapper/login.mapper';
 import { ProfileMapper } from './mapper/profile.mapper';
-import { RefreshTokenMapper } from './mapper/refresh-token.mapper';
-import { LogoutMapper } from './mapper/logout.mapper';
+import { AuthMapper } from './mapper/auth.mapper';
 
 // Guard
 import { BasicAuthGuard } from './adapter/in/http/auth/guards/basic-auth.guard';
@@ -50,7 +45,7 @@ import { ParentGuard } from './adapter/in/http/auth/guards/parent.guard';
 
 import { AuthModule } from './adapter/out/security/auth.module';
 import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-refresh-token.repository.adapter';
-import { GetAllProfilesService } from './application/use-cases/get-all-profiles.service';
+import { GetProfilesService } from './application/use-cases/get-profiles.service';
 
 @Module({
   imports: [AuthModule, RedisModule],
@@ -61,11 +56,8 @@ import { GetAllProfilesService } from './application/use-cases/get-all-profiles.
     ParentGuard,
 
     // Mapper
-    SignupMapper,
-    LoginMapper,
     ProfileMapper,
-    RefreshTokenMapper,
-    LogoutMapper,
+    AuthMapper,
 
     // UseCase 바인딩
     { provide: USER_TOKENS.SignupUseCase, useClass: SignupService },
@@ -92,17 +84,10 @@ import { GetAllProfilesService } from './application/use-cases/get-all-profiles.
       provide: USER_TOKENS.CheckEmailDuplicateUseCase,
       useClass: CheckEmailDuplicateService,
     },
+
     {
-      provide: USER_TOKENS.GetParentProfilesUseCase,
-      useClass: GetParentProfilesService,
-    },
-    {
-      provide: USER_TOKENS.GetChildProfilesUseCase,
-      useClass: GetChildProfilesService,
-    },
-    {
-      provide: USER_TOKENS.GetAllProfilesUseCase,
-      useClass: GetAllProfilesService,
+      provide: USER_TOKENS.GetProfilesUseCase,
+      useClass: GetProfilesService,
     },
 
     // Query 바인딩 (읽기)

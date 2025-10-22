@@ -26,13 +26,11 @@ import type { CreateProfileUseCase } from 'src/application/port/in/create-profil
 import type { UpdateProfileUseCase } from 'src/application/port/in/update-profile.use-case';
 import type { DeleteProfileUseCase } from 'src/application/port/in/delete-profile.use-case';
 import type { SelectProfileUseCase } from 'src/application/port/in/select-profile.use-case';
-import type { GetParentProfilesUseCase } from 'src/application/port/in/get-parent-profiles.use-case';
-import type { GetChildProfilesUseCase } from 'src/application/port/in/get-child-profiles.use-case';
 import { USER_TOKENS } from '../../../../user.token';
 import { ProfileMapper } from '../../../../mapper/profile.mapper';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
-import type { GetProfilesUseCase } from 'src/application/port/in/get-all-profiles.use-case';
+import type { GetProfilesUseCase } from 'src/application/port/in/get-profiles.use-case';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -51,14 +49,8 @@ export class ProfileController {
     @Inject(USER_TOKENS.SelectProfileUseCase)
     private readonly selectProfileUseCase: SelectProfileUseCase,
 
-    @Inject(USER_TOKENS.GetParentProfilesUseCase)
-    private readonly getParentProfilesUseCase: GetParentProfilesUseCase,
-
-    @Inject(USER_TOKENS.GetChildProfilesUseCase)
-    private readonly getChildProfilesUseCase: GetChildProfilesUseCase,
-
-    @Inject(USER_TOKENS.GetAllProfilesUseCase)
-    private readonly getAllProfilesUseCase: GetProfilesUseCase,
+    @Inject(USER_TOKENS.GetProfilesUseCase)
+    private readonly getProfilesUseCase: GetProfilesUseCase,
   ) {}
 
   @Post()
@@ -132,7 +124,7 @@ export class ProfileController {
     @Auth('userId') userId: number,
   ): Promise<BaseResponse<GetProfilesResponseData>> {
     const command = this.profileMapper.toGetProfileCommand(dto, userId);
-    const result = await this.getAllProfilesUseCase.execute(command);
+    const result = await this.getProfilesUseCase.execute(command);
     const response = this.profileMapper.toGetProfileResponse(result);
 
     return {
@@ -148,7 +140,7 @@ export class ProfileController {
     @Auth('userId') userId: number,
   ): Promise<BaseResponse<GetProfilesResponseData>> {
     const command = this.profileMapper.toGetProfileCommand(dto, userId);
-    const result = await this.getParentProfilesUseCase.execute(command);
+    const result = await this.getProfilesUseCase.execute(command);
     const response = this.profileMapper.toGetProfileResponse(result);
 
     return {
@@ -164,7 +156,7 @@ export class ProfileController {
     @Auth('userId') userId: number,
   ): Promise<BaseResponse<GetProfilesResponseData>> {
     const command = this.profileMapper.toGetProfileCommand(dto, userId);
-    const result = await this.getChildProfilesUseCase.execute(command);
+    const result = await this.getProfilesUseCase.execute(command);
     const response = this.profileMapper.toGetProfileResponse(result);
 
     return {
