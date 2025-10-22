@@ -1,4 +1,4 @@
-import { ProfileType } from '../enum/profile-type';
+import { ProfileType } from 'src/adapter/in/http/dto/enum/profile-type';
 
 export interface SelectProfileResult {
   userId: number;
