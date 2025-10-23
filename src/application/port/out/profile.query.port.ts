@@ -1,4 +1,4 @@
-import { Profile } from '../../../domain/model/profile/profile.entity';
+import { Profile } from '../../../domain/model/profile/entity/profile.entity';
 
 /**
  * Profile Query Port (읽기 전용)

@@ -59,8 +59,8 @@ export class ProfileController {
     @Auth('userId') userId: number,
   ): Promise<BaseResponse<CreateProfileResponseData>> {
     const command = this.profileMapper.toCreateCommand(dto, userId);
-    const result = await this.createProfileUseCase.execute(command);
-    const response = this.profileMapper.toCreateResponse(result);
+    const vo = await this.createProfileUseCase.execute(command);
+    const response = this.profileMapper.toCreateResponse(vo);
 
     return {
       success: true,

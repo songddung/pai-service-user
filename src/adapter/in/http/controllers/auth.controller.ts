@@ -54,8 +54,8 @@ export class AuthController {
     @Body() dto: SignupRequestDto,
   ): Promise<BaseResponse<SignupResponseData>> {
     const command = this.authMapper.toSignupCommand(dto);
-    const result = await this.signupUseCase.execute(command);
-    const response = this.authMapper.toSignupResponse(result);
+    const vo = await this.signupUseCase.execute(command);
+    const response = this.authMapper.toSignupResponse(vo);
 
     return {
       success: true,
@@ -69,8 +69,8 @@ export class AuthController {
     @Body() dto: LoginRequestDto,
   ): Promise<BaseResponse<LoginResponseData>> {
     const command = this.authMapper.toLoginCommand(dto);
-    const result = await this.loginUseCase.execute(command);
-    const response = this.authMapper.toLoginResponse(result);
+    const vo = await this.loginUseCase.execute(command);
+    const response = this.authMapper.toLoginResponse(vo);
 
     return {
       success: true,
@@ -99,8 +99,8 @@ export class AuthController {
     @Body('refreshToken') refreshToken: string,
   ): Promise<BaseResponse<RefreshTokenResponseData>> {
     const command = this.authMapper.toTokenCommand(userId, refreshToken);
-    const result = await this.refreshTokenUseCase.execute(command);
-    const response = this.authMapper.toTokenResponse(result);
+    const vo = await this.refreshTokenUseCase.execute(command);
+    const response = this.authMapper.toTokenResponse(vo);
 
     return {
       success: true,

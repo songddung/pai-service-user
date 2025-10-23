@@ -11,12 +11,12 @@ import type { UserRepositoryPort } from 'src/application/port/out/user.repositor
 import type { KakaoAddressService } from 'src/application/port/out/kakao-address.service';
 import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refresh-token.repository.port';
 import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
-import { User } from 'src/domain/model/user/user.entity';
+import { User } from 'src/domain/model/user/entity/user.entity';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { USER_TOKENS } from '../../user.token';
-import { SignupResult } from '../port/in/result/signup.result';
+import { SignupResponseVO } from 'src/domain/model/user/vo/signup-response.vo';
 
 @Injectable()
 export class SignupService implements SignupUseCase {
@@ -42,7 +42,7 @@ export class SignupService implements SignupUseCase {
     private readonly configService: ConfigService,
   ) {}
 
-  async execute(command: SignupCommand): Promise<SignupResult> {
+  async execute(command: SignupCommand): Promise<SignupResponseVO> {
     // 1) 이메일 중복 체크
     const exists = await this.userQuery.existsByEmail(command.email);
     if (exists) {
@@ -92,10 +92,10 @@ export class SignupService implements SignupUseCase {
       7 * 24 * 60 * 60, // 7일 (초 단위)
     );
 
-    return {
-      userId: userId,
-      accessToken: tokenPair.accessToken,
-      refreshToken: tokenPair.refreshToken,
-    };
+    return SignupResponseVO.create(
+      userId,
+      tokenPair.accessToken,
+      tokenPair.refreshToken,
+    );
   }
 }

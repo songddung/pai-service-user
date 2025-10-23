@@ -1,6 +1,6 @@
 import { CreateProfileCommand } from 'src/application/command/create-profile.command';
-import { CreateProfileResult } from './result/create-profile.result';
+import { CreateProfileResponseVO } from 'src/domain/model/profile/vo/create-profile-response.vo';
 
 export interface CreateProfileUseCase {
-  execute(command: CreateProfileCommand): Promise<CreateProfileResult>;
+  execute(command: CreateProfileCommand): Promise<CreateProfileResponseVO>;
 }

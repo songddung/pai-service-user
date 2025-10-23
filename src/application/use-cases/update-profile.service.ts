@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  BadRequestException,
   Inject,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -11,7 +10,7 @@ import { UpdateProfileCommand } from 'src/application/command/update-profile.com
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import { USER_TOKENS } from '../../user.token';
-import { UpdateProfileResult } from '../port/in/result/update-profile.result';
+import { Profile } from 'src/domain/model/profile/entity/profile.entity';
 
 @Injectable()
 export class UpdateProfileService implements UpdateProfileUseCase {
@@ -23,7 +22,9 @@ export class UpdateProfileService implements UpdateProfileUseCase {
     private readonly profileRepository: ProfileRepositoryPort,
   ) {}
 
-  async execute(command: UpdateProfileCommand): Promise<UpdateProfileResult> {
+  async execute(
+    command: UpdateProfileCommand,
+  ): Promise<UpdateProfileResponseVO> {
     // 1) 프로필 존재 여부 확인
     const profile = await this.profileQuery.findById(command.profileId);
     if (!profile) {
@@ -46,15 +47,9 @@ export class UpdateProfileService implements UpdateProfileUseCase {
 
     // 4) PIN 업데이트 (부모 프로필만)
     if (command.pin !== undefined) {
-      if (profile.getProfileType() !== 'parent') {
-        throw new BadRequestException(
-          '자녀 프로필은 PIN을 설정할 수 없습니다.',
-        );
-      }
-      // PIN 형식 검증 (4-6자리 숫자)
-      if (!/^\d{4,6}$/.test(command.pin)) {
-        throw new BadRequestException('PIN은 4-6자리 숫자여야 합니다.');
-      }
+      // PIN 검증
+      Profile.validatePin(command.pin);
+
       // PIN 해싱 후 업데이트
       const pinHash = await bcrypt.hash(command.pin, 10);
       profile.updatePin(pinHash);

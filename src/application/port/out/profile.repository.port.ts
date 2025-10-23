@@ -1,4 +1,4 @@
-import { Profile } from '../../../domain/model/profile/profile.entity';
+import { Profile } from '../../../domain/model/profile/entity/profile.entity';
 
 /**
  * Profile Repository Port (쓰기 전용)

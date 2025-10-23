@@ -7,9 +7,9 @@ import { CreateProfileCommand } from 'src/application/command/create-profile.com
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
-import { Profile } from 'src/domain/model/profile/profile.entity';
+import { Profile } from 'src/domain/model/profile/entity/profile.entity';
 import { USER_TOKENS } from '../../user.token';
-import { CreateProfileResult } from '../port/in/result/create-profile.result';
+import { CreateProfileResponseVO } from 'src/domain/model/profile/vo/create-profile-response.vo';
 
 @Injectable()
 export class CreateProfileService implements CreateProfileUseCase {
@@ -24,7 +24,9 @@ export class CreateProfileService implements CreateProfileUseCase {
     private readonly tokenProvider: TokenProvider,
   ) {}
 
-  async execute(command: CreateProfileCommand): Promise<CreateProfileResult> {
+  async execute(
+    command: CreateProfileCommand,
+  ): Promise<CreateProfileResponseVO> {
     // 1) 생년월일 형식 검증 및 변환
     const birthDate = this.parseBirthDate(command.birthDate);
 
@@ -56,28 +58,16 @@ export class CreateProfileService implements CreateProfileUseCase {
     // 4) 저장
     const saved = await this.profileRepository.save(profile);
 
-    // 5) 토큰 버전 증가 (이전 토큰 모두 무효화)
-    const tokenVersion = await this.tokenVersionRepository.incrementVersion(
-      command.userId,
-    );
-
-    // 6) 프로필 포함된 새 토큰 발급
-    const tokenPair = await this.tokenProvider.generateProfileTokenPair(
-      command.userId,
+    // 5) 결과 반환
+    return CreateProfileResponseVO.create(
       saved.getId(),
+      command.userId,
       saved.getProfileType(),
-      tokenVersion,
+      saved.getName(),
+      saved.getBirthDate().toISOString().split('T')[0],
+      saved.getGender(),
+      saved.getAvatarMediaId()?.toString(),
     );
-
-    // 7) 결과 반환
-    return {
-      profileId: saved.getId(),
-      userId: command.userId,
-      profileType: saved.getProfileType(),
-      name: saved.getName(),
-      accessToken: tokenPair.accessToken,
-      refreshToken: tokenPair.refreshToken,
-    };
   }
 
   private parseBirthDate(dateString: string): Date {

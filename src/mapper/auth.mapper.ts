@@ -10,9 +10,9 @@ import { LoginRequestDto } from 'src/adapter/in/http/dto/request/login-request.d
 import { LoginCommand } from 'src/application/command/login.command';
 import { LogoutCommand } from 'src/application/command/logout.command';
 import { RefreshTokenCommand } from 'src/application/command/refresh-token.command';
-import { SignupResult } from 'src/application/port/in/result/signup.result';
-import { LoginResult } from 'src/application/port/in/result/login.result';
-import { RefreshTokenResult } from 'src/application/port/in/result/refresh-token.result';
+import { SignupResponseVO } from 'src/domain/model/user/vo/signup-response.vo';
+import { LoginResponseVO } from 'src/domain/model/user/vo/login-response.vo';
+import { RefreshTokenResponseVO } from 'src/domain/model/user/vo/refresh-token-response.vo';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -30,11 +30,11 @@ export class AuthMapper {
     );
   }
 
-  toSignupResponse(result: SignupResult): SignupResponseData {
+  toSignupResponse(vo: SignupResponseVO): SignupResponseData {
     return {
-      userId: result.userId,
-      accessToken: result.accessToken,
-      refreshToken: result.refreshToken,
+      userId: vo.getUserId(),
+      accessToken: vo.getAccessToken(),
+      refreshToken: vo.getRefreshToken(),
     };
   }
 
@@ -46,11 +46,11 @@ export class AuthMapper {
     );
   }
 
-  toLoginResponse(result: LoginResult): LoginResponseData {
+  toLoginResponse(vo: LoginResponseVO): LoginResponseData {
     return {
-      userId: result.userId,
-      accessToken: result.accessToken,
-      refreshToken: result.refreshToken,
+      userId: vo.getUserId(),
+      accessToken: vo.getAccessToken(),
+      refreshToken: vo.getRefreshToken(),
     };
   }
 
@@ -64,10 +64,10 @@ export class AuthMapper {
     return new RefreshTokenCommand(userId, String(refreshToken ?? '').trim());
   }
 
-  toTokenResponse(result: RefreshTokenResult): RefreshTokenResponseData {
+  toTokenResponse(vo: RefreshTokenResponseVO): RefreshTokenResponseData {
     return {
-      accessToken: result.accessToken,
-      refreshToken: result.refreshToken,
+      accessToken: vo.getAccessToken(),
+      refreshToken: vo.getRefreshToken(),
     };
   }
 }

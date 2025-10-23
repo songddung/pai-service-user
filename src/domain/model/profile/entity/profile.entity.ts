@@ -1,4 +1,4 @@
-import type { ProfileType } from 'pai-shared-types';
+import { ProfileType } from 'src/adapter/in/http/dto/enum/profile-type';
 
 interface CreateProfileProps {
   userId: number;
@@ -6,9 +6,9 @@ interface CreateProfileProps {
   name: string;
   birthDate: Date;
   gender: string;
-  avatarMediaId?: number;
+  avatarMediaId?: string;
   pinHash?: string;
-  voiceMediaId?: number;
+  voiceMediaId?: string;
 }
 
 interface RehydrateProfileProps extends CreateProfileProps {
@@ -24,9 +24,9 @@ export class Profile {
     private name: string,
     private birthDate: Date,
     private gender: string,
-    private avatarMediaId?: number,
+    private avatarMediaId?: string,
     private pinHash?: string,
-    private voiceMediaId?: number,
+    private voiceMediaId?: string,
     private readonly createdAt?: Date,
   ) {}
 
@@ -68,6 +68,13 @@ export class Profile {
     );
   }
 
+  static validatePin(pin: string): void {
+    // PIN 형식 검증 (4-6자리 숫자)
+    if (!/^\d{4,6}$/.test(pin)) {
+      throw new Error('PIN은 4-6자리 숫자여야 합니다.');
+    }
+  }
+
   // Getters
   getId(): number {
     return this.id;
@@ -93,7 +100,7 @@ export class Profile {
     return this.gender;
   }
 
-  getAvatarMediaId(): number | undefined {
+  getAvatarMediaId(): string | undefined {
     return this.avatarMediaId;
   }
 
@@ -101,7 +108,7 @@ export class Profile {
     return this.pinHash;
   }
 
-  getVoiceMediaId(): number | undefined {
+  getVoiceMediaId(): string | undefined {
     return this.voiceMediaId;
   }
 
@@ -117,7 +124,7 @@ export class Profile {
     this.name = name;
   }
 
-  updateAvatar(avatarMediaId: number): void {
+  updateAvatar(avatarMediaId: string): void {
     this.avatarMediaId = avatarMediaId;
   }
 

@@ -15,11 +15,11 @@ import { SelectProfileCommand } from 'src/application/command/select-profile.com
 import { UpdateProfileCommand } from 'src/application/command/update-profile.command';
 import { DeleteProfileCommand } from 'src/application/command/delete-profile.command';
 import { GetProfileCommand } from 'src/application/command/get-profile.command';
-import { CreateProfileResult } from 'src/application/port/in/result/create-profile.result';
 import { GetProfilesResult } from 'src/application/port/in/result/get-profiles.result';
 import { SelectProfileResult } from 'src/application/port/in/result/select-profile.result';
 import { UpdateProfileResult } from 'src/application/port/in/result/update-profile.result';
 import { DeleteProfileResult } from 'src/application/port/in/result/delete-profile.result';
+import { CreateProfileResponseVO } from 'src/domain/model/profile/vo/create-profile-response.vo';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -43,14 +43,15 @@ export class ProfileMapper {
     );
   }
 
-  toCreateResponse(result: CreateProfileResult): CreateProfileResponseData {
+  toCreateResponse(vo: CreateProfileResponseVO): CreateProfileResponseData {
     return {
-      profileId: result.profileId,
-      userId: result.userId,
-      profileType: result.profileType,
-      name: result.name,
-      accessToken: result.accessToken,
-      refreshToken: result.refreshToken,
+      profileId: vo.getProfileId(),
+      userId: vo.getUserId(),
+      profileType: vo.getProfileType,
+      name: vo.getName(),
+      birthDate: vo.getBirthDate(),
+      gender: vo.getGender(),
+      avatarMediaId: vo.getAvatarMediaId(),
     };
   }
 

@@ -7,7 +7,7 @@ import type { TokenVersionRepositoryPort } from '../port/out/token-version.repos
 import * as bcrypt from 'bcrypt';
 import { LoginCommand } from '../command/login.command';
 import { USER_TOKENS } from '../../user.token';
-import { LoginResult } from '../port/in/result/login.result';
+import { LoginResponseVO } from 'src/domain/model/user/vo/login-response.vo';
 
 @Injectable()
 export class LoginService implements LoginUseCase {
@@ -25,7 +25,7 @@ export class LoginService implements LoginUseCase {
     private readonly tokenVersionRepository: TokenVersionRepositoryPort,
   ) {}
 
-  async execute(command: LoginCommand): Promise<LoginResult> {
+  async execute(command: LoginCommand): Promise<LoginResponseVO> {
     // 사용자 조회
     const user = await this.userQuery.findByEmail(command.email);
 
@@ -63,10 +63,10 @@ export class LoginService implements LoginUseCase {
       7 * 24 * 60 * 60, // 7일 (초 단위)
     );
 
-    return {
-      userId: userId,
-      accessToken: tokenPair.accessToken,
-      refreshToken: tokenPair.refreshToken,
-    };
+    return LoginResponseVO.create(
+      userId,
+      tokenPair.accessToken,
+      tokenPair.refreshToken,
+    );
   }
 }
