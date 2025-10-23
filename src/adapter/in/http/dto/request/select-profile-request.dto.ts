@@ -8,8 +8,8 @@ import {
 import { SelectProfileRequestDto as ISelectProfileRequestDto } from 'pai-shared-types';
 
 export class SelectProfileRequestDto implements ISelectProfileRequestDto {
-  @IsNumber()
-  profileId: number;
+  @IsString()
+  profileId: string;
 
   @IsOptional()
   @IsString()

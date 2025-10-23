@@ -5,7 +5,6 @@ import {
   IsDateString,
   MinLength,
   MaxLength,
-  IsNumber,
 } from 'class-validator';
 import type {
   ProfileType,
@@ -33,8 +32,8 @@ export class CreateProfileRequestDto implements ICreateProfileRequestDto {
   gender: string;
 
   @IsOptional()
-  @IsNumber()
-  avatarMediaId?: number;
+  @IsString()
+  avatarMediaId?: string;
 
   @IsOptional()
   @IsString()
@@ -43,6 +42,6 @@ export class CreateProfileRequestDto implements ICreateProfileRequestDto {
   pin?: string;
 
   @IsOptional()
-  @IsNumber()
-  voiceMediaId?: number;
+  @IsString()
+  voiceMediaId?: string;
 }

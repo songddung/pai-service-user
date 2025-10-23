@@ -27,12 +27,12 @@ export class UpdateProfileRequestDto implements IUpdateProfileRequestDto {
   gender?: string;
 
   @IsOptional()
-  @IsNumber()
-  avatarMediaId?: number;
+  @IsString()
+  avatarMediaId?: string;
 
   @IsOptional()
-  @IsNumber()
-  voiceMediaId?: number;
+  @IsString()
+  voiceMediaId?: string;
 
   @IsOptional()
   @IsString()
