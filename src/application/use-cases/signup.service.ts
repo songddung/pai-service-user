@@ -17,6 +17,9 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { USER_TOKENS } from '../../user.token';
 import { SignupResponseVO } from 'src/domain/model/user/vo/signup-response.vo';
+import { Email } from 'src/domain/model/user/vo/email.vo';
+import { PasswordHash } from 'src/domain/model/user/vo/passwordHash.vo';
+import { Address } from 'src/domain/model/user/vo/address.vo';
 
 @Injectable()
 export class SignupService implements SignupUseCase {
@@ -54,22 +57,29 @@ export class SignupService implements SignupUseCase {
     const saltRounds = saltRoundsStr ? parseInt(saltRoundsStr, 10) : 12;
     const passwordHash = await bcrypt.hash(command.password, saltRounds);
 
-    // 3) User 엔티티 생성 (위/경도는 null 상태)
-    const user = User.create({
-      email: command.email,
-      passwordHash,
-      address: command.address,
-    });
+    const emailVO = Email.create(command.email);
+    const passwordHashVO = PasswordHash.create(passwordHash);
 
     // 4) Kakao 주소 → 좌표 변환
     const latLng = await this.kakaoAddressService.getLatLng(command.address);
-
     if (!latLng) {
-      throw new BadRequestException('주소를 기반으로 좌표를 찾을 수 없습니다.');
+      throw new BadRequestException(
+        '유효한 주소가 아니거나 좌표를 찾을 수 없습니다.',
+      );
     }
 
-    // 5) 엔티티에 주소 + 위경도 반영
-    user.changeAddress(command.address, latLng.latitude, latLng.longitude);
+    const addressVO = Address.create(
+      command.address,
+      latLng.latitude,
+      latLng.longitude,
+    );
+
+    // 3) User 엔티티 생성 (위/경도는 null 상태)
+    const user = User.create({
+      email: emailVO,
+      passwordHash: passwordHashVO,
+      address: addressVO,
+    });
 
     // 6) 저장 (Prisma)
     const saved = await this.userRepository.save(user);

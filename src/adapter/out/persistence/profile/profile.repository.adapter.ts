@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import { Profile } from 'src/domain/model/profile/entity/profile.entity';
 import type { ProfileType } from 'pai-shared-types';
@@ -42,11 +42,11 @@ export class ProfileRepositoryAdapter implements ProfileRepositoryPort {
       birthDate: saved.birth_date!,
       gender: saved.gender!,
       avatarMediaId: saved.avatar_media_id
-        ? Number(saved.avatar_media_id)
+        ? String(saved.avatar_media_id)
         : undefined,
       pinHash: saved.pin_hash || undefined,
       voiceMediaId: saved.voice_media_id
-        ? Number(saved.voice_media_id)
+        ? String(saved.voice_media_id)
         : undefined,
       createdAt: saved.created_at,
     });
@@ -83,11 +83,11 @@ export class ProfileRepositoryAdapter implements ProfileRepositoryPort {
       birthDate: updated.birth_date!,
       gender: updated.gender!,
       avatarMediaId: updated.avatar_media_id
-        ? Number(updated.avatar_media_id)
+        ? String(updated.avatar_media_id)
         : undefined,
       pinHash: updated.pin_hash || undefined,
       voiceMediaId: updated.voice_media_id
-        ? Number(updated.voice_media_id)
+        ? String(updated.voice_media_id)
         : undefined,
       createdAt: updated.created_at,
     });

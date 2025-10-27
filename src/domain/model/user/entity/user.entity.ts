@@ -1,12 +1,14 @@
+import { Address } from '../vo/address.vo';
+import { Email } from '../vo/email.vo';
+import { PasswordHash } from '../vo/passwordHash.vo';
+
 // src/domain/model/user/user.entity.ts
 export class User {
   private constructor(
     private readonly id: bigint | null, // 생성 시 null, DB 로드 후 값 존재
-    private email: string,
-    private passwordHash: string,
-    private address: string | null,
-    private latitude: number | null,
-    private longitude: number | null,
+    private email: Email,
+    private passwordHash: PasswordHash,
+    private address: Address,
     private readonly createdAt: Date,
   ) {}
 
@@ -16,44 +18,33 @@ export class User {
    * - createdAt은 현재 시간
    */
   static create(props: {
-    email: string;
-    passwordHash: string;
-    address?: string;
-    latitude?: number;
-    longitude?: number;
+    email: Email;
+    passwordHash: PasswordHash;
+    address: Address;
   }): User {
     return new User(
       null,
       props.email,
       props.passwordHash,
-      props.address ?? null,
-      props.latitude ?? null,
-      props.longitude ?? null,
+      props.address,
       new Date(), // 생성 시점
     );
   }
 
-  /**
-   * ✅ DB or Persistence Layer에서 불러올 때 사용
-   * - 이미 id와 createdAt이 존재함
-   */
-  static rehydrate(raw: {
-    id: bigint;
-    email: string;
-    passwordHash: string;
-    address: string | null;
-    latitude: number | null;
-    longitude: number | null;
+  static reconstitute(props: {
+    id: bigint; // 재구성 시 ID는 필수
+    email: Email;
+    passwordHash: PasswordHash;
+    address: Address;
     createdAt: Date;
   }): User {
+    // 💡 public 메서드 내에서 private constructor를 호출하여 엔티티를 복원
     return new User(
-      raw.id,
-      raw.email,
-      raw.passwordHash,
-      raw.address,
-      raw.latitude,
-      raw.longitude,
-      raw.createdAt,
+      props.id,
+      props.email,
+      props.passwordHash,
+      props.address,
+      props.createdAt,
     );
   }
 
@@ -65,24 +56,16 @@ export class User {
     return this.id;
   }
 
-  getEmail(): string {
+  getEmail(): Email {
     return this.email;
   }
 
-  getPasswordHash(): string {
+  getPasswordHash(): PasswordHash {
     return this.passwordHash;
   }
 
-  getAddress(): string | null {
+  getAddress(): Address {
     return this.address;
-  }
-
-  getLatitude(): number | null {
-    return this.latitude;
-  }
-
-  getLongitude(): number | null {
-    return this.longitude;
   }
 
   getCreatedAt(): Date {
@@ -90,16 +73,28 @@ export class User {
   }
 
   // =============================
-  // ✅ Domain Logic (필요 시 확장)
+  // ✅ Domain Logic
   // =============================
 
-  changeAddress(
-    address: string,
-    latitude: number | null,
-    longitude: number | null,
-  ): void {
-    this.address = address;
-    this.latitude = latitude;
-    this.longitude = longitude;
+  updateEmail(newEmail: Email): void {
+    if (this.email.equals(newEmail)) {
+      return;
+    }
+
+    this.email = newEmail;
+  }
+
+  changePassword(newPasswordHash: PasswordHash): void {
+    if (this.passwordHash.equals(newPasswordHash)) {
+      throw new Error('기존의 비밀번호 같은 비밀번호로 변경할 수 없습니다.');
+    }
+    this.passwordHash = newPasswordHash;
+  }
+
+  updateAddress(newAddress: Address): void {
+    if (this.address && newAddress && this.address.equals(newAddress)) {
+      return;
+    }
+    this.address = newAddress;
   }
 }

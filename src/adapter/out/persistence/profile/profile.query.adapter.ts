@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import { Profile } from 'src/domain/model/profile/entity/profile.entity';
 import type { ProfileType } from 'pai-shared-types';
@@ -23,11 +23,11 @@ export class ProfileQueryAdapter implements ProfileQueryPort {
       birthDate: record.birth_date!,
       gender: record.gender!,
       avatarMediaId: record.avatar_media_id
-        ? Number(record.avatar_media_id)
+        ? String(record.avatar_media_id)
         : undefined,
       pinHash: record.pin_hash || undefined,
       voiceMediaId: record.voice_media_id
-        ? Number(record.voice_media_id)
+        ? String(record.voice_media_id)
         : undefined,
       createdAt: record.created_at,
     });
@@ -48,11 +48,11 @@ export class ProfileQueryAdapter implements ProfileQueryPort {
         birthDate: record.birth_date!,
         gender: record.gender!,
         avatarMediaId: record.avatar_media_id
-          ? Number(record.avatar_media_id)
+          ? String(record.avatar_media_id)
           : undefined,
         pinHash: record.pin_hash || undefined,
         voiceMediaId: record.voice_media_id
-          ? Number(record.voice_media_id)
+          ? String(record.voice_media_id)
           : undefined,
         createdAt: record.created_at,
       }),

@@ -20,13 +20,13 @@ import { DeleteProfileService } from './application/use-cases/delete-profile.ser
 
 // Query Adapter 구현체
 import { UserQueryAdapter } from './adapter/out/persistence/user.query.adapter';
-import { ProfileQueryAdapter } from './adapter/out/persistence/profile.query.adapter';
+import { ProfileQueryAdapter } from './adapter/out/persistence/profile/profile.query.adapter';
 import { RedisRefreshTokenQueryAdapter } from './adapter/out/cache/redis-refresh-token.query.adapter';
 import { RedisTokenVersionQueryAdapter } from './adapter/out/cache/redis-token-version.query.adapter';
 
 // Repository Adapter 구현체
 import { UserRepositoryAdapter } from './adapter/out/persistence/user.repository.adapter';
-import { ProfileRepositoryAdapter } from './adapter/out/persistence/profile.repository.adapter';
+import { ProfileRepositoryAdapter } from './adapter/out/persistence/profile/profile.repository.adapter';
 import { RedisTokenVersionRepositoryAdapter } from './adapter/out/cache/redis-token-version.repository.adapter';
 
 // Redis Module

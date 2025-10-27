@@ -33,10 +33,12 @@ export class LoginService implements LoginUseCase {
       throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.');
     }
 
+    const passwordHash = user.getPasswordHash();
+
     // 비밀번호 검증
     const isPasswordValid = await bcrypt.compare(
       command.password,
-      user.getPasswordHash(),
+      passwordHash.getValue(),
     );
 
     if (!isPasswordValid) {
