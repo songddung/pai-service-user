@@ -50,7 +50,7 @@ export class ProfileMapper {
       name: result.name,
       birthDate: result.birthDate,
       gender: result.gender,
-      avatarMediaId: BigInt(result.avatarMediaId) ?? undefined,
+      avatarMediaId: result.avatarMediaId ? String(result.avatarMediaId) : undefined,
     };
   }
 
@@ -67,11 +67,11 @@ export class ProfileMapper {
       profiles: result.profiles.map((profile) => ({
         profileId: String(profile.getId()),
         profileType: profile.getProfileType(),
-        name: profile.getName(),
-        birthDate: profile.getBirthDate().toISOString().split('T')[0],
-        gender: profile.getGender() ?? '',
-        avatarMediaId: profile.getAvatarMediaId(),
-        voiceMediaId: profile.getVoiceMediaId(),
+        name: profile.getName().getValue(),
+        birthDate: profile.getBirthDate().getValue().toISOString().split('T')[0],
+        gender: profile.getGender().getValue(),
+        avatarMediaId: profile.getAvatarMediaId() ? String(profile.getAvatarMediaId()) : undefined,
+        voiceMediaId: profile.getVoiceMediaId() ? String(profile.getVoiceMediaId()) : undefined,
         createdAt: profile.getCreatedAt()?.toISOString() ?? '',
       })),
     };
@@ -125,8 +125,8 @@ export class ProfileMapper {
       name: result.name,
       birthDate: result.birthDate,
       gender: result.gender,
-      avatarMediaId: result.avatarMediaId,
-      voiceMediaId: result.voiceMediaId,
+      avatarMediaId: result.avatarMediaId ? String(result.avatarMediaId) : undefined,
+      voiceMediaId: result.voiceMediaId ? String(result.voiceMediaId) : undefined,
     };
   }
 

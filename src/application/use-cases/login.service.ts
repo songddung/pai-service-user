@@ -4,7 +4,7 @@ import type { UserQueryPort } from '../port/out/user.query.port';
 import type { TokenProvider } from '../port/out/token.provider';
 import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repository.port';
 import type { TokenVersionRepositoryPort } from '../port/out/token-version.repository.port';
-import * as bcrypt from 'bcrypt';
+import type { PasswordHasher } from '../port/out/password-hasher';
 import { LoginCommand } from '../command/login.command';
 import { USER_TOKENS } from '../../user.token';
 import { LoginResult } from '../port/in/result/login.result.dto';
@@ -23,6 +23,9 @@ export class LoginService implements LoginUseCase {
 
     @Inject(USER_TOKENS.TokenVersionRepositoryPort)
     private readonly tokenVersionRepository: TokenVersionRepositoryPort,
+
+    @Inject(USER_TOKENS.PasswordHasher)
+    private readonly passwordHasher: PasswordHasher,
   ) {}
 
   async execute(command: LoginCommand): Promise<LoginResult> {
@@ -36,7 +39,7 @@ export class LoginService implements LoginUseCase {
     const passwordHash = user.getPasswordHash();
 
     // 비밀번호 검증
-    const isPasswordValid = await bcrypt.compare(
+    const isPasswordValid = await this.passwordHasher.compare(
       command.password,
       passwordHash.getValue(),
     );

@@ -18,12 +18,12 @@ export class GetProfilesService implements GetProfilesUseCase {
 
     if (command.profileType === 'parent') {
       return {
-        profiles: profiles.filter((profile) => profile.isparent()),
+        profiles: profiles.filter((profile) => profile.isParent()),
       };
     }
     if (command.profileType === 'child') {
       return {
-        profiles: profiles.filter((profile) => profile.ischild()),
+        profiles: profiles.filter((profile) => profile.isChild()),
       };
     }
     return { profiles: profiles };

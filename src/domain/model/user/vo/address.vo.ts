@@ -9,7 +9,7 @@ export class Address {
 
   static create(address: string, latitude: number, longitude: number): Address {
     if (!address || address.trim() === '') {
-      throw new Error('주소는 필수입니다,');
+      throw new Error('주소는 필수입니다.');
     }
     if (latitude === null || longitude === null) {
       throw new Error('유효한 주소가 아닙니다.');

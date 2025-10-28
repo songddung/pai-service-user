@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import { Profile } from 'src/domain/model/profile/entity/profile.entity';
-import type { ProfileType } from 'pai-shared-types';
+import { ProfileMapper } from './profile.mapper';
 
 @Injectable()
 export class ProfileQueryAdapter implements ProfileQueryPort {
@@ -15,22 +15,7 @@ export class ProfileQueryAdapter implements ProfileQueryPort {
 
     if (!record) return null;
 
-    return Profile.rehydrate({
-      id: Number(record.profile_id),
-      userId: Number(record.user_id),
-      profileType: record.profile_type as ProfileType,
-      name: record.name,
-      birthDate: record.birth_date!,
-      gender: record.gender!,
-      avatarMediaId: record.avatar_media_id
-        ? String(record.avatar_media_id)
-        : undefined,
-      pinHash: record.pin_hash || undefined,
-      voiceMediaId: record.voice_media_id
-        ? String(record.voice_media_id)
-        : undefined,
-      createdAt: record.created_at,
-    });
+    return ProfileMapper.toDomain(record);
   }
 
   async findByUserId(userId: number): Promise<Profile[]> {
@@ -39,24 +24,7 @@ export class ProfileQueryAdapter implements ProfileQueryPort {
       orderBy: { created_at: 'desc' },
     });
 
-    return records.map((record) =>
-      Profile.rehydrate({
-        id: Number(record.profile_id),
-        userId: Number(record.user_id),
-        profileType: record.profile_type as ProfileType,
-        name: record.name,
-        birthDate: record.birth_date!,
-        gender: record.gender!,
-        avatarMediaId: record.avatar_media_id
-          ? String(record.avatar_media_id)
-          : undefined,
-        pinHash: record.pin_hash || undefined,
-        voiceMediaId: record.voice_media_id
-          ? String(record.voice_media_id)
-          : undefined,
-        createdAt: record.created_at,
-      }),
-    );
+    return records.map((record) => ProfileMapper.toDomain(record));
   }
 
   async existsById(profileId: number): Promise<boolean> {

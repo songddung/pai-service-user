@@ -4,13 +4,14 @@ import {
   ForbiddenException,
   Inject,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import type { UpdateProfileUseCase } from 'src/application/port/in/update-profile.use-case';
 import { UpdateProfileCommand } from 'src/application/command/update-profile.command';
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
+import type { PasswordHasher } from 'src/application/port/out/password-hasher';
 import { USER_TOKENS } from '../../user.token';
-import { Profile } from 'src/domain/model/profile/entity/profile.entity';
+import { ProfileName } from 'src/domain/model/profile/vo/profile-name.vo';
+import { PinHash } from 'src/domain/model/profile/vo/pin-hash.vo';
 import { UpdateProfileResult } from '../port/in/result/update-profile.result';
 
 @Injectable()
@@ -21,6 +22,9 @@ export class UpdateProfileService implements UpdateProfileUseCase {
 
     @Inject(USER_TOKENS.ProfileRepositoryPort)
     private readonly profileRepository: ProfileRepositoryPort,
+
+    @Inject(USER_TOKENS.PasswordHasher)
+    private readonly passwordHasher: PasswordHasher,
   ) {}
 
   async execute(command: UpdateProfileCommand): Promise<UpdateProfileResult> {
@@ -37,7 +41,8 @@ export class UpdateProfileService implements UpdateProfileUseCase {
 
     // 3) 업데이트 가능한 필드 수정
     if (command.name !== undefined) {
-      profile.updateName(command.name);
+      const nameVO = ProfileName.create(command.name);
+      profile.updateName(nameVO);
     }
 
     if (command.avatarMediaId !== undefined) {
@@ -46,12 +51,15 @@ export class UpdateProfileService implements UpdateProfileUseCase {
 
     // 4) PIN 업데이트 (부모 프로필만)
     if (command.pin !== undefined) {
-      // PIN 검증
-      Profile.validatePin(command.pin);
+      // PIN 형식 검증 (4-6자리 숫자)
+      if (!/^\d{4,6}$/.test(command.pin)) {
+        throw new ForbiddenException('PIN은 4-6자리 숫자여야 합니다.');
+      }
 
       // PIN 해싱 후 업데이트
-      const pinHash = await bcrypt.hash(command.pin, 10);
-      profile.updatePin(pinHash);
+      const hashedPin = await this.passwordHasher.hash(command.pin);
+      const pinHashVO = PinHash.create(hashedPin);
+      profile.updatePin(pinHashVO);
     }
 
     // 5) 업데이트
@@ -62,15 +70,11 @@ export class UpdateProfileService implements UpdateProfileUseCase {
       profileId: updated.getId(),
       userId: updated.getUserId(),
       profileType: updated.getProfileType(),
-      name: updated.getName(),
-      birthDate: updated.getBirthDate().toISOString().split('T')[0],
-      gender: updated.getGender() || '',
-      avatarMediaId: updated.getAvatarMediaId()
-        ? updated.getAvatarMediaId()
-        : undefined,
-      voiceMediaId: updated.getVoiceMediaId()
-        ? updated.getVoiceMediaId()
-        : undefined,
+      name: updated.getName().getValue(),
+      birthDate: updated.getBirthDate().getValue().toISOString().split('T')[0],
+      gender: updated.getGender().getValue(),
+      avatarMediaId: updated.getAvatarMediaId(),
+      voiceMediaId: updated.getVoiceMediaId(),
     };
   }
 }

@@ -7,6 +7,6 @@ export interface UpdateProfileResult {
   name: string;
   birthDate: string;
   gender: string;
-  avatarMediaId?: string;
-  voiceMediaId?: string;
+  avatarMediaId?: bigint;
+  voiceMediaId?: bigint;
 }

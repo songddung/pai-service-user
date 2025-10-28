@@ -16,15 +16,7 @@ export class UserQueryAdapter implements UserQueryPort {
 
     if (!record) return null;
 
-    return UserMapper.toDomain({
-      user_id: record.user_id,
-      email: record.email,
-      password_hash: record.password_hash,
-      address: record.address,
-      latitude: record.latitude,
-      longitude: record.longitude,
-      created_at: record.created_at,
-    });
+    return UserMapper.toDomain(record);
   }
 
   async findById(userId: number): Promise<User | null> {

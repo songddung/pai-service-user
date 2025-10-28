@@ -5,13 +5,13 @@ import {
   UnauthorizedException,
   Inject,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { SelectProfileUseCase } from 'src/application/port/in/select-profile.use-case';
 import { SelectProfileCommand } from 'src/application/command/select-profile.command';
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refresh-token.repository.port';
 import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
+import type { PasswordHasher } from 'src/application/port/out/password-hasher';
 import { USER_TOKENS } from '../../user.token';
 import { SelectProfileResult } from '../port/in/result/select-profile.result';
 
@@ -29,6 +29,9 @@ export class SelectProfileService implements SelectProfileUseCase {
 
     @Inject(USER_TOKENS.TokenVersionRepositoryPort)
     private readonly tokenVersionRepository: TokenVersionRepositoryPort,
+
+    @Inject(USER_TOKENS.PasswordHasher)
+    private readonly passwordHasher: PasswordHasher,
   ) {}
 
   async execute(command: SelectProfileCommand): Promise<SelectProfileResult> {
@@ -54,7 +57,10 @@ export class SelectProfileService implements SelectProfileUseCase {
         throw new BadRequestException('프로필에 PIN이 설정되지 않았습니다.');
       }
 
-      const isPinValid = await bcrypt.compare(command.pin, pinHash);
+      const isPinValid = await this.passwordHasher.compare(
+        command.pin,
+        pinHash.getValue(),
+      );
       if (!isPinValid) {
         throw new UnauthorizedException('PIN이 일치하지 않습니다.');
       }

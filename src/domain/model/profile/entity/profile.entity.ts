@@ -1,14 +1,18 @@
 import { ProfileType } from 'src/domain/model/profile/enum/profile-type';
+import { ProfileName } from '../vo/profile-name.vo';
+import { BirthDate } from '../vo/birth-date.vo';
+import { Gender } from '../vo/gender.vo';
+import { PinHash } from '../vo/pin-hash.vo';
 
 interface CreateProfileProps {
   userId: number;
   profileType: ProfileType;
-  name: string;
-  birthDate: Date;
-  gender: string;
-  avatarMediaId?: BigInt;
-  pinHash?: string;
-  voiceMediaId?: BigInt;
+  name: ProfileName;
+  birthDate: BirthDate;
+  gender: Gender;
+  avatarMediaId?: bigint;
+  pinHash?: PinHash;
+  voiceMediaId?: bigint;
 }
 
 interface RehydrateProfileProps extends CreateProfileProps {
@@ -21,21 +25,17 @@ export class Profile {
     private readonly id: number,
     private readonly userId: number,
     private readonly profileType: ProfileType,
-    private name: string,
-    private birthDate: Date,
-    private gender: string,
-    private avatarMediaId?: BigInt,
-    private pinHash?: string,
-    private voiceMediaId?: BigInt,
+    private name: ProfileName,
+    private birthDate: BirthDate,
+    private gender: Gender,
+    private avatarMediaId?: bigint,
+    private pinHash?: PinHash,
+    private voiceMediaId?: bigint,
     private readonly createdAt?: Date,
   ) {}
 
   static create(props: CreateProfileProps): Profile {
     // 비즈니스 규칙 검증
-    if (!props.name || props.name.trim() === '') {
-      throw new Error('이름은 필수입니다.');
-    }
-
     if (props.profileType === 'parent' && !props.pinHash) {
       throw new Error('부모 프로필은 PIN이 필수입니다.');
     }
@@ -68,13 +68,6 @@ export class Profile {
     );
   }
 
-  static validatePin(pin: string): void {
-    // PIN 형식 검증 (4-6자리 숫자)
-    if (!/^\d{4,6}$/.test(pin)) {
-      throw new Error('PIN은 4-6자리 숫자여야 합니다.');
-    }
-  }
-
   // Getters
   getId(): number {
     return this.id;
@@ -88,27 +81,27 @@ export class Profile {
     return this.profileType;
   }
 
-  getName(): string {
+  getName(): ProfileName {
     return this.name;
   }
 
-  getBirthDate(): Date {
+  getBirthDate(): BirthDate {
     return this.birthDate;
   }
 
-  getGender(): string | undefined {
+  getGender(): Gender {
     return this.gender;
   }
 
-  getAvatarMediaId(): BigInt | undefined {
+  getAvatarMediaId(): bigint | undefined {
     return this.avatarMediaId;
   }
 
-  getPinHash(): string | undefined {
+  getPinHash(): PinHash | undefined {
     return this.pinHash;
   }
 
-  getVoiceMediaId(): BigInt | undefined {
+  getVoiceMediaId(): bigint | undefined {
     return this.voiceMediaId;
   }
 
@@ -117,29 +110,26 @@ export class Profile {
   }
 
   // 비즈니스 메서드
-  updateName(name: string): void {
-    if (!name || name.trim() === '') {
-      throw new Error('이름은 필수입니다.');
-    }
+  updateName(name: ProfileName): void {
     this.name = name;
   }
 
-  updateAvatar(avatarMediaId: BigInt): void {
+  updateAvatar(avatarMediaId: bigint): void {
     this.avatarMediaId = avatarMediaId;
   }
 
-  updatePin(pinHash: string): void {
+  updatePin(pinHash: PinHash): void {
     if (this.profileType !== 'parent') {
       throw new Error('부모 프로필만 PIN을 설정할 수 있습니다.');
     }
     this.pinHash = pinHash;
   }
 
-  isparent(): boolean {
+  isParent(): boolean {
     return this.profileType === 'parent';
   }
 
-  ischild(): boolean {
+  isChild(): boolean {
     return this.profileType === 'child';
   }
 }
