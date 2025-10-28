@@ -37,7 +37,7 @@ export class ProfileMapper {
       String(dto.name ?? '').trim(),
       String(dto.birthDate ?? '').trim(),
       dto.gender,
-      dto.avatarMediaId ? dto.avatarMediaId : undefined,
+      dto.avatarMediaId ? BigInt(dto.avatarMediaId) : undefined,
       dto.pin ? String(dto.pin).trim() : undefined,
     );
   }
@@ -50,7 +50,7 @@ export class ProfileMapper {
       name: result.name,
       birthDate: result.birthDate,
       gender: result.gender,
-      avatarMediaId: result.avatarMediaId ?? undefined,
+      avatarMediaId: BigInt(result.avatarMediaId) ?? undefined,
     };
   }
 
@@ -70,7 +70,7 @@ export class ProfileMapper {
         name: profile.getName(),
         birthDate: profile.getBirthDate().toISOString().split('T')[0],
         gender: profile.getGender() ?? '',
-        avatarMediaId: profile.getAvatarMediaId()?.toString(),
+        avatarMediaId: profile.getAvatarMediaId(),
         voiceMediaId: profile.getVoiceMediaId(),
         createdAt: profile.getCreatedAt()?.toISOString() ?? '',
       })),
@@ -111,8 +111,8 @@ export class ProfileMapper {
       dto.name ? String(dto.name).trim() : undefined,
       dto.birthDate ? String(dto.birthDate).trim() : undefined,
       dto.gender,
-      dto.avatarMediaId ? dto.avatarMediaId : undefined,
-      dto.voiceMediaId ? dto.voiceMediaId : undefined,
+      dto.avatarMediaId ? BigInt(dto.avatarMediaId) : undefined,
+      dto.voiceMediaId ? BigInt(dto.voiceMediaId) : undefined,
       dto.pin ? String(dto.pin).trim() : undefined,
     );
   }

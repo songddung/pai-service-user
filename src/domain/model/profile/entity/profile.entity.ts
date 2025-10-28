@@ -6,9 +6,9 @@ interface CreateProfileProps {
   name: string;
   birthDate: Date;
   gender: string;
-  avatarMediaId?: string;
+  avatarMediaId?: BigInt;
   pinHash?: string;
-  voiceMediaId?: string;
+  voiceMediaId?: BigInt;
 }
 
 interface RehydrateProfileProps extends CreateProfileProps {
@@ -24,9 +24,9 @@ export class Profile {
     private name: string,
     private birthDate: Date,
     private gender: string,
-    private avatarMediaId?: string,
+    private avatarMediaId?: BigInt,
     private pinHash?: string,
-    private voiceMediaId?: string,
+    private voiceMediaId?: BigInt,
     private readonly createdAt?: Date,
   ) {}
 
@@ -100,7 +100,7 @@ export class Profile {
     return this.gender;
   }
 
-  getAvatarMediaId(): string | undefined {
+  getAvatarMediaId(): BigInt | undefined {
     return this.avatarMediaId;
   }
 
@@ -108,7 +108,7 @@ export class Profile {
     return this.pinHash;
   }
 
-  getVoiceMediaId(): string | undefined {
+  getVoiceMediaId(): BigInt | undefined {
     return this.voiceMediaId;
   }
 
@@ -124,7 +124,7 @@ export class Profile {
     this.name = name;
   }
 
-  updateAvatar(avatarMediaId: string): void {
+  updateAvatar(avatarMediaId: BigInt): void {
     this.avatarMediaId = avatarMediaId;
   }
 

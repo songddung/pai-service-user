@@ -7,5 +7,5 @@ export interface CreateProfileResult {
   name: string;
   birthDate: string;
   gender: string;
-  avatarMediaId: string | null;
+  avatarMediaId: BigInt | null;
 }

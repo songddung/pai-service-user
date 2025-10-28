@@ -7,7 +7,7 @@ export class CreateProfileCommand {
     public readonly name: string,
     public readonly birthDate: string, // YYYY-MM-DD
     public readonly gender: string,
-    public readonly avatarMediaId?: string,
+    public readonly avatarMediaId?: BigInt,
     public readonly pin?: string, // 해시 전 원본 PIN
   ) {}
 }
