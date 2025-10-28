@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RefreshTokenCommand } from '../application/command/refresh-token.command';
+import { RefreshTokenCommand } from '../../../../application/command/refresh-token.command';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당

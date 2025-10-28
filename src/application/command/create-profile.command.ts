@@ -1,4 +1,4 @@
-import { ProfileType } from 'src/adapter/in/http/dto/enum/profile-type';
+import { ProfileType } from 'src/domain/model/profile/enum/profile-type';
 
 export class CreateProfileCommand {
   constructor(
@@ -9,6 +9,5 @@ export class CreateProfileCommand {
     public readonly gender: string,
     public readonly avatarMediaId?: string,
     public readonly pin?: string, // 해시 전 원본 PIN
-    public readonly voiceMediaId?: string,
   ) {}
 }

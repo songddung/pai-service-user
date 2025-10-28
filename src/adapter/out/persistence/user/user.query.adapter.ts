@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
+
 import { UserQueryPort } from 'src/application/port/out/user.query.port';
 import { User } from 'src/domain/model/user/entity/user.entity';
+import { PrismaService } from '../prisma/prisma.service';
+import { UserMapper } from './user.mapper';
 
 @Injectable()
 export class UserQueryAdapter implements UserQueryPort {
@@ -14,32 +16,32 @@ export class UserQueryAdapter implements UserQueryPort {
 
     if (!record) return null;
 
-    return User.rehydrate({
-      id: record.user_id,
+    return UserMapper.toDomain({
+      user_id: record.user_id,
       email: record.email,
-      passwordHash: record.password_hash,
+      password_hash: record.password_hash,
       address: record.address,
       latitude: record.latitude,
       longitude: record.longitude,
-      createdAt: record.created_at,
+      created_at: record.created_at,
     });
   }
 
   async findById(userId: number): Promise<User | null> {
     const record = await this.prisma.user.findUnique({
-      where: { user_id: BigInt(userId) },
+      where: { user_id: userId },
     });
 
     if (!record) return null;
 
-    return User.rehydrate({
-      id: record.user_id,
+    return UserMapper.toDomain({
+      user_id: record.user_id,
       email: record.email,
-      passwordHash: record.password_hash,
+      password_hash: record.password_hash,
       address: record.address,
       latitude: record.latitude,
       longitude: record.longitude,
-      createdAt: record.created_at,
+      created_at: record.created_at,
     });
   }
 

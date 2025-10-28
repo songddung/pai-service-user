@@ -1,6 +1,6 @@
 import { IsEnum } from 'class-validator';
 import { GetProfileRequestDto as IGetProfileRequestDto } from 'pai-shared-types';
-import type { ProfileType } from '../enum/profile-type';
+import type { ProfileType } from '../../../../../domain/model/profile/enum/profile-type';
 
 export class GetProfileRequestDto implements IGetProfileRequestDto {
   @IsEnum(['parent', 'child'], {

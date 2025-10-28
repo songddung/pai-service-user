@@ -5,7 +5,7 @@ import { PasswordHash } from '../vo/passwordHash.vo';
 // src/domain/model/user/user.entity.ts
 export class User {
   private constructor(
-    private readonly id: bigint | null, // 생성 시 null, DB 로드 후 값 존재
+    private readonly id: number | null, // 생성 시 null, DB 로드 후 값 존재
     private email: Email,
     private passwordHash: PasswordHash,
     private address: Address,
@@ -31,8 +31,8 @@ export class User {
     );
   }
 
-  static reconstitute(props: {
-    id: bigint; // 재구성 시 ID는 필수
+  static rehydrate(props: {
+    id: number; // 재구성 시 ID는 필수
     email: Email;
     passwordHash: PasswordHash;
     address: Address;
@@ -52,7 +52,7 @@ export class User {
   // ✅ Domain Getters (외부 노출)
   // =============================
 
-  getId(): bigint | null {
+  getId(): number | null {
     return this.id;
   }
 

@@ -27,7 +27,7 @@ export class UserRepositoryAdapter implements UserRepositoryPort {
     const dataToUpdate = UserMapper.toPersistence(user);
 
     const record = await this.prisma.user.update({
-      where: { user_id: BigInt(userId) },
+      where: { user_id: userId },
       data: dataToUpdate,
     });
 
@@ -40,7 +40,7 @@ export class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     await this.prisma.user.delete({
-      where: { user_id: BigInt(userId) },
+      where: { user_id: userId },
     });
   }
 }

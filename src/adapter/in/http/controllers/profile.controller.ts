@@ -27,7 +27,7 @@ import type { UpdateProfileUseCase } from 'src/application/port/in/update-profil
 import type { DeleteProfileUseCase } from 'src/application/port/in/delete-profile.use-case';
 import type { SelectProfileUseCase } from 'src/application/port/in/select-profile.use-case';
 import { USER_TOKENS } from '../../../../user.token';
-import { ProfileMapper } from '../../../../mapper/profile.mapper';
+import { ProfileMapper } from '../mapper/profile.mapper';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
 import type { GetProfilesUseCase } from 'src/application/port/in/get-profiles.use-case';

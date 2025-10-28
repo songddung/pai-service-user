@@ -3,7 +3,9 @@ export class Address {
     private readonly address: string,
     private readonly latitude: number,
     private readonly longitude: number,
-  ) {}
+  ) {
+    Object.freeze(this);
+  }
 
   static create(address: string, latitude: number, longitude: number): Address {
     if (!address || address.trim() === '') {
@@ -11,6 +13,12 @@ export class Address {
     }
     if (latitude === null || longitude === null) {
       throw new Error('유효한 주소가 아닙니다.');
+    }
+    if (latitude < -90 || latitude > 90) {
+      throw new Error('위도는  -90 ~ 90 사이여야 합니다.');
+    }
+    if (longitude < -180 || longitude > 180) {
+      throw new Error('경도는 -180 ~ 180 사이여야 합니다.');
     }
     return new Address(address, latitude, longitude);
   }

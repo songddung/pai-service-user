@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LogoutCommand } from '../application/command/logout.command';
+import { LogoutCommand } from '../../../../application/command/logout.command';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당

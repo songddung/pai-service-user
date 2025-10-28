@@ -1,8 +1,9 @@
-// src/adapter/out/security/auth.module.ts (별도 생성)
+// src/adapter/out/security/auth.module.ts
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { JwtTokenProvider } from './jwt/jwt-token.provider';
+import { BcryptPasswordHasher } from './bcrypt-password-hasher.adapter';
 import { USER_TOKENS } from '../../../user.token';
 
 @Module({
@@ -12,7 +13,11 @@ import { USER_TOKENS } from '../../../user.token';
       provide: USER_TOKENS.TokenProvider,
       useClass: JwtTokenProvider,
     },
+    {
+      provide: USER_TOKENS.PasswordHasher,
+      useClass: BcryptPasswordHasher,
+    },
   ],
-  exports: [USER_TOKENS.TokenProvider], // ← 다른 모듈에서 사용 가능하도록
+  exports: [USER_TOKENS.TokenProvider, USER_TOKENS.PasswordHasher],
 })
 export class AuthModule {}

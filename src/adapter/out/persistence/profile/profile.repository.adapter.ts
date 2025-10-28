@@ -16,7 +16,7 @@ export class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     }
 
     const data = {
-      user_id: BigInt(profile.getUserId()),
+      user_id: profile.getUserId(),
       profile_type: profile.getProfileType() as any,
       name: profile.getName(),
       birth_date: profile.getBirthDate(),
@@ -60,7 +60,7 @@ export class ProfileRepositoryAdapter implements ProfileRepositoryPort {
     }
 
     const updated = await this.prisma.profile.update({
-      where: { profile_id: BigInt(profile.getId()) },
+      where: { profile_id: profile.getId() },
       data: {
         name: profile.getName(),
         birth_date: profile.getBirthDate(),
@@ -95,7 +95,7 @@ export class ProfileRepositoryAdapter implements ProfileRepositoryPort {
 
   async delete(profileId: number): Promise<void> {
     await this.prisma.profile.delete({
-      where: { profile_id: BigInt(profileId) },
+      where: { profile_id: profileId },
     });
   }
 }

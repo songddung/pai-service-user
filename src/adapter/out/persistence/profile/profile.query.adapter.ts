@@ -10,7 +10,7 @@ export class ProfileQueryAdapter implements ProfileQueryPort {
 
   async findById(profileId: number): Promise<Profile | null> {
     const record = await this.prisma.profile.findUnique({
-      where: { profile_id: BigInt(profileId) },
+      where: { profile_id: profileId },
     });
 
     if (!record) return null;
@@ -35,7 +35,7 @@ export class ProfileQueryAdapter implements ProfileQueryPort {
 
   async findByUserId(userId: number): Promise<Profile[]> {
     const records = await this.prisma.profile.findMany({
-      where: { user_id: BigInt(userId) },
+      where: { user_id: userId },
       orderBy: { created_at: 'desc' },
     });
 
@@ -61,14 +61,14 @@ export class ProfileQueryAdapter implements ProfileQueryPort {
 
   async existsById(profileId: number): Promise<boolean> {
     const count = await this.prisma.profile.count({
-      where: { profile_id: BigInt(profileId) },
+      where: { profile_id: profileId },
     });
     return count > 0;
   }
 
   async countByUserId(userId: number): Promise<number> {
     return await this.prisma.profile.count({
-      where: { user_id: BigInt(userId) },
+      where: { user_id: userId },
     });
   }
 }

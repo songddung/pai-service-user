@@ -19,13 +19,11 @@ import { UpdateProfileService } from './application/use-cases/update-profile.ser
 import { DeleteProfileService } from './application/use-cases/delete-profile.service';
 
 // Query Adapter 구현체
-import { UserQueryAdapter } from './adapter/out/persistence/user.query.adapter';
 import { ProfileQueryAdapter } from './adapter/out/persistence/profile/profile.query.adapter';
 import { RedisRefreshTokenQueryAdapter } from './adapter/out/cache/redis-refresh-token.query.adapter';
 import { RedisTokenVersionQueryAdapter } from './adapter/out/cache/redis-token-version.query.adapter';
 
 // Repository Adapter 구현체
-import { UserRepositoryAdapter } from './adapter/out/persistence/user.repository.adapter';
 import { ProfileRepositoryAdapter } from './adapter/out/persistence/profile/profile.repository.adapter';
 import { RedisTokenVersionRepositoryAdapter } from './adapter/out/cache/redis-token-version.repository.adapter';
 
@@ -36,8 +34,8 @@ import { RedisModule } from './adapter/out/cache/redis.module';
 import { KakaoAddressAdapter } from './adapter/out/http/kakao/kakao-address.adapter';
 
 // Mapper
-import { ProfileMapper } from './mapper/profile.mapper';
-import { AuthMapper } from './mapper/auth.mapper';
+import { ProfileMapper } from './adapter/in/http/mapper/profile.mapper';
+import { AuthMapper } from './adapter/in/http/mapper/auth.mapper';
 
 // Guard
 import { BasicAuthGuard } from './adapter/in/http/auth/guards/basic-auth.guard';
@@ -46,6 +44,8 @@ import { ParentGuard } from './adapter/in/http/auth/guards/parent.guard';
 import { AuthModule } from './adapter/out/security/auth.module';
 import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-refresh-token.repository.adapter';
 import { GetProfilesService } from './application/use-cases/get-profiles.service';
+import { UserQueryAdapter } from './adapter/out/persistence/user/user.query.adapter';
+import { UserRepositoryAdapter } from './adapter/out/persistence/user/user.repository.adapter';
 
 @Module({
   imports: [AuthModule, RedisModule],

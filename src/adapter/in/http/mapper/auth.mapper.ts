@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SignupCommand } from '../application/command/signup.command';
+import { SignupCommand } from '../../../../application/command/signup.command';
 import { SignupRequestDto } from 'src/adapter/in/http/dto/request/signup-request.dto';
 import {
   LoginResponseData,
@@ -10,9 +10,9 @@ import { LoginRequestDto } from 'src/adapter/in/http/dto/request/login-request.d
 import { LoginCommand } from 'src/application/command/login.command';
 import { LogoutCommand } from 'src/application/command/logout.command';
 import { RefreshTokenCommand } from 'src/application/command/refresh-token.command';
-import { SignupResponseVO } from 'src/domain/model/user/vo/signup-response.vo';
-import { LoginResponseVO } from 'src/domain/model/user/vo/login-response.vo';
-import { RefreshTokenResponseVO } from 'src/domain/model/user/vo/refresh-token-response.vo';
+import { SignupResult } from 'src/application/port/in/result/signup.result.dto';
+import { LoginResult } from 'src/application/port/in/result/login.result.dto';
+import { RefreshTokenResult } from 'src/application/port/in/result/refresh-token.result.dto';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -30,11 +30,11 @@ export class AuthMapper {
     );
   }
 
-  toSignupResponse(vo: SignupResponseVO): SignupResponseData {
+  toSignupResponse(result: SignupResult): SignupResponseData {
     return {
-      userId: vo.getUserId(),
-      accessToken: vo.getAccessToken(),
-      refreshToken: vo.getRefreshToken(),
+      userId: result.userId,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
     };
   }
 
@@ -46,11 +46,11 @@ export class AuthMapper {
     );
   }
 
-  toLoginResponse(vo: LoginResponseVO): LoginResponseData {
+  toLoginResponse(result: LoginResult): LoginResponseData {
     return {
-      userId: vo.getUserId(),
-      accessToken: vo.getAccessToken(),
-      refreshToken: vo.getRefreshToken(),
+      userId: result.userId,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
     };
   }
 
@@ -64,10 +64,10 @@ export class AuthMapper {
     return new RefreshTokenCommand(userId, String(refreshToken ?? '').trim());
   }
 
-  toTokenResponse(vo: RefreshTokenResponseVO): RefreshTokenResponseData {
+  toTokenResponse(result: RefreshTokenResult): RefreshTokenResponseData {
     return {
-      accessToken: vo.getAccessToken(),
-      refreshToken: vo.getRefreshToken(),
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
     };
   }
 }

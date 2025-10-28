@@ -18,8 +18,8 @@ import { GetProfileCommand } from 'src/application/command/get-profile.command';
 import { GetProfilesResult } from 'src/application/port/in/result/get-profiles.result';
 import { SelectProfileResult } from 'src/application/port/in/result/select-profile.result';
 import { UpdateProfileResult } from 'src/application/port/in/result/update-profile.result';
-import { DeleteProfileResult } from 'src/application/port/in/result/delete-profile.result';
-import { CreateProfileResponseVO } from 'src/domain/model/profile/vo/create-profile-response.vo';
+import { CreateProfileResult } from 'src/application/port/in/result/create-profiile.result.dto';
+import { DeleteProfileResult } from 'src/application/port/in/result/delete-profile.result.dto';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -37,21 +37,20 @@ export class ProfileMapper {
       String(dto.name ?? '').trim(),
       String(dto.birthDate ?? '').trim(),
       dto.gender,
-      dto.avatarMediaId ? Number(dto.avatarMediaId) : undefined,
+      dto.avatarMediaId ? dto.avatarMediaId : undefined,
       dto.pin ? String(dto.pin).trim() : undefined,
-      dto.voiceMediaId ? Number(dto.voiceMediaId) : undefined,
     );
   }
 
-  toCreateResponse(vo: CreateProfileResponseVO): CreateProfileResponseData {
+  toCreateResponse(result: CreateProfileResult): CreateProfileResponseData {
     return {
-      profileId: vo.getProfileId(),
-      userId: vo.getUserId(),
-      profileType: vo.getProfileType,
-      name: vo.getName(),
-      birthDate: vo.getBirthDate(),
-      gender: vo.getGender(),
-      avatarMediaId: vo.getAvatarMediaId(),
+      profileId: result.profileId,
+      userId: result.userId,
+      profileType: result.profileType,
+      name: result.name,
+      birthDate: result.birthDate,
+      gender: result.gender,
+      avatarMediaId: result.avatarMediaId ?? undefined,
     };
   }
 
@@ -66,7 +65,7 @@ export class ProfileMapper {
   toGetProfileResponse(result: GetProfilesResult): GetProfilesResponseData {
     return {
       profiles: result.profiles.map((profile) => ({
-        profileId: profile.getId(),
+        profileId: String(profile.getId()),
         profileType: profile.getProfileType(),
         name: profile.getName(),
         birthDate: profile.getBirthDate().toISOString().split('T')[0],
@@ -92,7 +91,7 @@ export class ProfileMapper {
 
   toSelectResponse(result: SelectProfileResult): SelectProfileResponseData {
     return {
-      profileId: result.profileId,
+      profileId: String(result.profileId),
       userId: result.userId,
       profileType: result.profileType,
       accessToken: result.accessToken,
@@ -112,15 +111,15 @@ export class ProfileMapper {
       dto.name ? String(dto.name).trim() : undefined,
       dto.birthDate ? String(dto.birthDate).trim() : undefined,
       dto.gender,
-      dto.avatarMediaId ? Number(dto.avatarMediaId) : undefined,
-      dto.voiceMediaId ? Number(dto.voiceMediaId) : undefined,
+      dto.avatarMediaId ? dto.avatarMediaId : undefined,
+      dto.voiceMediaId ? dto.voiceMediaId : undefined,
       dto.pin ? String(dto.pin).trim() : undefined,
     );
   }
 
   toUpdateResponse(result: UpdateProfileResult): UpdateProfileResponseData {
     return {
-      profileId: result.profileId,
+      profileId: String(result.profileId),
       userId: result.userId,
       profileType: result.profileType,
       name: result.name,
@@ -138,7 +137,7 @@ export class ProfileMapper {
 
   toDeleteResponse(result: DeleteProfileResult): DeleteProfileResponseData {
     return {
-      profileId: result.profileId,
+      profileId: String(result.profileId),
       deletedAt: result.deletedAt,
     };
   }

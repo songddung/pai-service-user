@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import type { SignupRequestDto, SignupResponseData } from 'pai-shared-types';
-import { SignupCommand } from '../application/command/signup.command';
+import { SignupCommand } from '../../../../application/command/signup.command';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -11,7 +11,9 @@ import { SignupCommand } from '../application/command/signup.command';
 export class SignupMapper {
   toCommand(dto: SignupRequestDto): SignupCommand {
     return new SignupCommand(
-      String(dto.email ?? '').trim().toLowerCase(),
+      String(dto.email ?? '')
+        .trim()
+        .toLowerCase(),
       String(dto.password ?? ''),
       String(dto.address ?? '').trim(),
     );

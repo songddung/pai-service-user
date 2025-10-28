@@ -1,4 +1,4 @@
-import { ProfileType } from 'src/adapter/in/http/dto/enum/profile-type';
+import { ProfileType } from 'src/domain/model/profile/enum/profile-type';
 
 export class CreateProfileResponseVO {
   private constructor(

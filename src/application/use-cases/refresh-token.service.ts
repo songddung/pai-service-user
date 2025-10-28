@@ -6,7 +6,7 @@ import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repos
 import type { TokenVersionRepositoryPort } from '../port/out/token-version.repository.port';
 import type { TokenProvider } from '../port/out/token.provider';
 import { USER_TOKENS } from '../../user.token';
-import { RefreshTokenResponseVO } from 'src/domain/model/user/vo/refresh-token-response.vo';
+import { RefreshTokenResult } from '../port/in/result/refresh-token.result.dto';
 
 @Injectable()
 export class RefreshTokenService implements RefreshTokenUseCase {
@@ -24,7 +24,7 @@ export class RefreshTokenService implements RefreshTokenUseCase {
     private readonly tokenProvider: TokenProvider,
   ) {}
 
-  async execute(command: RefreshTokenCommand): Promise<RefreshTokenResponseVO> {
+  async execute(command: RefreshTokenCommand): Promise<RefreshTokenResult> {
     // 1. Redis에 저장된 RefreshToken과 비교하여 검증
     const isValid = await this.refreshTokenQuery.verify(
       command.userId,
@@ -53,9 +53,9 @@ export class RefreshTokenService implements RefreshTokenUseCase {
       7 * 24 * 60 * 60, // 7일 (초 단위)
     );
 
-    return RefreshTokenResponseVO.create(
-      tokenPair.accessToken,
-      tokenPair.refreshToken,
-    );
+    return {
+      accessToken: tokenPair.accessToken,
+      refreshToken: tokenPair.refreshToken,
+    };
   }
 }

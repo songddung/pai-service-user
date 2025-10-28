@@ -1,5 +1,7 @@
 export class PasswordHash {
-  private constructor(private readonly value: string) {}
+  private constructor(private readonly value: string) {
+    Object.freeze(this);
+  }
 
   static create(value: string): PasswordHash {
     if (!value || value.length < 60) {

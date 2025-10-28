@@ -3,6 +3,7 @@ import { GetProfilesUseCase } from '../port/in/get-profiles.use-case';
 import type { ProfileQueryPort } from '../port/out/profile.query.port';
 import { USER_TOKENS } from 'src/user.token';
 import { GetProfileCommand } from '../command/get-profile.command';
+
 import { GetProfilesResult } from '../port/in/result/get-profiles.result';
 
 @Injectable()

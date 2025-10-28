@@ -11,6 +11,7 @@ import type { ProfileQueryPort } from 'src/application/port/out/profile.query.po
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import { USER_TOKENS } from '../../user.token';
 import { Profile } from 'src/domain/model/profile/entity/profile.entity';
+import { UpdateProfileResult } from '../port/in/result/update-profile.result';
 
 @Injectable()
 export class UpdateProfileService implements UpdateProfileUseCase {
@@ -22,9 +23,7 @@ export class UpdateProfileService implements UpdateProfileUseCase {
     private readonly profileRepository: ProfileRepositoryPort,
   ) {}
 
-  async execute(
-    command: UpdateProfileCommand,
-  ): Promise<UpdateProfileResponseVO> {
+  async execute(command: UpdateProfileCommand): Promise<UpdateProfileResult> {
     // 1) 프로필 존재 여부 확인
     const profile = await this.profileQuery.findById(command.profileId);
     if (!profile) {

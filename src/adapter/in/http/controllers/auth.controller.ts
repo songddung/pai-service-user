@@ -16,7 +16,7 @@ import { USER_TOKENS } from '../../../../user.token';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
 import { CheckEmailDto } from '../dto/request/check-email.dto';
-import { AuthMapper } from 'src/mapper/auth.mapper';
+import { AuthMapper } from 'src/adapter/in/http/mapper/auth.mapper';
 
 @Controller('api/auth')
 export class AuthController {

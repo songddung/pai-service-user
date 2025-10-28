@@ -20,7 +20,7 @@ export class UserMapper {
       throw new Error('DB이상');
     }
 
-    return User.reconstitute({
+    return User.rehydrate({
       id: record.user_id,
       email: emailVO,
       passwordHash: passwordHashVO,
@@ -29,18 +29,21 @@ export class UserMapper {
     });
   }
 
-  static toPersistence(user: User): any { // 반환 타입은 Prisma의 'data' 객체와 동일
-        const address = user.getAddress();
-        
-        return {
-            // VO에서 내부 값(.getValue())을 추출합니다.
-            email: user.getEmail().getValue(),
-            password_hash: user.getPasswordHash().getValue(),
-            
-            // Address VO에서 필수 속성을 추출합니다.
-            address: address.getAddress(), 
-            latitude: address.getLatitude(),
-            longitude: address.getLongitude(),
-        };
-    }
+  static toPersistence(user: User): any {
+    // 반환 타입은 Prisma의 'data' 객체와 동일
+    const address = user.getAddress();
+
+    return {
+      user_id: user.getId(),
+      // VO에서 내부 값(.getValue())을 추출합니다.
+      email: user.getEmail().getValue(),
+      password_hash: user.getPasswordHash().getValue(),
+
+      // Address VO에서 필수 속성을 추출합니다.
+      address: address.getAddress(),
+      latitude: address.getLatitude(),
+      longitude: address.getLongitude(),
+      created_at: user.getCreatedAt(),
+    };
+  }
 }

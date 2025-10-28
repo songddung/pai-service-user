@@ -9,7 +9,7 @@ import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import { Profile } from 'src/domain/model/profile/entity/profile.entity';
 import { USER_TOKENS } from '../../user.token';
-import { CreateProfileResponseVO } from 'src/domain/model/profile/vo/create-profile-response.vo';
+import { CreateProfileResult } from '../port/in/result/create-profiile.result.dto';
 
 @Injectable()
 export class CreateProfileService implements CreateProfileUseCase {
@@ -24,9 +24,7 @@ export class CreateProfileService implements CreateProfileUseCase {
     private readonly tokenProvider: TokenProvider,
   ) {}
 
-  async execute(
-    command: CreateProfileCommand,
-  ): Promise<CreateProfileResponseVO> {
+  async execute(command: CreateProfileCommand): Promise<CreateProfileResult> {
     // 1) 생년월일 형식 검증 및 변환
     const birthDate = this.parseBirthDate(command.birthDate);
 
@@ -52,22 +50,21 @@ export class CreateProfileService implements CreateProfileUseCase {
       gender: command.gender,
       avatarMediaId: command.avatarMediaId,
       pinHash,
-      voiceMediaId: command.voiceMediaId,
     });
 
     // 4) 저장
     const saved = await this.profileRepository.save(profile);
 
     // 5) 결과 반환
-    return CreateProfileResponseVO.create(
-      saved.getId(),
-      command.userId,
-      saved.getProfileType(),
-      saved.getName(),
-      saved.getBirthDate().toISOString().split('T')[0],
-      saved.getGender(),
-      saved.getAvatarMediaId()?.toString(),
-    );
+    return {
+      userId: command.userId,
+      profileId: saved.getId(),
+      profileType: saved.getProfileType(),
+      name: saved.getName(),
+      birthDate: saved.getBirthDate().toISOString().split('T')[0],
+      gender: saved.getGender() ?? '',
+      avatarMediaId: saved.getAvatarMediaId() ?? null,
+    };
   }
 
   private parseBirthDate(dateString: string): Date {
