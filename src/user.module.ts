@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 // Controllers
 import { AuthController } from './adapter/in/http/controllers/auth.controller';
 import { ProfileController } from './adapter/in/http/controllers/profile.controller';
+import { InternalController } from './adapter/in/http/controllers/internal.controller';
 
 // Tokens
 import { USER_TOKENS } from './user.token';
@@ -49,7 +50,7 @@ import { UserRepositoryAdapter } from './adapter/out/persistence/user/user.repos
 
 @Module({
   imports: [AuthModule, RedisModule],
-  controllers: [AuthController, ProfileController],
+  controllers: [AuthController, ProfileController, InternalController],
   providers: [
     // Guard
     BasicAuthGuard,
