@@ -11,7 +11,9 @@ export class ProfileMapper {
     const nameVO = ProfileName.create(record.name);
     const birthDateVO = BirthDate.create(record.birth_date);
     const genderVO = Gender.create(record.gender);
-    const pinHashVO = record.pin_hash ? PinHash.create(record.pin_hash) : undefined;
+    const pinHashVO = record.pin_hash
+      ? PinHash.create(record.pin_hash)
+      : undefined;
 
     return Profile.rehydrate({
       id: Number(record.profile_id),

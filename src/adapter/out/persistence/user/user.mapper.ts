@@ -34,7 +34,6 @@ export class UserMapper {
     const address = user.getAddress();
 
     return {
-      user_id: user.getId(),
       // VO에서 내부 값(.getValue())을 추출합니다.
       email: user.getEmail().getValue(),
       password_hash: user.getPasswordHash().getValue(),

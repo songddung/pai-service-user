@@ -31,6 +31,7 @@ import { ProfileMapper } from '../mapper/profile.mapper';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
 import type { GetProfilesUseCase } from 'src/application/port/in/get-profiles.use-case';
+import { GetProfileCommand } from 'src/application/command/get-profile.command';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -120,10 +121,9 @@ export class ProfileController {
 
   @Get()
   async getProfiles(
-    @Body() dto: GetProfileRequestDto,
     @Auth('userId') userId: number,
   ): Promise<BaseResponse<GetProfilesResponseData>> {
-    const command = this.profileMapper.toGetProfileCommand(dto, userId);
+    const command = new GetProfileCommand(userId, 'all');
     const result = await this.getProfilesUseCase.execute(command);
     const response = this.profileMapper.toGetProfileResponse(result);
 
