@@ -3,7 +3,6 @@ import type {
   CreateProfileRequestDto,
   CreateProfileResponseData,
   DeleteProfileResponseData,
-  GetProfileRequestDto,
   GetProfilesResponseData,
   SelectProfileRequestDto,
   SelectProfileResponseData,
@@ -20,6 +19,7 @@ import { SelectProfileResult } from 'src/application/port/in/result/select-profi
 import { UpdateProfileResult } from 'src/application/port/in/result/update-profile.result';
 import { CreateProfileResult } from 'src/application/port/in/result/create-profiile.result.dto';
 import { DeleteProfileResult } from 'src/application/port/in/result/delete-profile.result.dto';
+import type { GetProfileType } from 'src/domain/model/profile/enum/profile-type';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -50,16 +50,18 @@ export class ProfileMapper {
       name: result.name,
       birthDate: result.birthDate,
       gender: result.gender,
-      avatarMediaId: result.avatarMediaId ? String(result.avatarMediaId) : undefined,
+      avatarMediaId: result.avatarMediaId
+        ? String(result.avatarMediaId)
+        : undefined,
     };
   }
 
   // 전체 프로필 조회
   toGetProfileCommand(
-    dto: GetProfileRequestDto,
     userId: number,
+    profileType: GetProfileType,
   ): GetProfileCommand {
-    return new GetProfileCommand(userId, dto.profileType);
+    return new GetProfileCommand(userId, profileType);
   }
 
   toGetProfileResponse(result: GetProfilesResult): GetProfilesResponseData {
@@ -68,10 +70,18 @@ export class ProfileMapper {
         profileId: String(profile.getId()),
         profileType: profile.getProfileType(),
         name: profile.getName().getValue(),
-        birthDate: profile.getBirthDate().getValue().toISOString().split('T')[0],
+        birthDate: profile
+          .getBirthDate()
+          .getValue()
+          .toISOString()
+          .split('T')[0],
         gender: profile.getGender().getValue(),
-        avatarMediaId: profile.getAvatarMediaId() ? String(profile.getAvatarMediaId()) : undefined,
-        voiceMediaId: profile.getVoiceMediaId() ? String(profile.getVoiceMediaId()) : undefined,
+        avatarMediaId: profile.getAvatarMediaId()
+          ? String(profile.getAvatarMediaId())
+          : undefined,
+        voiceMediaId: profile.getVoiceMediaId()
+          ? String(profile.getVoiceMediaId())
+          : undefined,
         createdAt: profile.getCreatedAt()?.toISOString() ?? '',
       })),
     };
@@ -125,8 +135,12 @@ export class ProfileMapper {
       name: result.name,
       birthDate: result.birthDate,
       gender: result.gender,
-      avatarMediaId: result.avatarMediaId ? String(result.avatarMediaId) : undefined,
-      voiceMediaId: result.voiceMediaId ? String(result.voiceMediaId) : undefined,
+      avatarMediaId: result.avatarMediaId
+        ? String(result.avatarMediaId)
+        : undefined,
+      voiceMediaId: result.voiceMediaId
+        ? String(result.voiceMediaId)
+        : undefined,
     };
   }
 

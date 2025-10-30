@@ -9,12 +9,12 @@ import {
   Inject,
   UseGuards,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import type {
   BaseResponse,
   CreateProfileResponseData,
   DeleteProfileResponseData,
-  GetProfileRequestDto,
   GetProfilesResponseData,
   SelectProfileResponseData,
   UpdateProfileResponseData,
@@ -32,6 +32,7 @@ import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
 import type { GetProfilesUseCase } from 'src/application/port/in/get-profiles.use-case';
 import { GetProfileCommand } from 'src/application/command/get-profile.command';
+import type { GetProfileType } from 'src/domain/model/profile/enum/profile-type';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -122,46 +123,15 @@ export class ProfileController {
   @Get()
   async getProfiles(
     @Auth('userId') userId: number,
+    @Query('profileType') profileType: GetProfileType,
   ): Promise<BaseResponse<GetProfilesResponseData>> {
-    const command = new GetProfileCommand(userId, 'all');
+    const command = this.profileMapper.toGetProfileCommand(userId, profileType);
     const result = await this.getProfilesUseCase.execute(command);
     const response = this.profileMapper.toGetProfileResponse(result);
 
     return {
       success: true,
       message: '프로필 조회 성공',
-      data: response,
-    };
-  }
-
-  @Get('parent')
-  async getParentProfiles(
-    @Body() dto: GetProfileRequestDto,
-    @Auth('userId') userId: number,
-  ): Promise<BaseResponse<GetProfilesResponseData>> {
-    const command = this.profileMapper.toGetProfileCommand(dto, userId);
-    const result = await this.getProfilesUseCase.execute(command);
-    const response = this.profileMapper.toGetProfileResponse(result);
-
-    return {
-      success: true,
-      message: '부모 프로필 조회 성공',
-      data: response,
-    };
-  }
-
-  @Get('child')
-  async getChildProfiles(
-    @Body() dto: GetProfileRequestDto,
-    @Auth('userId') userId: number,
-  ): Promise<BaseResponse<GetProfilesResponseData>> {
-    const command = this.profileMapper.toGetProfileCommand(dto, userId);
-    const result = await this.getProfilesUseCase.execute(command);
-    const response = this.profileMapper.toGetProfileResponse(result);
-
-    return {
-      success: true,
-      message: '아이 프로필 조회 성공',
       data: response,
     };
   }
