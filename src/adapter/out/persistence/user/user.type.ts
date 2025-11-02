@@ -1,9 +1,3 @@
-export type UserRecord = {
-  user_id: number;
-  email: string;
-  password_hash: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  created_at: Date;
-};
+import { User as PrismaUser } from '@prisma/client';
+
+export type UserRecord = PrismaUser;

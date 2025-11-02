@@ -21,12 +21,6 @@ export class CreateProfileService implements CreateProfileUseCase {
     @Inject(USER_TOKENS.ProfileRepositoryPort)
     private readonly profileRepository: ProfileRepositoryPort,
 
-    @Inject(USER_TOKENS.TokenVersionRepositoryPort)
-    private readonly tokenVersionRepository: TokenVersionRepositoryPort,
-
-    @Inject(USER_TOKENS.TokenProvider)
-    private readonly tokenProvider: TokenProvider,
-
     @Inject(USER_TOKENS.PasswordHasher)
     private readonly passwordHasher: PasswordHasher,
   ) {}

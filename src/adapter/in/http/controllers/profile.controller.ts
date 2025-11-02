@@ -31,7 +31,6 @@ import { ProfileMapper } from '../mapper/profile.mapper';
 import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
 import type { GetProfilesUseCase } from 'src/application/port/in/get-profiles.use-case';
-import { GetProfileCommand } from 'src/application/command/get-profile.command';
 import type { GetProfileType } from 'src/domain/model/profile/enum/profile-type';
 
 @UseGuards(BasicAuthGuard)
@@ -61,8 +60,8 @@ export class ProfileController {
     @Auth('userId') userId: number,
   ): Promise<BaseResponse<CreateProfileResponseData>> {
     const command = this.profileMapper.toCreateCommand(dto, userId);
-    const vo = await this.createProfileUseCase.execute(command);
-    const response = this.profileMapper.toCreateResponse(vo);
+    const result = await this.createProfileUseCase.execute(command);
+    const response = this.profileMapper.toCreateResponse(result);
 
     return {
       success: true,
