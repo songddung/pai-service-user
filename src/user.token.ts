@@ -26,6 +26,7 @@ export const USER_TOKENS = {
   // External Services (Output Ports)
   KakaoAddressService: Symbol('KakaoAddressService'),
   GeocodingService: Symbol('GeocodingService'),
+  MediaServicePort: Symbol('MediaServicePort'),
 
   // Security (Output Ports)
   TokenProvider: Symbol('TokenProvider'),

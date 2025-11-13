@@ -33,6 +33,7 @@ import { RedisModule } from './adapter/out/cache/redis.module';
 
 // Kakao API Adapter 구현체
 import { KakaoAddressAdapter } from './adapter/out/http/kakao/kakao-address.adapter';
+import { MediaServiceAdapter } from './adapter/out/external/media-service.adapter';
 
 // Mapper
 import { ProfileMapper } from './adapter/in/http/mapper/profile.mapper';
@@ -123,6 +124,7 @@ import { UserRepositoryAdapter } from './adapter/out/persistence/user/user.repos
 
     // External API 바인딩 (Kakao)
     { provide: USER_TOKENS.KakaoAddressService, useClass: KakaoAddressAdapter },
+    { provide: USER_TOKENS.MediaServicePort, useClass: MediaServiceAdapter },
   ],
 })
 export class UserModule {}

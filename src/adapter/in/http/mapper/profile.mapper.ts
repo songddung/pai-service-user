@@ -66,7 +66,7 @@ export class ProfileMapper {
 
   toGetProfileResponse(result: GetProfilesResult): GetProfilesResponseData {
     return {
-      profiles: result.profiles.map((profile) => ({
+      profiles: result.profiles.map((profile, index) => ({
         profileId: String(profile.getId()),
         profileType: profile.getProfileType(),
         name: profile.getName().getValue(),
@@ -79,6 +79,7 @@ export class ProfileMapper {
         avatarMediaId: profile.getAvatarMediaId()
           ? String(profile.getAvatarMediaId())
           : undefined,
+        avatarUrl: result.avatarUrls?.[index],
         voiceMediaId: profile.getVoiceMediaId()
           ? String(profile.getVoiceMediaId())
           : undefined,
