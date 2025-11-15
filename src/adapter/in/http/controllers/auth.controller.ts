@@ -92,13 +92,13 @@ export class AuthController {
     };
   }
 
-  @UseGuards(BasicAuthGuard)
   @Post('refresh')
   async refresh(
-    @Auth('userId') userId: number,
     @Body('refreshToken') refreshToken: string,
   ): Promise<BaseResponse<RefreshTokenResponseData>> {
-    const command = this.authMapper.toTokenCommand(userId, refreshToken);
+    // refreshToken에서 userId를 추출하여 사용
+    // RefreshTokenUseCase에서 refreshToken을 검증하고 userId를 가져옴
+    const command = this.authMapper.toTokenCommand(refreshToken);
     const vo = await this.refreshTokenUseCase.execute(command);
     const response = this.authMapper.toTokenResponse(vo);
 

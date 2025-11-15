@@ -25,9 +25,19 @@ export class RefreshTokenService implements RefreshTokenUseCase {
   ) {}
 
   async execute(command: RefreshTokenCommand): Promise<RefreshTokenResult> {
+    // 0. RefreshToken에서 userId 추출 (JWT 검증)
+    let payload;
+    try {
+      payload = await this.tokenProvider.verifyRefreshToken(command.refreshToken);
+    } catch (error) {
+      throw new UnauthorizedException('유효하지 않은 RefreshToken입니다.');
+    }
+
+    const userId = payload.userId;
+
     // 1. Redis에 저장된 RefreshToken과 비교하여 검증
     const isValid = await this.refreshTokenQuery.verify(
-      command.userId,
+      userId,
       command.refreshToken,
     );
 
@@ -37,7 +47,7 @@ export class RefreshTokenService implements RefreshTokenUseCase {
 
     // 2. 토큰 버전 증가 (이전 토큰 모두 무효화)
     const newTokenVersion = await this.tokenVersionRepository.incrementVersion(
-      command.userId,
+      userId,
     );
 
     // 3. 새로운 토큰 쌍 발급 (AccessToken + RefreshToken)
@@ -48,7 +58,7 @@ export class RefreshTokenService implements RefreshTokenUseCase {
 
     // 4. Redis에 새로운 RefreshToken 저장 (기존 것을 교체)
     await this.refreshTokenRepository.save(
-      command.userId,
+      userId,
       tokenPair.refreshToken,
       7 * 24 * 60 * 60, // 7일 (초 단위)
     );

@@ -60,8 +60,8 @@ export class AuthMapper {
   }
 
   // 토큰 재발급
-  toTokenCommand(userId: number, refreshToken: string): RefreshTokenCommand {
-    return new RefreshTokenCommand(userId, String(refreshToken ?? '').trim());
+  toTokenCommand(refreshToken: string): RefreshTokenCommand {
+    return new RefreshTokenCommand(String(refreshToken ?? '').trim());
   }
 
   toTokenResponse(result: RefreshTokenResult): RefreshTokenResponseData {

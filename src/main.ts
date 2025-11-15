@@ -15,8 +15,11 @@ async function bootstrap() {
     }),
   );
 
-  // 필요하면 CORS
-  // app.enableCors();
+  // CORS 활성화
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
 
   const port = parseInt(process.env.PORT ?? '3001', 10);
   await app.listen(port, '0.0.0.0'); // 컨테이너 외부에서도 접근 가능
