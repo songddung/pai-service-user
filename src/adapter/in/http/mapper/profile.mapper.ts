@@ -72,6 +72,7 @@ export class ProfileMapper {
     const profileEntity = result.profile;
     const profileDto: ProfileDto = {
       profileId: String(profileEntity.getId()),
+      userId: String(profileEntity.getUserId()),
       profileType: profileEntity.getProfileType(),
       name: profileEntity.getName().getValue(),
       birthDate: String(profileEntity.getBirthDate().getValue().toISOString()),
@@ -97,6 +98,7 @@ export class ProfileMapper {
     return {
       profiles: result.profiles.map((profile, index) => ({
         profileId: String(profile.getId()),
+        userId: result.userId,
         profileType: profile.getProfileType(),
         name: profile.getName().getValue(),
         birthDate: profile
@@ -108,7 +110,6 @@ export class ProfileMapper {
         avatarMediaId: profile.getAvatarMediaId()
           ? String(profile.getAvatarMediaId())
           : undefined,
-        avatarUrl: result.avatarUrls?.[index],
         voiceMediaId: profile.getVoiceMediaId()
           ? String(profile.getVoiceMediaId())
           : undefined,

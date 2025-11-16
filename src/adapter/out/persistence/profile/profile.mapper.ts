@@ -4,7 +4,6 @@ import { ProfileName } from 'src/domain/model/profile/vo/profile-name.vo';
 import { BirthDate } from 'src/domain/model/profile/vo/birth-date.vo';
 import { Gender } from 'src/domain/model/profile/vo/gender.vo';
 import { PinHash } from 'src/domain/model/profile/vo/pin-hash.vo';
-import type { ProfileType } from 'pai-shared-types';
 
 export class ProfileMapper {
   static toDomain(record: ProfileRecord): Profile {
@@ -18,7 +17,7 @@ export class ProfileMapper {
     return Profile.rehydrate({
       id: Number(record.profile_id),
       userId: Number(record.user_id),
-      profileType: record.profile_type as ProfileType,
+      profileType: record.profile_type as 'parent' | 'child',
       name: nameVO,
       birthDate: birthDateVO,
       gender: genderVO,

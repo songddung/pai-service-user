@@ -17,6 +17,6 @@ export class GetProfileIdService implements GetProfileIdUseCase {
     if (!profile) {
       throw new Error(`Profile with ID ${command.profileId} not found.`);
     }
-    return { profile };
+    return { profile: profile, userId: String(command.userId) };
   }
 }
