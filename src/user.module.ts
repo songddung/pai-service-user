@@ -18,15 +18,20 @@ import { CreateProfileService } from './application/use-cases/create-profile.ser
 import { SelectProfileService } from './application/use-cases/select-profile.service';
 import { UpdateProfileService } from './application/use-cases/update-profile.service';
 import { DeleteProfileService } from './application/use-cases/delete-profile.service';
+import { GetProfileIdService } from './application/use-cases/get-profileId.service';
+import { GetProfilesService } from './application/use-cases/get-profiles.service';
 
 // Query Adapter 구현체
 import { ProfileQueryAdapter } from './adapter/out/persistence/profile/profile.query.adapter';
 import { RedisRefreshTokenQueryAdapter } from './adapter/out/cache/redis-refresh-token.query.adapter';
 import { RedisTokenVersionQueryAdapter } from './adapter/out/cache/redis-token-version.query.adapter';
+import { UserQueryAdapter } from './adapter/out/persistence/user/user.query.adapter';
 
 // Repository Adapter 구현체
 import { ProfileRepositoryAdapter } from './adapter/out/persistence/profile/profile.repository.adapter';
 import { RedisTokenVersionRepositoryAdapter } from './adapter/out/cache/redis-token-version.repository.adapter';
+import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-refresh-token.repository.adapter';
+import { UserRepositoryAdapter } from './adapter/out/persistence/user/user.repository.adapter';
 
 // Redis Module
 import { RedisModule } from './adapter/out/cache/redis.module';
@@ -44,10 +49,6 @@ import { BasicAuthGuard } from './adapter/in/http/auth/guards/basic-auth.guard';
 import { ParentGuard } from './adapter/in/http/auth/guards/parent.guard';
 
 import { AuthModule } from './adapter/out/security/auth.module';
-import { RedisRefreshTokenRepositoryAdapter } from './adapter/out/cache/redis-refresh-token.repository.adapter';
-import { GetProfilesService } from './application/use-cases/get-profiles.service';
-import { UserQueryAdapter } from './adapter/out/persistence/user/user.query.adapter';
-import { UserRepositoryAdapter } from './adapter/out/persistence/user/user.repository.adapter';
 
 @Module({
   imports: [AuthModule, RedisModule],
@@ -90,6 +91,10 @@ import { UserRepositoryAdapter } from './adapter/out/persistence/user/user.repos
     {
       provide: USER_TOKENS.GetProfilesUseCase,
       useClass: GetProfilesService,
+    },
+    {
+      provide: USER_TOKENS.GetProfileIdUseCase,
+      useClass: GetProfileIdService,
     },
 
     // Query 바인딩 (읽기)

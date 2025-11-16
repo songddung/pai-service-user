@@ -15,6 +15,7 @@ import type {
   BaseResponse,
   CreateProfileResponseData,
   DeleteProfileResponseData,
+  GetProfileResponseData,
   GetProfilesResponseData,
   SelectProfileResponseData,
   UpdateProfileResponseData,
@@ -32,6 +33,7 @@ import { BasicAuthGuard } from '../auth/guards/basic-auth.guard';
 import { Auth } from '../decorators/auth.decorator';
 import type { GetProfilesUseCase } from 'src/application/port/in/get-profiles.use-case';
 import type { GetProfileType } from 'src/domain/model/profile/enum/profile-type';
+import type { GetProfileIdUseCase } from 'src/application/port/in/get-profileId.use-case';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -52,6 +54,9 @@ export class ProfileController {
 
     @Inject(USER_TOKENS.GetProfilesUseCase)
     private readonly getProfilesUseCase: GetProfilesUseCase,
+
+    @Inject(USER_TOKENS.GetProfileIdUseCase)
+    private readonly getProfileIdUseCase: GetProfileIdUseCase,
   ) {}
 
   @Post()
@@ -128,6 +133,21 @@ export class ProfileController {
     const result = await this.getProfilesUseCase.execute(command);
     const response = this.profileMapper.toGetProfileResponse(result);
 
+    return {
+      success: true,
+      message: '프로필 조회 성공',
+      data: response,
+    };
+  }
+
+  @Get(':profileId')
+  async getProfileId(
+    @Auth('userId') userId: number,
+    @Param('profileId', ParseIntPipe) profileId: number,
+  ): Promise<BaseResponse<GetProfileResponseData>> {
+    const command = this.profileMapper.toGetProfileIdCommand(userId, profileId);
+    const result = await this.getProfileIdUseCase.execute(command);
+    const response = this.profileMapper.toGetProfileIdResponse(result);
     return {
       success: true,
       message: '프로필 조회 성공',

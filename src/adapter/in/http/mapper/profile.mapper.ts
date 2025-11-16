@@ -3,7 +3,9 @@ import type {
   CreateProfileRequestDto,
   CreateProfileResponseData,
   DeleteProfileResponseData,
+  GetProfileResponseData,
   GetProfilesResponseData,
+  ProfileDto,
   SelectProfileRequestDto,
   SelectProfileResponseData,
   UpdateProfileRequestDto,
@@ -20,6 +22,8 @@ import { UpdateProfileResult } from 'src/application/port/in/result/update-profi
 import { CreateProfileResult } from 'src/application/port/in/result/create-profiile.result.dto';
 import { DeleteProfileResult } from 'src/application/port/in/result/delete-profile.result.dto';
 import type { GetProfileType } from 'src/domain/model/profile/enum/profile-type';
+import { GetProfileIdCommand } from 'src/application/command/get-profileId.command';
+import { GetProfileIdResult } from 'src/application/port/in/result/get-profileId.result';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -53,6 +57,31 @@ export class ProfileMapper {
       avatarMediaId: result.avatarMediaId
         ? String(result.avatarMediaId)
         : undefined,
+    };
+  }
+
+  // 단일 프로필 조회
+  toGetProfileIdCommand(
+    userId: number,
+    profileId: number,
+  ): GetProfileIdCommand {
+    return new GetProfileIdCommand(userId, profileId);
+  }
+
+  toGetProfileIdResponse(result: GetProfileIdResult): GetProfileResponseData {
+    const profileEntity = result.profile;
+    const profileDto: ProfileDto = {
+      profileId: String(profileEntity.getId()),
+      profileType: profileEntity.getProfileType(),
+      name: profileEntity.getName().getValue(),
+      birthDate: String(profileEntity.getBirthDate().getValue().toISOString()),
+      gender: String(profileEntity.getGender().getValue()),
+      avatarMediaId: String(profileEntity.getAvatarMediaId()),
+      voiceMediaId: String(profileEntity.getVoiceMediaId()),
+      createdAt: profileEntity.getCreatedAt()!.toISOString(),
+    };
+    return {
+      profile: profileDto,
     };
   }
 
