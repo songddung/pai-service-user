@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.24.1",
     "@nestjs/axios": "github:nestjs/axios",
     "@nestjs/cache-manager": "^3.0.1",
     "@nestjs/common": "^11.0.1",
@@ -37,7 +38,7 @@
     "ioredis": "^5.8.1",
     "jose": "^6.1.0",
     "npm": "^11.6.2",
-    "pai-shared-types": "^2.0.31",
+    "pai-shared-types": "^2.1.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
@@ -54,6 +55,7 @@
     "@types/cache-manager": "^4.0.6",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
+    "@types/multer": "^2.0.0",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",

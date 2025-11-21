@@ -118,6 +118,10 @@ export class Profile {
     this.avatarMediaId = avatarMediaId;
   }
 
+  updateVoice(voiceId: string): void {
+    this.voiceMediaId = voiceId;
+  }
+
   updatePin(pinHash: PinHash): void {
     if (this.profileType !== 'parent') {
       throw new Error('부모 프로필만 PIN을 설정할 수 있습니다.');

@@ -10,10 +10,12 @@ import {
   UseGuards,
   ParseIntPipe,
   Query,
+  UploadedFiles,
 } from '@nestjs/common';
 import type {
   BaseResponse,
   CreateProfileResponseData,
+  CreateVoiceResponseData,
   DeleteProfileResponseData,
   GetProfileResponseData,
   GetProfilesResponseData,
@@ -34,6 +36,8 @@ import { Auth } from '../decorators/auth.decorator';
 import type { GetProfilesUseCase } from 'src/application/port/in/get-profiles.use-case';
 import type { GetProfileType } from 'src/domain/model/profile/enum/profile-type';
 import type { GetProfileIdUseCase } from 'src/application/port/in/get-profileId.use-case';
+import { CreateVoiceRequestDto } from '../dto/request/create-voice-request.dto';
+import { CreateVoiceService } from 'src/application/use-cases/create-voice.service';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -57,6 +61,9 @@ export class ProfileController {
 
     @Inject(USER_TOKENS.GetProfileIdUseCase)
     private readonly getProfileIdUseCase: GetProfileIdUseCase,
+
+    @Inject(USER_TOKENS.CreateVoiceUseCase)
+    private readonly createVoiceUseCase: CreateVoiceService,
   ) {}
 
   @Post()
@@ -151,6 +158,26 @@ export class ProfileController {
     return {
       success: true,
       message: '프로필 조회 성공',
+      data: response,
+    };
+  }
+
+  @Patch(':profileId/voice')
+  async upsertProfileVoice(
+    @Param('profileId', ParseIntPipe) profileId: number,
+    @Body() dto: CreateVoiceRequestDto,
+    @UploadedFiles() files: Express.Multer.File[],
+  ): Promise<BaseResponse<CreateVoiceResponseData>> {
+    const command = this.profileMapper.toCreateVoiceCommand(
+      dto,
+      profileId,
+      files,
+    );
+    const result = await this.createVoiceUseCase.execute(command);
+    const response = this.profileMapper.toCreateVoiceResponse(result);
+    return {
+      success: true,
+      message: '음성등록 성공',
       data: response,
     };
   }

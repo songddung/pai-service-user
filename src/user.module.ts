@@ -49,6 +49,8 @@ import { BasicAuthGuard } from './adapter/in/http/auth/guards/basic-auth.guard';
 import { ParentGuard } from './adapter/in/http/auth/guards/parent.guard';
 
 import { AuthModule } from './adapter/out/security/auth.module';
+import { CreateVoiceService } from './application/use-cases/create-voice.service';
+import { ElevenLabsService } from './adapter/out/external/elevenLabs.service.adapter';
 
 @Module({
   imports: [AuthModule, RedisModule],
@@ -84,6 +86,10 @@ import { AuthModule } from './adapter/out/security/auth.module';
       useClass: DeleteProfileService,
     },
     {
+      provide: USER_TOKENS.CreateVoiceUseCase,
+      useClass: CreateVoiceService,
+    },
+    {
       provide: USER_TOKENS.CheckEmailDuplicateUseCase,
       useClass: CheckEmailDuplicateService,
     },
@@ -95,6 +101,10 @@ import { AuthModule } from './adapter/out/security/auth.module';
     {
       provide: USER_TOKENS.GetProfileIdUseCase,
       useClass: GetProfileIdService,
+    },
+    {
+      provide: USER_TOKENS.ElevenLabsUseCase,
+      useClass: ElevenLabsService,
     },
 
     // Query 바인딩 (읽기)

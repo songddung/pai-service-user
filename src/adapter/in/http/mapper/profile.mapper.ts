@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import type {
   CreateProfileRequestDto,
   CreateProfileResponseData,
+  CreateVoiceResponseData,
   DeleteProfileResponseData,
   GetProfileResponseData,
   GetProfilesResponseData,
@@ -24,6 +25,9 @@ import { DeleteProfileResult } from 'src/application/port/in/result/delete-profi
 import type { GetProfileType } from 'src/domain/model/profile/enum/profile-type';
 import { GetProfileIdCommand } from 'src/application/command/get-profileId.command';
 import { GetProfileIdResult } from 'src/application/port/in/result/get-profileId.result';
+import { CreateVoiceRequestDto } from '../dto/request/create-voice-request.dto';
+import { CreateVoiceCommand } from 'src/application/command/create-voice.command';
+import { CreateVoiceResult } from 'src/application/port/in/result/create-voice.result.dto';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -182,6 +186,21 @@ export class ProfileMapper {
     return {
       profileId: String(result.profileId),
       deletedAt: result.deletedAt,
+    };
+  }
+
+  // 음성 등록
+  toCreateVoiceCommand(
+    dto: CreateVoiceRequestDto,
+    profileId: number,
+    files: Express.Multer.File[],
+  ): CreateVoiceCommand {
+    return new CreateVoiceCommand(dto.name, profileId, files);
+  }
+
+  toCreateVoiceResponse(result: CreateVoiceResult): CreateVoiceResponseData {
+    return {
+      voiceId: result.voiceId,
     };
   }
 }

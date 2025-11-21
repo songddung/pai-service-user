@@ -11,6 +11,7 @@ export const USER_TOKENS = {
   DeleteProfileUseCase: Symbol('DeleteProfileUseCase'),
   GetProfilesUseCase: Symbol('GetAllProfilesUseCase'),
   GetProfileIdUseCase: Symbol('GetProfileIdUseCase'),
+  CreateVoiceUseCase: Symbol('CreateVoiceUseCase'),
 
   // Repository (Output Ports - Write)
   UserRepositoryPort: Symbol('UserRepositoryPort'),
@@ -28,6 +29,7 @@ export const USER_TOKENS = {
   KakaoAddressService: Symbol('KakaoAddressService'),
   GeocodingService: Symbol('GeocodingService'),
   MediaServicePort: Symbol('MediaServicePort'),
+  ElevenLabsUseCase: Symbol('ElevenLabsUseCase'),
 
   // Security (Output Ports)
   TokenProvider: Symbol('TokenProvider'),
