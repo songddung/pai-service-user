@@ -27,7 +27,7 @@ model Profile {
   birth_date      DateTime
   gender          String
   avatar_media_id BigInt?
-  voice_media_id  BigInt?
+  voice_media_id  String?
   pin_hash        String?
   created_at      DateTime @default(now())
 

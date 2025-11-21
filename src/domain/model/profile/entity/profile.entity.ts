@@ -12,7 +12,7 @@ interface CreateProfileProps {
   gender: Gender;
   avatarMediaId?: bigint;
   pinHash?: PinHash;
-  voiceMediaId?: bigint;
+  voiceMediaId?: string;
 }
 
 interface RehydrateProfileProps extends CreateProfileProps {
@@ -30,7 +30,7 @@ export class Profile {
     private gender: Gender,
     private avatarMediaId?: bigint,
     private pinHash?: PinHash,
-    private voiceMediaId?: bigint,
+    private voiceMediaId?: string,
     private readonly createdAt?: Date,
   ) {}
 
@@ -101,7 +101,7 @@ export class Profile {
     return this.pinHash;
   }
 
-  getVoiceMediaId(): bigint | undefined {
+  getVoiceMediaId(): string | undefined {
     return this.voiceMediaId;
   }
 

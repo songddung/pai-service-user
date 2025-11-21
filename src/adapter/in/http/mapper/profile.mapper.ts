@@ -78,7 +78,7 @@ export class ProfileMapper {
       birthDate: String(profileEntity.getBirthDate().getValue().toISOString()),
       gender: String(profileEntity.getGender().getValue()),
       avatarMediaId: String(profileEntity.getAvatarMediaId()),
-      voiceMediaId: String(profileEntity.getVoiceMediaId()),
+      voiceMediaId: profileEntity.getVoiceMediaId(),
       createdAt: profileEntity.getCreatedAt()!.toISOString(),
     };
     return {
@@ -111,7 +111,7 @@ export class ProfileMapper {
           ? String(profile.getAvatarMediaId())
           : undefined,
         voiceMediaId: profile.getVoiceMediaId()
-          ? String(profile.getVoiceMediaId())
+          ? profile.getVoiceMediaId()
           : undefined,
         createdAt: profile.getCreatedAt()?.toISOString() ?? '',
       })),
@@ -153,7 +153,7 @@ export class ProfileMapper {
       dto.birthDate ? String(dto.birthDate).trim() : undefined,
       dto.gender,
       dto.avatarMediaId ? BigInt(dto.avatarMediaId) : undefined,
-      dto.voiceMediaId ? BigInt(dto.voiceMediaId) : undefined,
+      dto.voiceMediaId ? dto.voiceMediaId : undefined,
       dto.pin ? String(dto.pin).trim() : undefined,
     );
   }
@@ -169,9 +169,7 @@ export class ProfileMapper {
       avatarMediaId: result.avatarMediaId
         ? String(result.avatarMediaId)
         : undefined,
-      voiceMediaId: result.voiceMediaId
-        ? String(result.voiceMediaId)
-        : undefined,
+      voiceMediaId: result.voiceMediaId ? result.voiceMediaId : undefined,
     };
   }
 

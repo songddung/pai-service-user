@@ -8,5 +8,5 @@ export interface UpdateProfileResult {
   birthDate: string;
   gender: string;
   avatarMediaId?: bigint;
-  voiceMediaId?: bigint;
+  voiceMediaId?: string;
 }

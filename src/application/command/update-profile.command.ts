@@ -6,7 +6,7 @@ export class UpdateProfileCommand {
     public readonly birthDate?: string, // YYYY-MM-DD
     public readonly gender?: string,
     public readonly avatarMediaId?: bigint,
-    public readonly voiceMediaId?: bigint,
+    public readonly voiceMediaId?: string,
     public readonly pin?: string, // 부모 프로필 PIN 변경 시
   ) {}
 }
