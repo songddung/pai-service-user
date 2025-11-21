@@ -11,7 +11,9 @@ import {
   ParseIntPipe,
   Query,
   UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import type {
   BaseResponse,
   CreateProfileResponseData,
@@ -163,6 +165,7 @@ export class ProfileController {
   }
 
   @Patch(':profileId/voice')
+  @UseInterceptors(FilesInterceptor('files'))
   async upsertProfileVoice(
     @Param('profileId', ParseIntPipe) profileId: number,
     @Body() dto: CreateVoiceRequestDto,
