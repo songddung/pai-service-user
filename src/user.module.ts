@@ -108,7 +108,7 @@ import { SynthesizeVoiceService } from './application/use-cases/synthesize-voice
       useClass: ElevenLabsService,
     },
     {
-      provide: USER_TOKENS.SynthesizeVocieUseCase,
+      provide: USER_TOKENS.SynthesizeVoiceUseCase,
       useClass: SynthesizeVoiceService,
     },
 
