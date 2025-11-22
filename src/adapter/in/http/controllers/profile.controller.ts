@@ -12,6 +12,7 @@ import {
   Query,
   UploadedFiles,
   UseInterceptors,
+  Res,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import type {
@@ -40,6 +41,9 @@ import type { GetProfileType } from 'src/domain/model/profile/enum/profile-type'
 import type { GetProfileIdUseCase } from 'src/application/port/in/get-profileId.use-case';
 import { CreateVoiceRequestDto } from '../dto/request/create-voice-request.dto';
 import { CreateVoiceService } from 'src/application/use-cases/create-voice.service';
+import { SynthesizeVoiceRequestDto } from '../dto/request/synthesize-voice.dto';
+import type { Response } from 'express';
+import type { SynthesizeVoiceUseCase } from 'src/application/port/in/synthesize-voice.use-case';
 
 @UseGuards(BasicAuthGuard)
 @Controller('api/profiles')
@@ -66,6 +70,9 @@ export class ProfileController {
 
     @Inject(USER_TOKENS.CreateVoiceUseCase)
     private readonly createVoiceUseCase: CreateVoiceService,
+
+    @Inject(USER_TOKENS.SynthesizeVoiceUseCase)
+    private readonly SynthesizeVoiceUseCase: SynthesizeVoiceUseCase,
   ) {}
 
   @Post()
@@ -183,5 +190,20 @@ export class ProfileController {
       message: '음성등록 성공',
       data: response,
     };
+  }
+
+  @Post(':profileId/voice/synthesize')
+  async synthesizeVoice(
+    @Param('profileId', ParseIntPipe) profileId: number,
+    @Body() dto: SynthesizeVoiceRequestDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const command = this.profileMapper.toSynthesizeVoiceCommand(dto, profileId);
+    const result = await this.SynthesizeVoiceUseCase.execute(command);
+    res.set({
+      'Content-Type': 'audio/mpeg',
+      'Content-Length': result.length,
+    });
+    res.send(result);
   }
 }

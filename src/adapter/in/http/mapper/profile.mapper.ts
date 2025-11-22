@@ -28,6 +28,8 @@ import { GetProfileIdResult } from 'src/application/port/in/result/get-profileId
 import { CreateVoiceRequestDto } from '../dto/request/create-voice-request.dto';
 import { CreateVoiceCommand } from 'src/application/command/create-voice.command';
 import { CreateVoiceResult } from 'src/application/port/in/result/create-voice.result.dto';
+import { SynthesizeVoiceCommand } from 'src/application/command/synthesize-voice.command';
+import { SynthesizeVoiceRequestDto } from '../dto/request/synthesize-voice.dto';
 
 /**
  * DTO(shared-type) <-> Command <-> Response 변환 담당
@@ -202,5 +204,13 @@ export class ProfileMapper {
     return {
       voiceId: result.voiceId,
     };
+  }
+
+  // TTS
+  toSynthesizeVoiceCommand(
+    dto: SynthesizeVoiceRequestDto,
+    profileId: number,
+  ): SynthesizeVoiceCommand {
+    return new SynthesizeVoiceCommand(dto.text, profileId);
   }
 }

@@ -59,4 +59,23 @@ export class ElevenLabsService implements ElevenLabsUseCase {
       throw new Error('Voice not found');
     }
   }
+
+  //TTS 요청
+  async synthesize(voiceId: string, text: string): Promise<Buffer> {
+    try {
+      const audio = await this.client.textToSpeech.convert(voiceId, {
+        text: text,
+        modelId: 'eleven_multilingual_v2',
+      });
+
+      // Stream을 Buffer로 변환
+      const chunks: Uint8Array[] = [];
+      for await (const chunk of audio) {
+        chunks.push(chunk);
+      }
+      return Buffer.concat(chunks);
+    } catch (error) {
+      throw new Error('음성 합성 실패', error);
+    }
+  }
 }

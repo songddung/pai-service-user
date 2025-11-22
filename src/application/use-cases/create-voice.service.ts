@@ -5,7 +5,7 @@ import type { ProfileRepositoryPort } from '../port/out/profile.repository.port'
 import type { ProfileQueryPort } from '../port/out/profile.query.port';
 import { CreateVoiceCommand } from '../command/create-voice.command';
 import { CreateVoiceResult } from '../port/in/result/create-voice.result.dto';
-import { ElevenLabsService } from 'src/adapter/out/external/elevenLabs.service.adapter';
+import type { ElevenLabsUseCase } from '../port/out/elevenLabs.use-case';
 
 @Injectable()
 export class CreateVoiceService implements CreateVoiceUseCase {
@@ -17,7 +17,7 @@ export class CreateVoiceService implements CreateVoiceUseCase {
     private readonly profileQuery: ProfileQueryPort,
 
     @Inject(USER_TOKENS.ElevenLabsUseCase)
-    private readonly elevenLabsService: ElevenLabsService,
+    private readonly elevenLabsService: ElevenLabsUseCase,
   ) {}
 
   async execute(command: CreateVoiceCommand): Promise<CreateVoiceResult> {

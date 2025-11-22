@@ -12,6 +12,7 @@ export const USER_TOKENS = {
   GetProfilesUseCase: Symbol('GetAllProfilesUseCase'),
   GetProfileIdUseCase: Symbol('GetProfileIdUseCase'),
   CreateVoiceUseCase: Symbol('CreateVoiceUseCase'),
+  SynthesizeVoiceUseCase: Symbol('SynthesizeVoiceUseCase'),
 
   // Repository (Output Ports - Write)
   UserRepositoryPort: Symbol('UserRepositoryPort'),

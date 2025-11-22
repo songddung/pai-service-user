@@ -10,4 +10,6 @@ export interface ElevenLabsUseCase {
   deleteVoice(voiceId: string): Promise<void>;
 
   getVoice(voiceId: string): Promise<ElevenLabs.Voice>;
+
+  synthesize(voiceId: string, text: string): Promise<Buffer>;
 }

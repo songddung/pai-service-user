@@ -51,6 +51,7 @@ import { ParentGuard } from './adapter/in/http/auth/guards/parent.guard';
 import { AuthModule } from './adapter/out/security/auth.module';
 import { CreateVoiceService } from './application/use-cases/create-voice.service';
 import { ElevenLabsService } from './adapter/out/external/elevenLabs.service.adapter';
+import { SynthesizeVoiceService } from './application/use-cases/synthesize-voice.service';
 
 @Module({
   imports: [AuthModule, RedisModule],
@@ -105,6 +106,10 @@ import { ElevenLabsService } from './adapter/out/external/elevenLabs.service.ada
     {
       provide: USER_TOKENS.ElevenLabsUseCase,
       useClass: ElevenLabsService,
+    },
+    {
+      provide: USER_TOKENS.SynthesizeVocieUseCase,
+      useClass: SynthesizeVoiceService,
     },
 
     // Query 바인딩 (읽기)
