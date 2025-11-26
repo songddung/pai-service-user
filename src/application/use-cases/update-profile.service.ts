@@ -49,6 +49,10 @@ export class UpdateProfileService implements UpdateProfileUseCase {
       profile.updateAvatar(command.avatarMediaId);
     }
 
+    if (command.voiceMediaId !== undefined) {
+      profile.updateVoice(command.voiceMediaId);
+    }
+
     // 4) PIN 업데이트 (부모 프로필만)
     if (command.pin !== undefined) {
       // PIN 형식 검증 (4-6자리 숫자)
