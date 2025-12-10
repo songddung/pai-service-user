@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "user_id" BIGSERIAL NOT NULL,
+    "user_id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
     "password_hash" TEXT NOT NULL,
     "address" TEXT NOT NULL,
@@ -13,8 +13,8 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Profile" (
-    "profile_id" BIGSERIAL NOT NULL,
-    "user_id" BIGINT NOT NULL,
+    "profile_id" SERIAL NOT NULL,
+    "user_id" INTEGER NOT NULL,
     "profile_type" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "birth_date" TIMESTAMP(3),

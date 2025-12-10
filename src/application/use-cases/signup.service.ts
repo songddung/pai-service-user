@@ -9,12 +9,16 @@ import { SignupCommand } from 'src/application/command/signup.command';
 import type { UserQueryPort } from 'src/application/port/out/user.query.port';
 import type { UserRepositoryPort } from 'src/application/port/out/user.repository.port';
 import type { KakaoAddressService } from 'src/application/port/out/kakao-address.service';
-import { User } from 'src/domain/model/user/user.entity';
+import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refresh-token.repository.port';
+import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
+import type { PasswordHasher } from 'src/application/port/out/password-hasher';
+import { User } from 'src/domain/model/user/entity/user.entity';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
-import { SignupResponseData } from 'pai-shared-types';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
 import { USER_TOKENS } from '../../user.token';
+import { Email } from 'src/domain/model/user/vo/email.vo';
+import { PasswordHash } from 'src/domain/model/user/vo/passwordHash.vo';
+import { Address } from 'src/domain/model/user/vo/address.vo';
+import { SignupResult } from '../port/in/result/signup.result.dto';
 
 @Injectable()
 export class SignupService implements SignupUseCase {
@@ -28,56 +32,80 @@ export class SignupService implements SignupUseCase {
     @Inject(USER_TOKENS.KakaoAddressService)
     private readonly kakaoAddressService: KakaoAddressService,
 
+    @Inject(USER_TOKENS.PasswordHasher)
+    private readonly passwordHasher: PasswordHasher,
+
     @Inject(USER_TOKENS.TokenProvider)
     private readonly tokenProvider: TokenProvider,
 
-    private readonly configService: ConfigService,
+    @Inject(USER_TOKENS.RefreshTokenRepositoryPort)
+    private readonly refreshTokenRepository: RefreshTokenRepositoryPort,
+
+    @Inject(USER_TOKENS.TokenVersionRepositoryPort)
+    private readonly tokenVersionRepository: TokenVersionRepositoryPort,
   ) {}
 
-  async execute(command: SignupCommand): Promise<SignupResponseData> {
+  async execute(command: SignupCommand): Promise<SignupResult> {
     // 1) 이메일 중복 체크
     const exists = await this.userQuery.existsByEmail(command.email);
     if (exists) {
       throw new ConflictException('이미 가입된 이메일입니다.');
     }
 
-    // 2) 비밀번호 해싱 (saltRounds = .env)
-    const saltRoundsStr = this.configService.get<string>('BCRYPT_SALT_ROUNDS');
-    const saltRounds = saltRoundsStr ? parseInt(saltRoundsStr, 10) : 12;
-    const passwordHash = await bcrypt.hash(command.password, saltRounds);
+    // 2) 이메일 VO 생성
+    const emailVO = Email.create(command.email);
 
-    // 3) User 엔티티 생성 (위/경도는 null 상태)
-    const user = User.create({
-      email: command.email,
-      passwordHash,
-      address: command.address,
-    });
+    // 3) 비밀번호 해싱 (Infrastructure 계층의 PasswordHasher 사용)
+    const hashedPassword = await this.passwordHasher.hash(command.password);
+    const passwordHashVO = PasswordHash.create(hashedPassword);
 
     // 4) Kakao 주소 → 좌표 변환
     const latLng = await this.kakaoAddressService.getLatLng(command.address);
-
     if (!latLng) {
-      throw new BadRequestException('주소를 기반으로 좌표를 찾을 수 없습니다.');
+      throw new BadRequestException(
+        '유효한 주소가 아니거나 좌표를 찾을 수 없습니다.',
+      );
     }
 
-    // 5) 엔티티에 주소 + 위경도 반영
-    user.changeAddress(command.address, latLng.latitude, latLng.longitude);
-
-    // 6) 저장 (Prisma)
-    const saved = await this.userRepository.save(user);
-
-    // 7) 토큰 발급
-    const tokenPair = await this.tokenProvider.generateBasicTokenPair(
-      Number(saved.getId()),
+    // 5) 주소 VO 생성
+    const addressVO = Address.create(
+      command.address,
+      latLng.latitude,
+      latLng.longitude,
     );
 
-    // 8) 반환 DTO 구성
-    const response: SignupResponseData = {
-      userId: Number(saved.getId()),
+    // 6) User 엔티티 생성
+    const user = User.create({
+      email: emailVO,
+      passwordHash: passwordHashVO,
+      address: addressVO,
+    });
+
+    // 7) 저장 (Prisma)
+    const saved = await this.userRepository.save(user);
+
+    // 8) 토큰 버전 증가 (최초 가입이므로 1부터 시작)
+    const userId = Number(saved.getId());
+    const tokenVersion =
+      await this.tokenVersionRepository.incrementVersion(userId);
+
+    // 9) 토큰 발급
+    const tokenPair = await this.tokenProvider.generateBasicTokenPair(
+      userId,
+      tokenVersion,
+    );
+
+    // 10) Redis에 RefreshToken 저장 (7일 TTL)
+    await this.refreshTokenRepository.save(
+      userId,
+      tokenPair.refreshToken,
+      7 * 24 * 60 * 60, // 7일 (초 단위)
+    );
+
+    return {
+      userId: userId,
       accessToken: tokenPair.accessToken,
       refreshToken: tokenPair.refreshToken,
     };
-
-    return response;
   }
 }

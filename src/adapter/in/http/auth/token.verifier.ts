@@ -3,6 +3,7 @@ import { ProfileType } from 'pai-shared-types';
 
 export type AuthClaims = JWTPayload & {
   sub: string; // userId (가족 계정)
+  tokenVersion?: number; // 토큰 버전 (무효화 용)
   profileId?: string; // 프로필 ID (부모/자녀)
   profileType?: ProfileType;
 };

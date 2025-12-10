@@ -18,9 +18,13 @@ export class JwtTokenProvider implements TokenProvider {
     private readonly configService: ConfigService,
   ) {}
 
-  async generateBasicTokenPair(userId: number): Promise<TokenPair> {
+  async generateBasicTokenPair(
+    userId: number,
+    tokenVersion: number,
+  ): Promise<TokenPair> {
     const payload: BasicTokenPayload = {
       userId,
+      tokenVersion,
       sub: String(userId), // JWT 표준: subject claim
     };
 
@@ -43,9 +47,11 @@ export class JwtTokenProvider implements TokenProvider {
     userId: number,
     profileId: number,
     profileType: string,
+    tokenVersion: number,
   ): Promise<TokenPair> {
     const payload: ProfileTokenPayload = {
       userId,
+      tokenVersion,
       sub: String(userId), // JWT 표준: subject claim
       profileId,
       profileType,
@@ -88,17 +94,41 @@ export class JwtTokenProvider implements TokenProvider {
     }
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<string> {
+  async refreshTokenPair(
+    refreshToken: string,
+    newTokenVersion: number,
+  ): Promise<TokenPair> {
     // Refresh Token 검증
     const payload = await this.verifyRefreshToken(refreshToken);
 
-    // 새로운 Access Token 발급 (동일한 페이로드로)
-    const newAccessToken = this.jwtService.sign(payload, {
+    // JWT 메타데이터 제거 (iat, exp, sub, tokenVersion 등)
+    const { iat, exp, sub, tokenVersion, ...cleanPayload } = payload as any;
+
+    // 새로운 payload 생성 (새로운 tokenVersion 사용)
+    const newPayload = {
+      userId: payload.userId,
+      tokenVersion: newTokenVersion, // 새로운 버전으로 교체
+      sub: String(payload.userId),
+      ...cleanPayload,
+    };
+
+    // 새로운 AccessToken 발급
+    const newAccessToken = this.jwtService.sign(newPayload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
       expiresIn: (this.configService.get<string>('JWT_ACCESS_EXPIRES_IN') ||
         '30m') as string,
     } as JwtSignOptions);
 
-    return newAccessToken;
+    // 새로운 RefreshToken 발급
+    const newRefreshToken = this.jwtService.sign(newPayload, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ||
+        '7d') as string,
+    } as JwtSignOptions);
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
   }
 }

@@ -1,14 +1,19 @@
 // src/application/use-cases/create-profile.service.ts
 
 import { Injectable, BadRequestException, Inject } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import type { CreateProfileResponseData } from 'pai-shared-types';
 import type { CreateProfileUseCase } from 'src/application/port/in/create-profile.use-case';
 import { CreateProfileCommand } from 'src/application/command/create-profile.command';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
+import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
-import { Profile } from 'src/domain/model/profile/profile.entity';
+import type { PasswordHasher } from 'src/application/port/out/password-hasher';
+import { Profile } from 'src/domain/model/profile/entity/profile.entity';
+import { ProfileName } from 'src/domain/model/profile/vo/profile-name.vo';
+import { BirthDate } from 'src/domain/model/profile/vo/birth-date.vo';
+import { Gender } from 'src/domain/model/profile/vo/gender.vo';
+import { PinHash } from 'src/domain/model/profile/vo/pin-hash.vo';
 import { USER_TOKENS } from '../../user.token';
+import { CreateProfileResult } from '../port/in/result/create-profiile.result.dto';
 
 @Injectable()
 export class CreateProfileService implements CreateProfileUseCase {
@@ -16,18 +21,18 @@ export class CreateProfileService implements CreateProfileUseCase {
     @Inject(USER_TOKENS.ProfileRepositoryPort)
     private readonly profileRepository: ProfileRepositoryPort,
 
-    @Inject(USER_TOKENS.TokenProvider)
-    private readonly tokenProvider: TokenProvider,
+    @Inject(USER_TOKENS.PasswordHasher)
+    private readonly passwordHasher: PasswordHasher,
   ) {}
 
-  async execute(
-    command: CreateProfileCommand,
-  ): Promise<CreateProfileResponseData> {
-    // 1) 생년월일 형식 검증 및 변환
-    const birthDate = this.parseBirthDate(command.birthDate);
+  async execute(command: CreateProfileCommand): Promise<CreateProfileResult> {
+    // 1) VO 생성
+    const nameVO = ProfileName.create(command.name);
+    const birthDateVO = BirthDate.create(new Date(command.birthDate));
+    const genderVO = Gender.create(command.gender);
 
     // 2) parent인 경우 PIN 해싱
-    let pinHash: string | undefined;
+    let pinHashVO: PinHash | undefined;
     if (command.profileType === 'parent') {
       if (!command.pin) {
         throw new BadRequestException('부모 프로필은 PIN이 필수입니다.');
@@ -36,49 +41,33 @@ export class CreateProfileService implements CreateProfileUseCase {
       if (!/^\d{4,6}$/.test(command.pin)) {
         throw new BadRequestException('PIN은 4-6자리 숫자여야 합니다.');
       }
-      pinHash = await bcrypt.hash(command.pin, 10);
+      const hashedPin = await this.passwordHasher.hash(command.pin);
+      pinHashVO = PinHash.create(hashedPin);
     }
 
     // 3) Profile 엔티티 생성
     const profile = Profile.create({
       userId: command.userId,
       profileType: command.profileType,
-      name: command.name,
-      birthDate,
-      gender: command.gender,
+      name: nameVO,
+      birthDate: birthDateVO,
+      gender: genderVO,
       avatarMediaId: command.avatarMediaId,
-      pinHash,
-      voiceMediaId: command.voiceMediaId,
+      pinHash: pinHashVO,
     });
 
     // 4) 저장
     const saved = await this.profileRepository.save(profile);
 
-    // 5) 프로필 포함된 새 토큰 발급
-    const tokenPair = await this.tokenProvider.generateProfileTokenPair(
-      command.userId,
-      saved.getId(),
-      saved.getProfileType(),
-    );
-
-    // 6) 결과 반환
+    // 5) 결과 반환
     return {
-      profileId: saved.getId(),
       userId: command.userId,
+      profileId: saved.getId(),
       profileType: saved.getProfileType(),
-      name: saved.getName(),
-      accessToken: tokenPair.accessToken,
-      refreshToken: tokenPair.refreshToken,
+      name: saved.getName().getValue(),
+      birthDate: saved.getBirthDate().getValue().toISOString().split('T')[0],
+      gender: saved.getGender().getValue(),
+      avatarMediaId: saved.getAvatarMediaId(),
     };
-  }
-
-  private parseBirthDate(dateString: string): Date {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      throw new BadRequestException(
-        '올바른 날짜 형식이 아닙니다. (YYYY-MM-DD)',
-      );
-    }
-    return date;
   }
 }

@@ -1,4 +1,4 @@
-import { User } from '../../../domain/model/user/user.entity';
+import { User } from '../../../domain/model/user/entity/user.entity';
 
 /**
  * User Repository Port (쓰기 전용)

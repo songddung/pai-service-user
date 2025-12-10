@@ -1,4 +1,4 @@
-import { User } from '../../../domain/model/user/user.entity';
+import { User } from '../../../domain/model/user/entity/user.entity';
 
 /**
  * User Query Port (읽기 전용)

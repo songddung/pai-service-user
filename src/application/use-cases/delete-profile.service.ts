@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException, ForbiddenException, Inject } from '@nestjs/common';
-import type { DeleteProfileResponseData } from 'pai-shared-types';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  Inject,
+} from '@nestjs/common';
 import type { DeleteProfileUseCase } from 'src/application/port/in/delete-profile.use-case';
 import { DeleteProfileCommand } from 'src/application/command/delete-profile.command';
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
 import { USER_TOKENS } from '../../user.token';
+import { DeleteProfileResult } from '../port/in/result/delete-profile.result.dto';
 
 @Injectable()
 export class DeleteProfileService implements DeleteProfileUseCase {
@@ -16,9 +21,7 @@ export class DeleteProfileService implements DeleteProfileUseCase {
     private readonly profileRepository: ProfileRepositoryPort,
   ) {}
 
-  async execute(
-    command: DeleteProfileCommand,
-  ): Promise<DeleteProfileResponseData> {
+  async execute(command: DeleteProfileCommand): Promise<DeleteProfileResult> {
     // 1) 프로필 존재 여부 확인
     const profile = await this.profileQuery.findById(command.profileId);
     if (!profile) {
