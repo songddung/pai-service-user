@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Inject, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Inject,
+  UseGuards,
+  Headers,
+} from '@nestjs/common';
 import type {
   BaseResponse,
   SignupResponseData,
@@ -7,6 +14,7 @@ import type {
 } from 'pai-shared-types';
 import { SignupRequestDto } from '../dto/request/signup-request.dto';
 import { LoginRequestDto } from '../dto/request/login-request.dto';
+import { RefreshTokenRequestDto } from '../dto/request/refresh-token-request.dto';
 import type { SignupUseCase } from 'src/application/port/in/signup.use-case';
 import type { LoginUseCase } from 'src/application/port/in/login.use-case';
 import type { LogoutUseCase } from 'src/application/port/in/logout.use-case';
@@ -81,8 +89,11 @@ export class AuthController {
 
   @UseGuards(BasicAuthGuard)
   @Post('logout')
-  async logout(@Auth('userId') userId: number): Promise<BaseResponse<null>> {
-    const command = this.authMapper.toLogoutCommand(userId);
+  async logout(
+    @Auth('userId') userId: number,
+    @Headers('x-device-id') deviceId: string,
+  ): Promise<BaseResponse<null>> {
+    const command = this.authMapper.toLogoutCommand(userId, deviceId || '');
     await this.logoutUseCase.execute(command);
 
     return {
@@ -94,11 +105,14 @@ export class AuthController {
 
   @Post('refresh')
   async refresh(
-    @Body('refreshToken') refreshToken: string,
+    @Body() dto: RefreshTokenRequestDto,
   ): Promise<BaseResponse<RefreshTokenResponseData>> {
     // refreshToken에서 userId를 추출하여 사용
     // RefreshTokenUseCase에서 refreshToken을 검증하고 userId를 가져옴
-    const command = this.authMapper.toTokenCommand(refreshToken);
+    const command = this.authMapper.toTokenCommand(
+      dto.refreshToken,
+      dto.deviceId,
+    );
     const vo = await this.refreshTokenUseCase.execute(command);
     const response = this.authMapper.toTokenResponse(vo);
 

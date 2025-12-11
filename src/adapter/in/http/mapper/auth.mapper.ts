@@ -43,6 +43,7 @@ export class AuthMapper {
     return new LoginCommand(
       dto.email ?? ''.trim().toLowerCase(),
       dto.password ?? '',
+      dto.deviceId ?? '',
     );
   }
 
@@ -55,13 +56,16 @@ export class AuthMapper {
   }
 
   // 로그아웃
-  toLogoutCommand(userId: number): LogoutCommand {
-    return new LogoutCommand(userId);
+  toLogoutCommand(userId: number, deviceId: string): LogoutCommand {
+    return new LogoutCommand(userId, deviceId);
   }
 
   // 토큰 재발급
-  toTokenCommand(refreshToken: string): RefreshTokenCommand {
-    return new RefreshTokenCommand(String(refreshToken ?? '').trim());
+  toTokenCommand(refreshToken: string, deviceId: string): RefreshTokenCommand {
+    return new RefreshTokenCommand(
+      String(refreshToken ?? '').trim(),
+      deviceId ?? '',
+    );
   }
 
   toTokenResponse(result: RefreshTokenResult): RefreshTokenResponseData {

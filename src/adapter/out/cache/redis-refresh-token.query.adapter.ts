@@ -7,17 +7,21 @@ import { REDIS_CLIENT } from './redis.module';
 export class RedisRefreshTokenQueryAdapter implements RefreshTokenQueryPort {
   constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
 
-  private getKey(userId: number): string {
-    return `refresh_token:${userId}`;
+  private getKey(userId: number, deviceId: string): string {
+    return `refresh_token:${userId}:${deviceId}`;
   }
 
-  async get(userId: number): Promise<string | null> {
-    const key = this.getKey(userId);
+  async get(userId: number, deviceId: string): Promise<string | null> {
+    const key = this.getKey(userId, deviceId);
     return await this.redis.get(key);
   }
 
-  async verify(userId: number, token: string): Promise<boolean> {
-    const storedToken = await this.get(userId);
+  async verify(
+    userId: number,
+    deviceId: string,
+    token: string,
+  ): Promise<boolean> {
+    const storedToken = await this.get(userId, deviceId);
     return storedToken === token;
   }
 }

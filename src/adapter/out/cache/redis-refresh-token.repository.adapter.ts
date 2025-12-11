@@ -9,17 +9,34 @@ export class RedisRefreshTokenRepositoryAdapter
 {
   constructor(@Inject(REDIS_CLIENT) private readonly redis: Redis) {}
 
-  private getKey(userId: number): string {
-    return `refresh_token:${userId}`;
+  private getKey(userId: number, deviceId: string): string {
+    return `refresh_token:${userId}:${deviceId}`;
   }
 
-  async save(userId: number, token: string, ttlSeconds: number): Promise<void> {
-    const key = this.getKey(userId);
+  private getUserPattern(userId: number): string {
+    return `refresh_token:${userId}:*`;
+  }
+
+  async save(
+    userId: number,
+    deviceId: string,
+    token: string,
+    ttlSeconds: number,
+  ): Promise<void> {
+    const key = this.getKey(userId, deviceId);
     await this.redis.set(key, token, 'EX', ttlSeconds);
   }
 
-  async delete(userId: number): Promise<void> {
-    const key = this.getKey(userId);
+  async delete(userId: number, deviceId: string): Promise<void> {
+    const key = this.getKey(userId, deviceId);
     await this.redis.del(key);
+  }
+
+  async deleteAll(userId: number): Promise<void> {
+    const pattern = this.getUserPattern(userId);
+    const keys = await this.redis.keys(pattern);
+    if (keys.length > 0) {
+      await this.redis.del(...keys);
+    }
   }
 }
