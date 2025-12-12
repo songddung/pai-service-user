@@ -82,6 +82,7 @@ export class SelectProfileService implements SelectProfileUseCase {
     // 6) Redis에 RefreshToken 업데이트 (7일 TTL)
     await this.refreshTokenRepository.save(
       command.userId,
+      command.deviceId,
       tokenPair.refreshToken,
       7 * 24 * 60 * 60, // 7일 (초 단위)
     );

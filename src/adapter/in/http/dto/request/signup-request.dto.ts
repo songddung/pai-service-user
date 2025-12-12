@@ -11,4 +11,7 @@ export class SignupRequestDto implements ISignupRequestDto {
 
   @IsString()
   address: string;
+
+  @IsString()
+  deviceId: string;
 }

@@ -98,6 +98,7 @@ export class SignupService implements SignupUseCase {
     // 10) Redis에 RefreshToken 저장 (7일 TTL)
     await this.refreshTokenRepository.save(
       userId,
+      command.deviceId,
       tokenPair.refreshToken,
       7 * 24 * 60 * 60, // 7일 (초 단위)
     );

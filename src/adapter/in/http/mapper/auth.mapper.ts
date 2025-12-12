@@ -27,6 +27,7 @@ export class AuthMapper {
       dto.email ?? ''.trim().toLowerCase(),
       dto.password ?? '',
       dto.address ?? ''.trim(),
+      dto.deviceId ?? '',
     );
   }
 

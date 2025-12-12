@@ -132,6 +132,7 @@ export class ProfileMapper {
     return new SelectProfileCommand(
       userId,
       Number(dto.profileId),
+      dto.deviceId ?? '',
       dto.pin ? String(dto.pin).trim() : undefined,
     );
   }
