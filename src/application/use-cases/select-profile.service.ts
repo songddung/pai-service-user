@@ -10,7 +10,7 @@ import { SelectProfileCommand } from 'src/application/command/select-profile.com
 import type { ProfileQueryPort } from 'src/application/port/out/profile.query.port';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
 import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refresh-token.repository.port';
-import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
+import type { TokenVersionQueryPort } from 'src/application/port/out/token-version.query.port';
 import type { PasswordHasher } from 'src/application/port/out/password-hasher';
 import { USER_TOKENS } from '../../user.token';
 import { SelectProfileResult } from '../port/in/result/select-profile.result';
@@ -27,8 +27,8 @@ export class SelectProfileService implements SelectProfileUseCase {
     @Inject(USER_TOKENS.RefreshTokenRepositoryPort)
     private readonly refreshTokenRepository: RefreshTokenRepositoryPort,
 
-    @Inject(USER_TOKENS.TokenVersionRepositoryPort)
-    private readonly tokenVersionRepository: TokenVersionRepositoryPort,
+    @Inject(USER_TOKENS.TokenVersionQueryPort)
+    private readonly tokenVersionQuery: TokenVersionQueryPort,
 
     @Inject(USER_TOKENS.PasswordHasher)
     private readonly passwordHasher: PasswordHasher,
@@ -66,9 +66,10 @@ export class SelectProfileService implements SelectProfileUseCase {
       }
     }
 
-    // 4) 토큰 버전 증가 (이전 토큰 모두 무효화)
-    const tokenVersion = await this.tokenVersionRepository.incrementVersion(
+    // 4) 디바이스별 토큰 버전 조회 (멀티 디바이스 로그인 지원)
+    const deviceVersion = await this.tokenVersionQuery.getDeviceVersion(
       command.userId,
+      command.deviceId,
     );
 
     // 5) 프로필 정보로 새 토큰 발급
@@ -76,7 +77,8 @@ export class SelectProfileService implements SelectProfileUseCase {
       command.userId,
       profile.getId(),
       profile.getProfileType(),
-      tokenVersion,
+      command.deviceId,
+      deviceVersion,
     );
 
     // 6) Redis에 RefreshToken 업데이트 (7일 TTL)

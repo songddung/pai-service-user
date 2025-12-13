@@ -50,16 +50,25 @@ export class ParentGuard implements CanActivate {
       throw new ForbiddenException('FORBIDDEN: parent profile required');
 
     // 4) Token Version 검증 (무효화된 토큰 차단)
+    // 모든 토큰은 tokenVersion과 deviceId를 가져야 함
     const tokenVersion = claims.tokenVersion;
-    if (tokenVersion !== undefined) {
-      const currentVersion = await this.tokenVersionQuery.getVersion(
-        Number(userId),
+    if (tokenVersion === undefined) {
+      throw new UnauthorizedException('UNAUTHORIZED: token version missing');
+    }
+
+    const deviceId = claims.deviceId;
+    if (!deviceId) {
+      throw new UnauthorizedException('UNAUTHORIZED: deviceId missing in token');
+    }
+
+    const currentVersion = await this.tokenVersionQuery.getDeviceVersion(
+      Number(userId),
+      deviceId,
+    );
+    if (tokenVersion !== currentVersion) {
+      throw new UnauthorizedException(
+        'UNAUTHORIZED: token has been revoked (version mismatch)',
       );
-      if (tokenVersion !== currentVersion) {
-        throw new UnauthorizedException(
-          'UNAUTHORIZED: token has been revoked (version mismatch)',
-        );
-      }
     }
 
     // 5) 쓰기 쉽게 저장

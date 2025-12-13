@@ -24,8 +24,8 @@ import { GetProfilesService } from './application/use-cases/get-profiles.service
 // Query Adapter 구현체
 import { ProfileQueryAdapter } from './adapter/out/persistence/profile/profile.query.adapter';
 import { RedisRefreshTokenQueryAdapter } from './adapter/out/cache/redis-refresh-token.query.adapter';
-import { RedisTokenVersionQueryAdapter } from './adapter/out/cache/redis-token-version.query.adapter';
 import { UserQueryAdapter } from './adapter/out/persistence/user/user.query.adapter';
+import { RedisTokenVersionQueryAdapter } from './adapter/out/cache/redis-token-version.query.adapter';
 
 // Repository Adapter 구현체
 import { ProfileRepositoryAdapter } from './adapter/out/persistence/profile/profile.repository.adapter';
@@ -112,6 +112,7 @@ import { SynthesizeVoiceService } from './application/use-cases/synthesize-voice
       useClass: SynthesizeVoiceService,
     },
 
+
     // Query 바인딩 (읽기)
     { provide: USER_TOKENS.UserQueryPort, useClass: UserQueryAdapter },
     { provide: USER_TOKENS.ProfileQueryPort, useClass: ProfileQueryAdapter },
@@ -123,7 +124,6 @@ import { SynthesizeVoiceService } from './application/use-cases/synthesize-voice
       provide: USER_TOKENS.TokenVersionQueryPort,
       useClass: RedisTokenVersionQueryAdapter,
     },
-
     // Repository 바인딩 (쓰기)
     {
       provide: USER_TOKENS.UserRepositoryPort,

@@ -10,7 +10,7 @@ import type { UserQueryPort } from 'src/application/port/out/user.query.port';
 import type { UserRepositoryPort } from 'src/application/port/out/user.repository.port';
 import type { KakaoAddressService } from 'src/application/port/out/kakao-address.service';
 import type { RefreshTokenRepositoryPort } from 'src/application/port/out/refresh-token.repository.port';
-import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
+import type { TokenVersionQueryPort } from 'src/application/port/out/token-version.query.port';
 import type { PasswordHasher } from 'src/application/port/out/password-hasher';
 import { User } from 'src/domain/model/user/entity/user.entity';
 import type { TokenProvider } from 'src/application/port/out/token.provider';
@@ -41,8 +41,8 @@ export class SignupService implements SignupUseCase {
     @Inject(USER_TOKENS.RefreshTokenRepositoryPort)
     private readonly refreshTokenRepository: RefreshTokenRepositoryPort,
 
-    @Inject(USER_TOKENS.TokenVersionRepositoryPort)
-    private readonly tokenVersionRepository: TokenVersionRepositoryPort,
+    @Inject(USER_TOKENS.TokenVersionQueryPort)
+    private readonly tokenVersionQuery: TokenVersionQueryPort,
   ) {}
 
   async execute(command: SignupCommand): Promise<SignupResult> {
@@ -81,18 +81,20 @@ export class SignupService implements SignupUseCase {
       address: addressVO,
     });
 
+
     // 7) 저장 (Prisma)
     const saved = await this.userRepository.save(user);
 
-    // 8) 토큰 버전 증가 (최초 가입이므로 1부터 시작)
+    // 8) 디바이스별 토큰 버전 조회 (최초 가입이므로 1로 시작)
     const userId = Number(saved.getId());
-    const tokenVersion =
-      await this.tokenVersionRepository.incrementVersion(userId);
+    const deviceVersion =
+      await this.tokenVersionQuery.getDeviceVersion(userId, command.deviceId);
 
     // 9) 토큰 발급
     const tokenPair = await this.tokenProvider.generateBasicTokenPair(
       userId,
-      tokenVersion,
+      command.deviceId,
+      deviceVersion,
     );
 
     // 10) Redis에 RefreshToken 저장 (7일 TTL)

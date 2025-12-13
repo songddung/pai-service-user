@@ -3,7 +3,7 @@ import { RefreshTokenUseCase } from '../port/in/refresh-token.use-case';
 import { RefreshTokenCommand } from '../command/refresh-token.command';
 import type { RefreshTokenQueryPort } from '../port/out/refresh-token.query.port';
 import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repository.port';
-import type { TokenVersionRepositoryPort } from '../port/out/token-version.repository.port';
+import type { TokenVersionQueryPort } from '../port/out/token-version.query.port';
 import type { TokenProvider } from '../port/out/token.provider';
 import { USER_TOKENS } from '../../user.token';
 import { RefreshTokenResult } from '../port/in/result/refresh-token.result.dto';
@@ -17,8 +17,8 @@ export class RefreshTokenService implements RefreshTokenUseCase {
     @Inject(USER_TOKENS.RefreshTokenRepositoryPort)
     private readonly refreshTokenRepository: RefreshTokenRepositoryPort,
 
-    @Inject(USER_TOKENS.TokenVersionRepositoryPort)
-    private readonly tokenVersionRepository: TokenVersionRepositoryPort,
+    @Inject(USER_TOKENS.TokenVersionQueryPort)
+    private readonly tokenVersionQuery: TokenVersionQueryPort,
 
     @Inject(USER_TOKENS.TokenProvider)
     private readonly tokenProvider: TokenProvider,
@@ -46,13 +46,17 @@ export class RefreshTokenService implements RefreshTokenUseCase {
       throw new UnauthorizedException('유효하지 않은 RefreshToken입니다.');
     }
 
-    // 2. 기존 tokenVersion 유지 (다른 디바이스의 accessToken을 무효화하지 않음)
-    const currentTokenVersion = payload.tokenVersion;
+    // 2. 현재 디바이스의 토큰 버전 조회
+    const deviceVersion = await this.tokenVersionQuery.getDeviceVersion(
+      userId,
+      command.deviceId,
+    );
 
-    // 3. 새로운 토큰 쌍 발급 (AccessToken + RefreshToken, 기존 버전 유지)
+    // 3. 새로운 토큰 쌍 발급 (디바이스 버전으로 갱신)
     const tokenPair = await this.tokenProvider.refreshTokenPair(
       command.refreshToken,
-      currentTokenVersion,
+      command.deviceId,
+      deviceVersion,
     );
 
     // 4. Redis에 새로운 RefreshToken 저장 (디바이스별로 교체)

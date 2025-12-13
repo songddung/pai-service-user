@@ -20,10 +20,12 @@ export class JwtTokenProvider implements TokenProvider {
 
   async generateBasicTokenPair(
     userId: number,
+    deviceId: string,
     tokenVersion: number,
   ): Promise<TokenPair> {
     const payload: BasicTokenPayload = {
       userId,
+      deviceId,
       tokenVersion,
       sub: String(userId), // JWT 표준: subject claim
     };
@@ -47,10 +49,12 @@ export class JwtTokenProvider implements TokenProvider {
     userId: number,
     profileId: number,
     profileType: string,
+    deviceId: string,
     tokenVersion: number,
   ): Promise<TokenPair> {
     const payload: ProfileTokenPayload = {
       userId,
+      deviceId,
       tokenVersion,
       sub: String(userId), // JWT 표준: subject claim
       profileId,
@@ -96,17 +100,19 @@ export class JwtTokenProvider implements TokenProvider {
 
   async refreshTokenPair(
     refreshToken: string,
+    deviceId: string,
     newTokenVersion: number,
   ): Promise<TokenPair> {
     // Refresh Token 검증
     const payload = await this.verifyRefreshToken(refreshToken);
 
-    // JWT 메타데이터 제거 (iat, exp, sub, tokenVersion 등)
-    const { iat, exp, sub, tokenVersion, ...cleanPayload } = payload as any;
+    // JWT 메타데이터 제거 (iat, exp, sub, tokenVersion, deviceId 등)
+    const { iat, exp, sub, tokenVersion, deviceId: _, ...cleanPayload } = payload as any;
 
-    // 새로운 payload 생성 (새로운 tokenVersion 사용)
+    // 새로운 payload 생성 (명시적으로 전달받은 deviceId 사용)
     const newPayload = {
       userId: payload.userId,
+      deviceId: deviceId, // 명시적으로 전달받은 deviceId 사용
       tokenVersion: newTokenVersion, // 새로운 버전으로 교체
       sub: String(payload.userId),
       ...cleanPayload,

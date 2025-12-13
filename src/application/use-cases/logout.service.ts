@@ -16,8 +16,11 @@ export class LogoutService implements LogoutUseCase {
   ) {}
 
   async execute(command: LogoutCommand): Promise<void> {
-    // 1. Token Version 증가 (모든 기존 AccessToken 무효화)
-    await this.tokenVersionRepository.incrementVersion(command.userId);
+    // 1. 해당 디바이스의 토큰 버전 증가 (해당 디바이스의 AccessToken만 무효화)
+    await this.tokenVersionRepository.incrementDeviceVersion(
+      command.userId,
+      command.deviceId,
+    );
 
     // 2. Redis에서 해당 디바이스의 RefreshToken 삭제
     await this.refreshTokenRepository.delete(command.userId, command.deviceId);

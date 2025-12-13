@@ -3,7 +3,7 @@ import { LoginUseCase } from '../port/in/login.use-case';
 import type { UserQueryPort } from '../port/out/user.query.port';
 import type { TokenProvider } from '../port/out/token.provider';
 import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repository.port';
-import type { TokenVersionRepositoryPort } from '../port/out/token-version.repository.port';
+import type { TokenVersionQueryPort } from '../port/out/token-version.query.port';
 import type { PasswordHasher } from '../port/out/password-hasher';
 import { LoginCommand } from '../command/login.command';
 import { USER_TOKENS } from '../../user.token';
@@ -21,8 +21,8 @@ export class LoginService implements LoginUseCase {
     @Inject(USER_TOKENS.RefreshTokenRepositoryPort)
     private readonly refreshTokenRepository: RefreshTokenRepositoryPort,
 
-    @Inject(USER_TOKENS.TokenVersionRepositoryPort)
-    private readonly tokenVersionRepository: TokenVersionRepositoryPort,
+    @Inject(USER_TOKENS.TokenVersionQueryPort)
+    private readonly tokenVersionQuery: TokenVersionQueryPort,
 
     @Inject(USER_TOKENS.PasswordHasher)
     private readonly passwordHasher: PasswordHasher,
@@ -50,15 +50,16 @@ export class LoginService implements LoginUseCase {
       );
     }
 
-    // 토큰 버전 증가 (이전 토큰 모두 무효화)
+    // 디바이스별 토큰 버전 조회 (멀티 디바이스 로그인 지원)
     const userId = Number(user.getId());
-    const tokenVersion =
-      await this.tokenVersionRepository.incrementVersion(userId);
+    const deviceVersion =
+      await this.tokenVersionQuery.getDeviceVersion(userId, command.deviceId);
 
-    // 새로운 버전으로 토큰 발급
+    // 디바이스별 버전으로 토큰 발급
     const tokenPair = await this.tokenProvider.generateBasicTokenPair(
       userId,
-      tokenVersion,
+      command.deviceId,
+      deviceVersion,
     );
 
     // Redis에 RefreshToken 저장 (디바이스별로 저장, 7일 TTL)
