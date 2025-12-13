@@ -11,9 +11,6 @@ export class SelectProfileRequestDto implements ISelectProfileRequestDto {
   @IsString()
   profileId: string;
 
-  @IsString()
-  deviceId: string;
-
   @IsOptional()
   @IsString()
   @MinLength(4)

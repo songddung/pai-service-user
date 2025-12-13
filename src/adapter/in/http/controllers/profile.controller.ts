@@ -13,6 +13,7 @@ import {
   UploadedFiles,
   UseInterceptors,
   Res,
+  Headers,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import type {
@@ -128,8 +129,9 @@ export class ProfileController {
   async selectProfile(
     @Body() dto: SelectProfileRequestDto,
     @Auth('userId') userId: number,
+    @Headers('x-device-id') deviceId: string,
   ): Promise<BaseResponse<SelectProfileResponseData>> {
-    const command = this.profileMapper.toSelectCommand(dto, userId);
+    const command = this.profileMapper.toSelectCommand(dto, userId, deviceId);
     const result = await this.selectProfileUseCase.execute(command);
     const response = this.profileMapper.toSelectResponse(result);
 

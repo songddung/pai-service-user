@@ -22,12 +22,12 @@ import { RefreshTokenResult } from 'src/application/port/in/result/refresh-token
 @Injectable()
 export class AuthMapper {
   // 회원가입
-  toSignupCommand(dto: SignupRequestDto): SignupCommand {
+  toSignupCommand(dto: SignupRequestDto, deviceId: string): SignupCommand {
     return new SignupCommand(
       dto.email ?? ''.trim().toLowerCase(),
       dto.password ?? '',
       dto.address ?? ''.trim(),
-      dto.deviceId ?? '',
+      deviceId ?? '',
     );
   }
 
@@ -40,11 +40,11 @@ export class AuthMapper {
   }
 
   // 로그인
-  toLoginCommand(dto: LoginRequestDto): LoginCommand {
+  toLoginCommand(dto: LoginRequestDto, deviceId: string): LoginCommand {
     return new LoginCommand(
       dto.email ?? ''.trim().toLowerCase(),
       dto.password ?? '',
-      dto.deviceId ?? '',
+      deviceId ?? '',
     );
   }
 

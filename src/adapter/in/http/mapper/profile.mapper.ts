@@ -128,11 +128,12 @@ export class ProfileMapper {
   toSelectCommand(
     dto: SelectProfileRequestDto,
     userId: number,
+    deviceId: string,
   ): SelectProfileCommand {
     return new SelectProfileCommand(
       userId,
       Number(dto.profileId),
-      dto.deviceId ?? '',
+      deviceId ?? '',
       dto.pin ? String(dto.pin).trim() : undefined,
     );
   }

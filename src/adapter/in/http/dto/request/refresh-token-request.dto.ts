@@ -4,7 +4,4 @@ import type { RefreshTokenRequestDto as IRefreshTokenRequestDto } from 'pai-shar
 export class RefreshTokenRequestDto implements IRefreshTokenRequestDto {
   @IsString()
   refreshToken: string;
-
-  @IsString()
-  deviceId: string;
 }

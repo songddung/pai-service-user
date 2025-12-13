@@ -7,7 +7,4 @@ export class LoginRequestDto implements ILoginRequestDto {
 
   @IsString()
   password: string;
-
-  @IsString()
-  deviceId: string;
 }

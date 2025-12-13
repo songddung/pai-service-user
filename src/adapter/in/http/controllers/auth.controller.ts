@@ -60,8 +60,9 @@ export class AuthController {
   @Post('signup')
   async signup(
     @Body() dto: SignupRequestDto,
+    @Headers('x-device-id') deviceId: string,
   ): Promise<BaseResponse<SignupResponseData>> {
-    const command = this.authMapper.toSignupCommand(dto);
+    const command = this.authMapper.toSignupCommand(dto, deviceId);
     const vo = await this.signupUseCase.execute(command);
     const response = this.authMapper.toSignupResponse(vo);
 
@@ -75,8 +76,9 @@ export class AuthController {
   @Post('login')
   async login(
     @Body() dto: LoginRequestDto,
+    @Headers('x-device-id') deviceId: string,
   ): Promise<BaseResponse<LoginResponseData>> {
-    const command = this.authMapper.toLoginCommand(dto);
+    const command = this.authMapper.toLoginCommand(dto, deviceId);
     const vo = await this.loginUseCase.execute(command);
     const response = this.authMapper.toLoginResponse(vo);
 
@@ -106,12 +108,13 @@ export class AuthController {
   @Post('refresh')
   async refresh(
     @Body() dto: RefreshTokenRequestDto,
+    @Headers('x-device-id') deviceId: string,
   ): Promise<BaseResponse<RefreshTokenResponseData>> {
     // refreshToken에서 userId를 추출하여 사용
     // RefreshTokenUseCase에서 refreshToken을 검증하고 userId를 가져옴
     const command = this.authMapper.toTokenCommand(
       dto.refreshToken,
-      dto.deviceId,
+      deviceId,
     );
     const vo = await this.refreshTokenUseCase.execute(command);
     const response = this.authMapper.toTokenResponse(vo);
