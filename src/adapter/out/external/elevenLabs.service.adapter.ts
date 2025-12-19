@@ -55,7 +55,7 @@ export class ElevenLabsService implements ElevenLabsUseCase {
   async getVoice(voiceId: string): Promise<ElevenLabs.Voice> {
     try {
       return await this.client.voices.get(voiceId);
-    } catch (error) {
+    } catch {
       throw new Error('Voice not found');
     }
   }
