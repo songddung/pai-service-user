@@ -3,6 +3,15 @@ import axios from 'axios';
 import { KakaoAddressService } from 'src/application/port/out/kakao-address.service';
 import { ConfigService } from '@nestjs/config';
 
+interface KakaoDocument {
+  x: string;
+  y: string;
+}
+
+interface KakaoResponse {
+  documents: KakaoDocument[];
+}
+
 @Injectable()
 export class KakaoAddressAdapter implements KakaoAddressService {
   constructor(private readonly configService: ConfigService) {}
@@ -18,7 +27,7 @@ export class KakaoAddressAdapter implements KakaoAddressService {
     const url = 'https://dapi.kakao.com/v2/local/search/address.json';
 
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get<KakaoResponse>(url, {
         params: { query: address },
         headers: {
           Authorization: `KakaoAK ${apiKey}`,

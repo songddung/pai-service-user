@@ -15,11 +15,14 @@ export class MediaServiceAdapter implements MediaServicePort {
 
   async getMediaByIds(mediaIds: bigint[]): Promise<MediaInfo[]> {
     try {
-      const response = await axios.get(`${this.baseUrl}/internal/media`, {
-        params: {
-          mediaIds: mediaIds.map((id) => String(id)).join(','),
+      const response = await axios.get<{ data: MediaInfo[] }>(
+        `${this.baseUrl}/internal/media`,
+        {
+          params: {
+            mediaIds: mediaIds.map((id) => String(id)).join(','),
+          },
         },
-      });
+      );
 
       return response.data.data || [];
     } catch (error) {

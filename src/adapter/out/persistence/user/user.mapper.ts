@@ -29,7 +29,7 @@ export class UserMapper {
     });
   }
 
-  static toPersistence(user: User): any {
+  static toPersistence(user: User) {
     // 반환 타입은 Prisma의 'data' 객체와 동일
     const address = user.getAddress();
 

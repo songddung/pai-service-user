@@ -12,10 +12,11 @@
  */
 
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import type { Request } from 'express';
 
 export const Auth = createParamDecorator(
   (field: 'userId' | 'profileId' | undefined, ctx: ExecutionContext) => {
-    const req = ctx.switchToHttp().getRequest();
+    const req = ctx.switchToHttp().getRequest<Request>();
     const { auth } = req;
 
     if (!field) {

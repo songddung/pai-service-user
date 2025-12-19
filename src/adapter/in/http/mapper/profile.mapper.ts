@@ -43,7 +43,7 @@ export class ProfileMapper {
   ): CreateProfileCommand {
     return new CreateProfileCommand(
       userId,
-      dto.profileType,
+      dto.profileType as 'parent' | 'child',
       String(dto.name ?? '').trim(),
       String(dto.birthDate ?? '').trim(),
       dto.gender,

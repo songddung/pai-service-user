@@ -108,11 +108,16 @@ export class JwtTokenProvider implements TokenProvider {
 
     // JWT 메타데이터 제거 (iat, exp, sub, tokenVersion, deviceId 등)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { iat, exp, sub, tokenVersion, deviceId: _, ...cleanPayload } =
-      payload as any;
+    const {
+      iat: _iat,
+      exp: _exp,
+      sub: _sub,
+      tokenVersion: _tokenVersion,
+      deviceId: _deviceId,
+      ...cleanPayload
+    } = payload as unknown as Record<string, unknown>;
 
     // 새로운 payload 생성 (명시적으로 전달받은 deviceId 사용)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const newPayload = {
       userId: payload.userId,
       deviceId: deviceId, // 명시적으로 전달받은 deviceId 사용

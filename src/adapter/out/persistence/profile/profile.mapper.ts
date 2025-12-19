@@ -28,7 +28,7 @@ export class ProfileMapper {
     });
   }
 
-  static toPersistence(profile: Profile): any {
+  static toPersistence(profile: Profile) {
     // 반환 타입은 Prisma의 'data' 객체와 동일
     return {
       user_id: profile.getUserId(),

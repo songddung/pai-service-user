@@ -5,9 +5,10 @@ import {
   Inject,
   UnauthorizedException,
 } from '@nestjs/common';
-import { verifyAccessToken } from '../token.verifier';
+import { verifyAccessToken, type AuthClaims } from '../token.verifier';
 import type { TokenVersionQueryPort } from 'src/application/port/out/token-version.query.port';
 import { USER_TOKENS } from 'src/user.token';
+import type { Request } from 'express';
 
 /**
  * Basic 토큰 검증 Guard
@@ -23,17 +24,17 @@ export class BasicAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest<Request>();
 
     // 1) Bearer 토큰 추출
-    const authHeader = req.headers['authorization'] as string | undefined;
+    const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException('UNAUTHORIZED: Bearer token required');
     }
     const token = authHeader.slice('Bearer '.length).trim();
 
     // 2) 서명/만료 검증 + 클레임 추출
-    let claims;
+    let claims: AuthClaims;
     try {
       claims = await verifyAccessToken(token);
     } catch {
@@ -62,7 +63,7 @@ export class BasicAuthGuard implements CanActivate {
 
     const currentVersion = await this.tokenVersionQuery.getDeviceVersion(
       Number(userId),
-      deviceId,
+      String(deviceId),
     );
     if (tokenVersion !== currentVersion) {
       throw new UnauthorizedException(
@@ -75,7 +76,7 @@ export class BasicAuthGuard implements CanActivate {
       token,
       userId,
       profileId: claims.profileId || null,
-      profileType: claims.profileType || null,
+      profileType: (claims.profileType === 'parent' || claims.profileType === 'child') ? claims.profileType : null,
       claims,
     };
 

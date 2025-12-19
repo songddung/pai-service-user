@@ -2,15 +2,15 @@ import { Transform } from 'class-transformer';
 
 // 문자열이면 trim, 공백만 있으면 undefined로
 export const TrimToUndefined = () =>
-  Transform(({ value }) => {
-    if (typeof value !== 'string') return value;
+  Transform(({ value }): string | undefined => {
+    if (typeof value !== 'string') return value as string | undefined;
     const t = value.trim();
     return t === '' ? undefined : t;
   });
 
 // 쿼리/바디에 들어온 값을 number로 (null/undefined/'' -> undefined)
 export const ToNumber = () =>
-  Transform(({ value }) =>
+  Transform(({ value }): number | undefined =>
     value === undefined || value === null || value === ''
       ? undefined
       : Number(value),
