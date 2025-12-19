@@ -10,8 +10,7 @@ export class MediaServiceAdapter implements MediaServicePort {
   private readonly baseUrl: string;
 
   constructor() {
-    this.baseUrl =
-      process.env.MEDIA_SERVICE_URL || 'http://localhost:3002';
+    this.baseUrl = process.env.MEDIA_SERVICE_URL || 'http://localhost:3002';
   }
 
   async getMediaByIds(mediaIds: bigint[]): Promise<MediaInfo[]> {

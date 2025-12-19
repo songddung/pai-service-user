@@ -12,7 +12,9 @@ export class Gender {
 
     if (
       !normalized ||
-      !Gender.VALID_VALUES.includes(normalized as (typeof Gender.VALID_VALUES)[number])
+      !Gender.VALID_VALUES.includes(
+        normalized as (typeof Gender.VALID_VALUES)[number],
+      )
     ) {
       throw new Error('유효하지 않은 성별입니다. (MALE 또는 FEMALE)');
     }

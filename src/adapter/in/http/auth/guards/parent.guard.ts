@@ -20,7 +20,7 @@ export class ParentGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // HTTP 요청 객체 가져오기
-    const req = context.switchToHttp().getRequest() as any;
+    const req = context.switchToHttp().getRequest();
 
     // 1) Bearer 토큰 추출
     const authHeader = req.headers['authorization'] as string | undefined;
@@ -58,7 +58,9 @@ export class ParentGuard implements CanActivate {
 
     const deviceId = claims.deviceId;
     if (!deviceId) {
-      throw new UnauthorizedException('UNAUTHORIZED: deviceId missing in token');
+      throw new UnauthorizedException(
+        'UNAUTHORIZED: deviceId missing in token',
+      );
     }
 
     const currentVersion = await this.tokenVersionQuery.getDeviceVersion(

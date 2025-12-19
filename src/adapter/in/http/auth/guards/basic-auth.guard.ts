@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable, Inject, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { verifyAccessToken } from '../token.verifier';
 import type { TokenVersionQueryPort } from 'src/application/port/out/token-version.query.port';
 import { USER_TOKENS } from 'src/user.token';
@@ -17,7 +23,7 @@ export class BasicAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest() as any;
+    const req = context.switchToHttp().getRequest();
 
     // 1) Bearer 토큰 추출
     const authHeader = req.headers['authorization'] as string | undefined;
@@ -49,7 +55,9 @@ export class BasicAuthGuard implements CanActivate {
 
     const deviceId = claims.deviceId;
     if (!deviceId) {
-      throw new UnauthorizedException('UNAUTHORIZED: deviceId missing in token');
+      throw new UnauthorizedException(
+        'UNAUTHORIZED: deviceId missing in token',
+      );
     }
 
     const currentVersion = await this.tokenVersionQuery.getDeviceVersion(

@@ -26,7 +26,10 @@ export class RedisTokenVersionRepositoryAdapter
     return newVersion;
   }
 
-  async incrementDeviceVersion(userId: number, deviceId: string): Promise<number> {
+  async incrementDeviceVersion(
+    userId: number,
+    deviceId: string,
+  ): Promise<number> {
     const key = this.getDeviceKey(userId, deviceId);
     // Redis INCR: 값을 1 증가시키고 새로운 값 반환 (없으면 1부터 시작)
     const newVersion = await this.redis.incr(key);

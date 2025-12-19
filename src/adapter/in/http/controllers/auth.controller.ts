@@ -47,7 +47,7 @@ export class AuthController {
   ) {}
 
   @Post('check-email')
-  async checkEmail(@Body() dto: CheckEmailDto): Promise<BaseResponse<Boolean>> {
+  async checkEmail(@Body() dto: CheckEmailDto): Promise<BaseResponse<boolean>> {
     const data = await this.checkEmailDuplicateUseCase.execute(dto.email);
 
     return {
@@ -112,10 +112,7 @@ export class AuthController {
   ): Promise<BaseResponse<RefreshTokenResponseData>> {
     // refreshToken에서 userId를 추출하여 사용
     // RefreshTokenUseCase에서 refreshToken을 검증하고 userId를 가져옴
-    const command = this.authMapper.toTokenCommand(
-      dto.refreshToken,
-      deviceId,
-    );
+    const command = this.authMapper.toTokenCommand(dto.refreshToken, deviceId);
     const vo = await this.refreshTokenUseCase.execute(command);
     const response = this.authMapper.toTokenResponse(vo);
 

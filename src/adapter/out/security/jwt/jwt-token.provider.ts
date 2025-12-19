@@ -32,14 +32,14 @@ export class JwtTokenProvider implements TokenProvider {
 
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-      expiresIn: (this.configService.get<string>('JWT_ACCESS_EXPIRES_IN') ||
-        '30m') as string,
+      expiresIn:
+        this.configService.get<string>('JWT_ACCESS_EXPIRES_IN') || '30m',
     } as JwtSignOptions);
 
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ||
-        '7d') as string,
+      expiresIn:
+        this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d',
     } as JwtSignOptions);
 
     return { accessToken, refreshToken };
@@ -63,14 +63,14 @@ export class JwtTokenProvider implements TokenProvider {
 
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-      expiresIn: (this.configService.get<string>('JWT_ACCESS_EXPIRES_IN') ||
-        '30m') as string,
+      expiresIn:
+        this.configService.get<string>('JWT_ACCESS_EXPIRES_IN') || '30m',
     } as JwtSignOptions);
 
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ||
-        '7d') as string,
+      expiresIn:
+        this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d',
     } as JwtSignOptions);
 
     return { accessToken, refreshToken };
@@ -82,7 +82,7 @@ export class JwtTokenProvider implements TokenProvider {
         secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
       });
       return payload;
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('유효하지 않은 Access Token입니다.');
     }
   }
@@ -93,7 +93,7 @@ export class JwtTokenProvider implements TokenProvider {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
       return payload;
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('유효하지 않은 Refresh Token입니다.');
     }
   }
@@ -107,9 +107,12 @@ export class JwtTokenProvider implements TokenProvider {
     const payload = await this.verifyRefreshToken(refreshToken);
 
     // JWT 메타데이터 제거 (iat, exp, sub, tokenVersion, deviceId 등)
-    const { iat, exp, sub, tokenVersion, deviceId: _, ...cleanPayload } = payload as any;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { iat, exp, sub, tokenVersion, deviceId: _, ...cleanPayload } =
+      payload as any;
 
     // 새로운 payload 생성 (명시적으로 전달받은 deviceId 사용)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const newPayload = {
       userId: payload.userId,
       deviceId: deviceId, // 명시적으로 전달받은 deviceId 사용
@@ -121,15 +124,15 @@ export class JwtTokenProvider implements TokenProvider {
     // 새로운 AccessToken 발급
     const newAccessToken = this.jwtService.sign(newPayload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-      expiresIn: (this.configService.get<string>('JWT_ACCESS_EXPIRES_IN') ||
-        '30m') as string,
+      expiresIn:
+        this.configService.get<string>('JWT_ACCESS_EXPIRES_IN') || '30m',
     } as JwtSignOptions);
 
     // 새로운 RefreshToken 발급
     const newRefreshToken = this.jwtService.sign(newPayload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') ||
-        '7d') as string,
+      expiresIn:
+        this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d',
     } as JwtSignOptions);
 
     return {

@@ -102,7 +102,7 @@ export class ProfileMapper {
 
   toGetProfileResponse(result: GetProfilesResult): GetProfilesResponseData {
     return {
-      profiles: result.profiles.map((profile, index) => ({
+      profiles: result.profiles.map((profile) => ({
         profileId: String(profile.getId()),
         userId: result.userId,
         profileType: profile.getProfileType(),

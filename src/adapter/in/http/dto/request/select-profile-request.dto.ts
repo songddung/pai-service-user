@@ -1,10 +1,4 @@
-import {
-  IsOptional,
-  IsString,
-  MinLength,
-  MaxLength,
-  IsNumber,
-} from 'class-validator';
+import { IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
 import { SelectProfileRequestDto as ISelectProfileRequestDto } from 'pai-shared-types';
 
 export class SelectProfileRequestDto implements ISelectProfileRequestDto {

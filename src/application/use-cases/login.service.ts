@@ -52,8 +52,10 @@ export class LoginService implements LoginUseCase {
 
     // 디바이스별 토큰 버전 조회 (멀티 디바이스 로그인 지원)
     const userId = Number(user.getId());
-    const deviceVersion =
-      await this.tokenVersionQuery.getDeviceVersion(userId, command.deviceId);
+    const deviceVersion = await this.tokenVersionQuery.getDeviceVersion(
+      userId,
+      command.deviceId,
+    );
 
     // 디바이스별 버전으로 토큰 발급
     const tokenPair = await this.tokenProvider.generateBasicTokenPair(

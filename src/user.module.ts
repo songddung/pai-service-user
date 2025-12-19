@@ -112,7 +112,6 @@ import { SynthesizeVoiceService } from './application/use-cases/synthesize-voice
       useClass: SynthesizeVoiceService,
     },
 
-
     // Query 바인딩 (읽기)
     { provide: USER_TOKENS.UserQueryPort, useClass: UserQueryAdapter },
     { provide: USER_TOKENS.ProfileQueryPort, useClass: ProfileQueryAdapter },

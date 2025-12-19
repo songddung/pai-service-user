@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { GetProfilesUseCase } from '../port/in/get-profiles.use-case';
 import type { ProfileQueryPort } from '../port/out/profile.query.port';
-import type { MediaServicePort } from '../port/out/media-service.port';
 import { USER_TOKENS } from 'src/user.token';
 import { GetProfileCommand } from '../command/get-profile.command';
 

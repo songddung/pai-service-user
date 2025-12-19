@@ -35,7 +35,7 @@ export class CreateVoiceService implements CreateVoiceUseCase {
     if (profile.getVoiceMediaId()) {
       try {
         await this.elevenLabsService.deleteVoice(profile.getVoiceMediaId()!);
-      } catch (error) {
+      } catch {
         throw new Error('Failed to delete voice');
       }
     }

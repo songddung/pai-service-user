@@ -81,14 +81,15 @@ export class SignupService implements SignupUseCase {
       address: addressVO,
     });
 
-
     // 7) 저장 (Prisma)
     const saved = await this.userRepository.save(user);
 
     // 8) 디바이스별 토큰 버전 조회 (최초 가입이므로 1로 시작)
     const userId = Number(saved.getId());
-    const deviceVersion =
-      await this.tokenVersionQuery.getDeviceVersion(userId, command.deviceId);
+    const deviceVersion = await this.tokenVersionQuery.getDeviceVersion(
+      userId,
+      command.deviceId,
+    );
 
     // 9) 토큰 발급
     const tokenPair = await this.tokenProvider.generateBasicTokenPair(

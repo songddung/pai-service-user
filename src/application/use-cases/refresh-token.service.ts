@@ -5,6 +5,7 @@ import type { RefreshTokenQueryPort } from '../port/out/refresh-token.query.port
 import type { RefreshTokenRepositoryPort } from '../port/out/refresh-token.repository.port';
 import type { TokenVersionQueryPort } from '../port/out/token-version.query.port';
 import type { TokenProvider } from '../port/out/token.provider';
+import type { TokenPayload } from '../port/out/token.provider';
 import { USER_TOKENS } from '../../user.token';
 import { RefreshTokenResult } from '../port/in/result/refresh-token.result.dto';
 
@@ -26,10 +27,12 @@ export class RefreshTokenService implements RefreshTokenUseCase {
 
   async execute(command: RefreshTokenCommand): Promise<RefreshTokenResult> {
     // 0. RefreshToken에서 userId 추출 (JWT 검증)
-    let payload;
+    let payload: TokenPayload;
     try {
-      payload = await this.tokenProvider.verifyRefreshToken(command.refreshToken);
-    } catch (error) {
+      payload = await this.tokenProvider.verifyRefreshToken(
+        command.refreshToken,
+      );
+    } catch {
       throw new UnauthorizedException('유효하지 않은 RefreshToken입니다.');
     }
 

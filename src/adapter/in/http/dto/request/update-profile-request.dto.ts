@@ -4,7 +4,6 @@ import {
   IsDateString,
   MinLength,
   MaxLength,
-  IsNumber,
 } from 'class-validator';
 import { UpdateProfileRequestDto as IUpdateProfileRequestDto } from 'pai-shared-types';
 

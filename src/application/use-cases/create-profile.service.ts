@@ -4,8 +4,6 @@ import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import type { CreateProfileUseCase } from 'src/application/port/in/create-profile.use-case';
 import { CreateProfileCommand } from 'src/application/command/create-profile.command';
 import type { ProfileRepositoryPort } from 'src/application/port/out/profile.repository.port';
-import type { TokenVersionRepositoryPort } from 'src/application/port/out/token-version.repository.port';
-import type { TokenProvider } from 'src/application/port/out/token.provider';
 import type { PasswordHasher } from 'src/application/port/out/password-hasher';
 import { Profile } from 'src/domain/model/profile/entity/profile.entity';
 import { ProfileName } from 'src/domain/model/profile/vo/profile-name.vo';
