@@ -63,7 +63,7 @@ export class BasicAuthGuard implements CanActivate {
 
     const currentVersion = await this.tokenVersionQuery.getDeviceVersion(
       Number(userId),
-      String(deviceId),
+      deviceId,
     );
     if (tokenVersion !== currentVersion) {
       throw new UnauthorizedException(
@@ -76,7 +76,10 @@ export class BasicAuthGuard implements CanActivate {
       token,
       userId,
       profileId: claims.profileId || null,
-      profileType: (claims.profileType === 'parent' || claims.profileType === 'child') ? claims.profileType : null,
+      profileType:
+        claims.profileType === 'parent' || claims.profileType === 'child'
+          ? claims.profileType
+          : null,
       claims,
     };
 

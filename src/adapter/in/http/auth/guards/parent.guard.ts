@@ -66,7 +66,7 @@ export class ParentGuard implements CanActivate {
 
     const currentVersion = await this.tokenVersionQuery.getDeviceVersion(
       Number(userId),
-      String(deviceId),
+      deviceId,
     );
     if (tokenVersion !== currentVersion) {
       throw new UnauthorizedException(
