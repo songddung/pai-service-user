@@ -124,7 +124,7 @@ spec:
                                 git config --global user.name "Jenkins CI"
 
                                 # Clone gitops repo
-                                git clone https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/songddung/pai-gitops.git
+                                git clone https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/YJ856/pai-gitops.git
                                 cd pai-gitops
 
                                 # Update image tag in deployment file
